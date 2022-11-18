@@ -20,15 +20,15 @@ public class User {
 
     private String userId;
     private String password;
-    private String nickName;
+    private String nickname;
     private String phoneNum;
     private String image;
 
     @Builder
-    public User(String userId, String password, String nickName, String phoneNum, String image) {
+    public User(String userId, String password, String nickname, String phoneNum, String image) {
         this.userId = userId;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.image = image;
     }

@@ -1,3 +1,21 @@
+spring:
+  application:
+    name: pome-server
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        show_sql: true
+        format_sql: true
+
+  datasource:
+    url: ENC(YSS5V6ZC9hVVQAhkdNID/xJNCaTCiMXXyWk1onRHyeWgDTGahM7dyhpr+/ROyYrMgWhoSmQ3c80phX6kJU79gTsS2LLcxYLifbwZq+xZaUK2YNKBh7AARyZcKYbPBSjK)
+    username: ENC(CJAzb5ILVtCPqokrW3tC/Q==)
+    password: ENC(q6Le8/73U2gfDVw3RIXqM9O2wAJAlVdF)
+    driver-class-name: org.mariadb.jdbc.Driver
+
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
@@ -6,3 +24,4 @@ jasypt:
     string-output-type: base64
     key-obtention-iterations: 100000
 #    password: password
+

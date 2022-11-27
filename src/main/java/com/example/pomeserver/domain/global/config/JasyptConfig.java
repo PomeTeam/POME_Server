@@ -32,12 +32,6 @@ public class JasyptConfig {
         encryptor.setPassword(password);
         encryptor.setStringOutputType(stringOutputType);
         encryptor.setKeyObtentionIterations(keyObtentionIterations);
-        String source1 = "jdbc:mariadb://pome-server-db.cvyfpcmdhter.ap-northeast-2.rds.amazonaws.com/pomedb";
-        log.info("plane :: {}, encrypt :: {}", source1, encryptor.encrypt(source1));
-        String source2 = "admin";
-        log.info("plane :: {}, encrypt :: {}", source2, encryptor.encrypt(source2));
-        String source3 = "pome0302!";
-        log.info("plane :: {}, encrypt :: {}", source3, encryptor.encrypt(source3));
         return encryptor;
     }
 }

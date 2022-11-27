@@ -11,9 +11,9 @@ spring:
         format_sql: true
 
   datasource:
-    url: ENC(YSS5V6ZC9hVVQAhkdNID/xJNCaTCiMXXyWk1onRHyeWgDTGahM7dyhpr+/ROyYrMgWhoSmQ3c80phX6kJU79gTsS2LLcxYLifbwZq+xZaUK2YNKBh7AARyZcKYbPBSjK)
-    username: ENC(CJAzb5ILVtCPqokrW3tC/Q==)
-    password: ENC(q6Le8/73U2gfDVw3RIXqM9O2wAJAlVdF)
+    url: ENC(/senGpUtjiUUOHFhiF1GVqgq+5FM9uXefgbdKJ+wUkkmtPVqwKk5i5XfT0EW7MdD8VTVm9Q7aZBiFNyM8DGkICiOVcHaHpNrdwgxdlhDv2oJs6e2Fng6JNNjHsacFP9S)
+    username: ENC(IYzvRWBhSVqPTiMmHrcbbA==)
+    password: ENC(krxh0bWdOGwi1Cb1Lv+0eQQnncteJAaEZgBzLEykHyw=)
     driver-class-name: org.mariadb.jdbc.Driver
 
 jasypt:

@@ -1,9 +1,7 @@
-package com.example.pomeserver.domain.global.dto.response;
+package com.example.pomeserver.global.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;

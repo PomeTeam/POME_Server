@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.global.dto.response;
+package com.example.pomeserver.global.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

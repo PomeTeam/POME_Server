@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 10s # 10초마다 매트릭을 수집
+  evaluation_interval: 1m # 1분마다 규칙을 평가
+
+  external_labels: # 외부 시스템에 표시할 이 서버의 레이블
+    monitor: 'pome-server-monitor'
+
+rule_files: # 규칙을 로딩하고 evaluation_interval 설정에 따라 정기적으로 평가한다.
+# - "first.rules"
+# - "second.rules"
+
+scrape_configs:
+  - job_name: 'monitoring-app' # 잡 이름
+    metrics_path: '/actuator/prometheus' # 메트릭을 수집할 path 설정
+    static_configs:
+      - targets: ['host.docker.internal:8080'] # 도커 인스턴스 내부 호스트:8080

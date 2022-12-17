@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.global.config;
+package com.example.pomeserver.global.config;
 
 
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
 package com.example.pomeserver.domain.user.controller;
 
-import com.example.pomeserver.domain.global.dto.response.ApplicationResponse;
+import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.domain.user.dto.request.UserSaveRequest;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.service.UserService;

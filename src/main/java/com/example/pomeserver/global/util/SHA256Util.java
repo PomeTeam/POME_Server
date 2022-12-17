@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.global.util;
+package com.example.pomeserver.global.util;
 
 import org.springframework.stereotype.Component;
 

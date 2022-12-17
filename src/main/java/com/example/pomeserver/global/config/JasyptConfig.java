@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.global.config;
+package com.example.pomeserver.global.config;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import lombok.extern.slf4j.Slf4j;

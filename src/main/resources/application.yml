@@ -16,6 +16,10 @@ spring:
     password: ENC(krxh0bWdOGwi1Cb1Lv+0eQQnncteJAaEZgBzLEykHyw=)
     driver-class-name: org.mariadb.jdbc.Driver
 
+  redis:
+    host: user-information.darpbm.ng.0001.apn2.cache.amazonaws.com
+    port: 6379
+
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor

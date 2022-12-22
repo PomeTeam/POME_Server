@@ -9,5 +9,4 @@ public class PomeServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(PomeServerApplication.class, args);
     }
-
 }

@@ -11,13 +11,13 @@ spring:
         format_sql: true
 
   datasource:
-    url: ENC(/senGpUtjiUUOHFhiF1GVqgq+5FM9uXefgbdKJ+wUkkmtPVqwKk5i5XfT0EW7MdD8VTVm9Q7aZBiFNyM8DGkICiOVcHaHpNrdwgxdlhDv2oJs6e2Fng6JNNjHsacFP9S)
-    username: ENC(IYzvRWBhSVqPTiMmHrcbbA==)
-    password: ENC(krxh0bWdOGwi1Cb1Lv+0eQQnncteJAaEZgBzLEykHyw=)
+    url: ENC(UhTZCchsTuaeCIIRGVB6fspHO4hHAO93iN26ywQqRZ50Jt2SMHuqnGRZTh1cpTP549QnZTp6h9SO3x/sGlMvvS0X2h8o9ILPJcDspScRnXxdsY+b6U3IyiBfcnPgWnb2)
+    username: ENC(Nuj++ONTcU4Eni1u8DZUtg==)
+    password: ENC(gUg4tCfrFn1uhFANXIwld0OgbavZq0zQzrT1sgXY5fY=)
     driver-class-name: org.mariadb.jdbc.Driver
 
   redis:
-    host: user-information.darpbm.ng.0001.apn2.cache.amazonaws.com
+    host: ENC(A8Kbxf7WkyJXcjNIGNBBbFWLt3AboErqoV3FfEZbQSw5YZ9J6SiTZWmPlvaeM/IDVHO6SxD3l9d7qun3UTxtWQ==)
     port: 6379
 
 jasypt:
@@ -44,4 +44,3 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-

@@ -1,14 +1,18 @@
 package com.example.pomeserver.domain.user.dto.request;
 
 import com.example.pomeserver.domain.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 @NoArgsConstructor
 @Getter
-public class UserSaveRequest {
-    private String userId;
+@JsonInclude(Include.NON_NULL)
+public class UserSignUpRequest {
+    private String email;
     private String password;
     private String nickname;
     private String phoneNum;
@@ -20,9 +24,10 @@ public class UserSaveRequest {
 
     public User toEntity() {
         return User.builder()
-                .userId(this.userId)
-                .password(this.password)
-                .nickname(this.nickname)
-                .phoneNum(this.phoneNum).build();
+            .userId(UUID.randomUUID().toString())
+            .email(this.email)
+            .password(this.password)
+            .nickname(this.nickname)
+            .phoneNum(this.phoneNum).build();
     }
 }

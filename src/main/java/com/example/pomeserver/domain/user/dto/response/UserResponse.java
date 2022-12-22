@@ -18,7 +18,7 @@ public class UserResponse {
         userResponse.userId = user.getUserId();
         userResponse.nickName = user.getNickname();
         userResponse.phoneNum = user.getPhoneNum();
-        userResponse.imageURL = "test"; //TODO
+        userResponse.imageURL = "test"; //TO-DO
         return userResponse;
     }
 }

@@ -2,8 +2,8 @@ package com.example.pomeserver.domain.user.service;
 
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.SHA256Util;
-import com.example.pomeserver.domain.user.dto.request.UserLoginRequest;
-import com.example.pomeserver.domain.user.dto.request.UserSaveRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.PasswordIsNotValid;
@@ -23,20 +23,26 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     @Override
-    public ApplicationResponse<UserResponse> create(UserSaveRequest userSaveRequest){
-        if(userRepository.findByUserId(userSaveRequest.getUserId()).isPresent())
-            throw new UserIdAlreadyExistException(userSaveRequest.getUserId());
-        userSaveRequest.setEncPassword(SHA256Util.encrypt(userSaveRequest.getPassword()));
-        User user = userRepository.save(userSaveRequest.toEntity());
-        return ApplicationResponse.create("회원가입 완료.", UserResponse.toDto(user));
+    public UserResponse signUp(UserSignUpRequest userSignUpRequest){
+        if(userRepository.findByUserId(userSignUpRequest.getEmail()).isPresent())
+            throw new UserIdAlreadyExistException(userSignUpRequest.getEmail());
+
+        userSignUpRequest.setEncPassword(SHA256Util.encrypt(userSignUpRequest.getPassword()));
+
+        User user = userRepository.save(userSignUpRequest.toEntity());
+
+        return UserResponse.toDto(user);
     }
 
+    @Transactional
     @Override
-    public ApplicationResponse<UserResponse> login(UserLoginRequest userLoginRequest) {
-        User user = userRepository.findByUserId(userLoginRequest.getUserId())
-                .orElseThrow(() -> new UserIdNotFound(userLoginRequest.getUserId()));
-        if(!user.getPassword().equals(SHA256Util.encrypt(userLoginRequest.getPassword())))
+    public UserResponse signIn(UserSignInRequest userSignInRequest) {
+        User user = userRepository.findByUserId(userSignInRequest.getEmail())
+                .orElseThrow(() -> new UserIdNotFound(userSignInRequest.getEmail()));
+
+        if(!user.getPassword().equals(SHA256Util.encrypt(userSignInRequest.getPassword())))
             throw new PasswordIsNotValid();
-        return ApplicationResponse.ok(UserResponse.toDto(user));
+
+        return UserResponse.toDto(user);
     }
 }

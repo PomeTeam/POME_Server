@@ -48,7 +48,9 @@ jobs:
     # 5) Set for yml
     - name: Make application-dev.yml
       run: |
-          echo "${{ secrets.PROPERTIES_TEST }}"
+          cd ./src/main/resources
+          touch ./application-secret.yml
+          echo "${{ secrets.PROPERTIES_TEST }}" > ./application-secret.yml
       shell: bash
       
     # 6) 빌드 테스트

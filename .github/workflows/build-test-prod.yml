@@ -46,19 +46,13 @@ jobs:
         run: chmod +x gradlew
 
       # 5) Set for yml
-      - name: Make application-prod.yml
+      - name: Make application-secret.yml
         run: |
           cd ./src/main/resources
-          echo "${{ secrets.PROPERTIES_TEST_PROD }}" >> ./application-prod.yml
+          touch ./application-secret.yml
+          echo "${{ secrets.PROPERTIES_TEST }}" > ./application-secret.yml
         shell: bash
 
       # 6) 빌드 테스트
       - name: Test with gradle
         run:  ./gradlew clean build
-
-      # 7) 테스트 후 result를 보기 위해 추가
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}
-        with:
-          files: build/test-results/**/*.xml

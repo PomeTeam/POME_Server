@@ -46,7 +46,7 @@ jobs:
       run: chmod +x gradlew
     
     # 5) Set for yml
-    - name: Make application-dev.yml
+    - name: Make application-secret.yml
       run: |
           cd ./src/main/resources
           touch ./application-secret.yml

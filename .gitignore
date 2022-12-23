@@ -34,6 +34,7 @@ out/
 /.nb-gradle/
 
 /src/test/resources/**
+application-secret.yml
 
 ### VS Code ###
 .vscode/

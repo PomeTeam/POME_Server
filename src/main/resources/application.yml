@@ -1,6 +1,11 @@
 spring:
   application:
     name: pome-server
+
+  profiles:
+    include:
+      secret
+
   jpa:
     hibernate:
       ddl-auto: update

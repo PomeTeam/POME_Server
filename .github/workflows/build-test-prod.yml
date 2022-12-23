@@ -49,8 +49,7 @@ jobs:
       - name: Make application-prod.yml
         run: |
           cd ./src/main/resources
-          touch ./application-prod.yml
-          echo "${{ secrets.PROPERTIES_TEST_PROD }}" > ./application-prod.yml
+          echo "${{ secrets.PROPERTIES_TEST_PROD }}" >> ./application-prod.yml
         shell: bash
 
       # 6) 빌드 테스트
@@ -60,6 +59,6 @@ jobs:
       # 7) 테스트 후 result를 보기 위해 추가
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }} # 테스트가 실패해도 report를 남기기 위해 설정
+        if: ${{ always() }}
         with:
           files: build/test-results/**/*.xml

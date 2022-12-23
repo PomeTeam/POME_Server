@@ -44,3 +44,14 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+---
+spring:
+  profiles:
+    active: prod
+---
+spring:
+  profiles:
+    active: dev
+
+

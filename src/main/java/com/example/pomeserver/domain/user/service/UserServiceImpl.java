@@ -1,6 +1,5 @@
 package com.example.pomeserver.domain.user.service;
 
-import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.SHA256Util;
 import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;

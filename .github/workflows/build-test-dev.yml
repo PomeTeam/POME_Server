@@ -49,7 +49,6 @@ jobs:
     - name: Make application-dev.yml
       run: |
           cd ./src/main/resources
-          touch ./application-dev.yml
           echo "${{ secrets.PROPERTIES_TEST }}" > ./application-dev.yml
       shell: bash
       

@@ -1,6 +1,11 @@
 spring:
   application:
     name: pome-server
+
+  profiles:
+    include:
+      secret
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,3 +49,14 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+---
+spring:
+  profiles:
+    active: prod
+---
+spring:
+  profiles:
+    active: dev
+
+

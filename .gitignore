@@ -46,6 +46,9 @@ out/
 ### macOS ###
 # General
 .DS_Store
+/src/.DS_Store
+/src/test/.DS_Store
+/src/main/.DS_Store
 .AppleDouble
 .LSOverride
 

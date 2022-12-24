@@ -18,6 +18,16 @@ public class HealthCheckController {
         this.env = env;
     }
 
+    @GetMapping("/health")
+    public String health(){
+        return "UP";
+    }
+
+    @GetMapping("/port")
+    public String port(){
+        return env.getProperty("local.server.port");
+    }
+
     @GetMapping("/health-check")
     public String healthCheck(){
         return Arrays.stream(env.getActiveProfiles()).findFirst().orElse("");

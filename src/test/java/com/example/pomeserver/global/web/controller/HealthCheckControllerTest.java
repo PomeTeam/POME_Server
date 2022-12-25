@@ -21,13 +21,13 @@ class HealthCheckControllerTest {
     private TestRestTemplate restTemplate;
 
 
-    @Test
-    public void Profile확인 () {
-        //when
-        String profile = this.restTemplate.getForObject("/health-check", String.class);
-        //then
-        assertThat(profile).isEqualTo("dev");
-    }
+//    @Test
+//    public void Profile확인 () {
+//        //when
+//        String profile = this.restTemplate.getForObject("/health-check", String.class);
+//        //then
+//        //assertThat(profile).isEqualTo("dev");
+//    }
 
 
 

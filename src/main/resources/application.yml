@@ -22,7 +22,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   redis:
-    host: ENC(A8Kbxf7WkyJXcjNIGNBBbFWLt3AboErqoV3FfEZbQSw5YZ9J6SiTZWmPlvaeM/IDVHO6SxD3l9d7qun3UTxtWQ==)
+    host: ENC(sMlJjYXXaW+NF0l8NmfErEWCrdUyWEP2)
     port: 6379
 
 jasypt:

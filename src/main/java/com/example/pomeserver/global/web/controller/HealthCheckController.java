@@ -6,6 +6,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 @RestController
@@ -31,5 +33,10 @@ public class HealthCheckController {
     @GetMapping("/health-check")
     public String healthCheck(){
         return Arrays.stream(env.getActiveProfiles()).findFirst().orElse("");
+    }
+
+    @GetMapping("/ip-check")
+    public String ipCheck() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostAddress();
     }
 }

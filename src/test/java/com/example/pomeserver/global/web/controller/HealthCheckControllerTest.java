@@ -19,8 +19,6 @@ class HealthCheckControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    @Autowired
-    private JasyptConfig jasyptConfig;
 
 
 //    @Test

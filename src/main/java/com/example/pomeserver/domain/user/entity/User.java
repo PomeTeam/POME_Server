@@ -22,17 +22,14 @@ public class User {
     @Column(nullable = false, unique = true)
     private String userId;
     @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false, unique = true)
     private String password;
     private String nickname;
     private String phoneNum;
     private String image;
 
     @Builder
-    public User(String userId, String email, String password, String nickname, String phoneNum, String image) {
+    public User(String userId, String password, String nickname, String phoneNum, String image) {
         this.userId = userId;
-        this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.phoneNum = phoneNum;

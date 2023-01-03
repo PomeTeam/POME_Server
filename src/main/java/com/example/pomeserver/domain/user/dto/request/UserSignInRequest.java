@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.dto.request;
+package com.example.pomeserver.domain.user.DTO.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

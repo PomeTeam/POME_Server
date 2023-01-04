@@ -1,14 +1,14 @@
 package com.example.pomeserver.domain.user.service;
 
+import com.example.pomeserver.domain.user.DTO.response.UserResponse;
+import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
+import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
 import com.example.pomeserver.global.util.SHA256Util;
-import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
-import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
-import com.example.pomeserver.domain.user.dto.response.UserResponse;
+import com.example.pomeserver.domain.user.DTO.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.DTO.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.entity.User;
-import com.example.pomeserver.domain.user.exception.PasswordIsNotValid;
-import com.example.pomeserver.domain.user.exception.UserIdAlreadyExistException;
-import com.example.pomeserver.domain.user.exception.UserIdNotFound;
 import com.example.pomeserver.domain.user.repository.UserRepository;
+import com.example.pomeserver.global.util.sms.service.SmsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,25 +23,22 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public UserResponse signUp(UserSignUpRequest userSignUpRequest){
-        if(userRepository.findByUserId(userSignUpRequest.getEmail()).isPresent())
-            throw new UserIdAlreadyExistException(userSignUpRequest.getEmail());
+        userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
+        userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
+//        userSignUpRequest.setEncPassword(SHA256Util.encrypt(userSignUpRequest.getPassword()));
 
-        userSignUpRequest.setEncPassword(SHA256Util.encrypt(userSignUpRequest.getPassword()));
-
-        User user = userRepository.save(userSignUpRequest.toEntity());
-
-        return UserResponse.toDto(user);
+        return UserResponse.toDto(userRepository.save(userSignUpRequest.toEntity()));
     }
 
     @Transactional
     @Override
     public UserResponse signIn(UserSignInRequest userSignInRequest) {
-        User user = userRepository.findByUserId(userSignInRequest.getEmail())
-                .orElseThrow(() -> new UserIdNotFound(userSignInRequest.getEmail()));
+//        User user = userRepository.findByUserId(userSignInRequest.getEmail())
+//                .orElseThrow(() -> new UserIdNotFound();
+//
+//        if(!user.getPassword().equals(SHA256Util.encrypt(userSignInRequest.getPassword())))
+//            throw new PasswordIsNotValid();
 
-        if(!user.getPassword().equals(SHA256Util.encrypt(userSignInRequest.getPassword())))
-            throw new PasswordIsNotValid();
-
-        return UserResponse.toDto(user);
+        return UserResponse.toDto(null);
     }
 }

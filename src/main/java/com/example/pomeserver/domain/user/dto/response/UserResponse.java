@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.dto.response;
+package com.example.pomeserver.domain.user.DTO.response;
 
 import com.example.pomeserver.domain.user.entity.User;
 import lombok.Getter;

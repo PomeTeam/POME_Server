@@ -6,22 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Record extends DateBaseEntity {
+public class Emotion extends DateBaseEntity {
 
-    @Id @Column(name = "record_id")
+    @Id @Column(name = "emotion_id")
     @GeneratedValue
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emotion_id")
-    private Emotion emotion;
+    @JoinColumn(name = "record_id")
+    private Record record;
 
-    private int usePrice;
-    private LocalDateTime useDate;
-    private String userComment;
+    private String emotionName;
+    private String image;
 }

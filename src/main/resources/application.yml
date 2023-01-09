@@ -22,7 +22,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   redis:
-    host: ENC(A8Kbxf7WkyJXcjNIGNBBbFWLt3AboErqoV3FfEZbQSw5YZ9J6SiTZWmPlvaeM/IDVHO6SxD3l9d7qun3UTxtWQ==)
+    host: ENC(sMlJjYXXaW+NF0l8NmfErEWCrdUyWEP2)
     port: 6379
 
 jasypt:
@@ -49,6 +49,13 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+sms:
+  service-id: ENC(jRcp9bJ+pmP5Chc7PjdXvOO0G7zA+bMRVogojNPNqp5zMpHZEG4XGYW0hr09rZW6)
+  access-key: ENC(RUDLHvlS4pyljqRnVLtcij1/laYT3SmVAzYRsPrBmdY=)
+  secret-key: ENC(m4bqtTEsHWdFabh0qVqyunARg1Qm+r9v9N9TVrz+9RnTJoGMFjE+YloqOVaK+hiQuGTZ9Hvs1PI=)
+  phone-num: ENC(42M3V/I2lZaJJ/mF4vfW1L3HBpykydka)
+
 
 ---
 spring:

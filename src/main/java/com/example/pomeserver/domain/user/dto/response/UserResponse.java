@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.dto.response;
+package com.example.pomeserver.domain.user.DTO.response;
 
 import com.example.pomeserver.domain.user.entity.User;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 public class UserResponse {
     private String userId;
     private String nickName;
-    private String phoneNum;
     private String imageURL;
 
 
@@ -17,7 +16,6 @@ public class UserResponse {
         UserResponse userResponse = new UserResponse();
         userResponse.userId = user.getUserId();
         userResponse.nickName = user.getNickname();
-        userResponse.phoneNum = user.getPhoneNum();
         userResponse.imageURL = "test"; //TO-DO
         return userResponse;
     }

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Emotion extends DateBaseEntity {
+public class Emotion extends DateBaseEntity{
 
     @Id @Column(name = "emotion_id")
     @GeneratedValue

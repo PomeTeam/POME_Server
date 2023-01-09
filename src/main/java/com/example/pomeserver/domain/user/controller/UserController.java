@@ -30,6 +30,4 @@ public class UserController {
         UserResponse data = userService.signIn(request);
         return ApplicationResponse.ok(data);
     }
-
-
 }

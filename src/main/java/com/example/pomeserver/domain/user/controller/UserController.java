@@ -1,10 +1,12 @@
 package com.example.pomeserver.domain.user.controller;
 
+import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
 import com.example.pomeserver.domain.user.DTO.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.DTO.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.DTO.response.UserResponse;
 import com.example.pomeserver.domain.user.service.UserService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +43,7 @@ public class UserController {
     /**
      * 닉네임 중복 확인
      * @Author 한규범
-  범  */
+    범  */
     @PostMapping("/check-nickname")
     public ApplicationResponse<Boolean> checkNickname(@RequestBody @Valid UserNicknameRequest userNicknameRequest){
         return ApplicationResponse.create("멋진 닉네임이네요!",userService.checkNickname(userNicknameRequest));

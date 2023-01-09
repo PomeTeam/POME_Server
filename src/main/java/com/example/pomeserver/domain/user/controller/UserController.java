@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @RestController
@@ -20,6 +22,11 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 회원가입 기능
+     * @Author 한규범
+     */
+    //TODO 사진
     @PostMapping("/sign-up")
     public ApplicationResponse<UserResponse> signUp(@RequestBody UserSignUpRequest request) {
         return ApplicationResponse.create("회원가입에 성공하셨습니다.", userService.signUp(request));
@@ -30,4 +37,15 @@ public class UserController {
         UserResponse data = userService.signIn(request);
         return ApplicationResponse.ok(data);
     }
+
+    /**
+     * 닉네임 중복 확인
+     * @Author 한규범
+  범  */
+    @PostMapping("/check-nickname")
+    public ApplicationResponse<Boolean> checkNickname(@RequestBody @Valid UserNicknameRequest userNicknameRequest){
+        return ApplicationResponse.create("멋진 닉네임이네요!",userService.checkNickname(userNicknameRequest));
+    }
+
+
 }

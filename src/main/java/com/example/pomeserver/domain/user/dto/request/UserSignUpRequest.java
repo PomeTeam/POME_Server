@@ -12,11 +12,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @JsonInclude(Include.NON_NULL)
 public class UserSignUpRequest {
-    private String name;
     private String nickname;
     private String phoneNum;
     //private MultipartFile image; //TODO 추후 추가 예정
-
 
     public User toEntity() {
         return User.builder()

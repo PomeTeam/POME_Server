@@ -5,9 +5,6 @@ import io.jsonwebtoken.*;
 import io.netty.handler.codec.compression.CompressionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -157,8 +154,8 @@ public class TokenUtils {
         return false;
     }
 
-    public Long getUserIdFromFullToken(String fullToken){
-        return Long.valueOf((Integer) getJwtBodyFromJustToken(parseJustTokenFromFullToken(fullToken)).get(USER_ID));
+    public String getUserIdFromFullToken(String fullToken){
+        return (String) getJwtBodyFromJustToken(parseJustTokenFromFullToken(fullToken)).get(USER_ID);
     }
 
     public String getNicknameFromFullToken(String fullToken){

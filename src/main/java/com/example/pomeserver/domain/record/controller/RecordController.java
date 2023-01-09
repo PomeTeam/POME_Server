@@ -5,6 +5,8 @@ import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.dto.response.RecordResponse;
 import com.example.pomeserver.domain.record.service.RecordService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import com.example.pomeserver.global.util.authResolver.Auth;
+import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,11 @@ public class RecordController {
 
     private final RecordService recordService;
 
+    @Auth
     @PostMapping
-    public ApplicationResponse<RecordResponse> create(RecordCreateRequest request, String userId)
+    public ApplicationResponse<RecordResponse> create(
+            RecordCreateRequest request,
+            @UserId String userId)
     {
         return recordService.create(request, userId);
     }
@@ -29,19 +34,21 @@ public class RecordController {
         return recordService.findById(recordId);
     }
 
+    @Auth
     @PutMapping("/{recordId}")
     public ApplicationResponse<RecordResponse> update(
             RecordUpdateRequest request,
             @PathVariable Long recordId,
-            String userId)
+            @UserId String userId)
     {
         return recordService.update(request, recordId, userId);
     }
 
+    @Auth
     @DeleteMapping("/{recordId}")
     public ApplicationResponse<RecordResponse> delete(
             @PathVariable Long recordId,
-            String userId)
+            @UserId String userId)
     {
         return recordService.delete(recordId, userId);
     }

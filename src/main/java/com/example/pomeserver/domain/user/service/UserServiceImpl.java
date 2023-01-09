@@ -1,5 +1,6 @@
 package com.example.pomeserver.domain.user.service;
 
+import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
 import com.example.pomeserver.domain.user.DTO.response.UserResponse;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
@@ -23,11 +24,11 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public UserResponse signUp(UserSignUpRequest userSignUpRequest){
-        userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
-        userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
-//        userSignUpRequest.setEncPassword(SHA256Util.encrypt(userSignUpRequest.getPassword()));
-
-        return UserResponse.toDto(userRepository.save(userSignUpRequest.toEntity()));
+        if (userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).isEmpty()){
+            return UserResponse.toDto(userRepository.save(userSignUpRequest.toEntity()));
+        }else{
+            throw new UserAlreadyPhoneNum();
+        }
     }
 
     @Transactional
@@ -40,5 +41,14 @@ public class UserServiceImpl implements UserService{
 //            throw new PasswordIsNotValid();
 
         return UserResponse.toDto(null);
+    }
+
+    @Override
+    public Boolean checkNickname(UserNicknameRequest userNicknameRequest) {
+        if (userRepository.findByNickname(userNicknameRequest.getNickName()).isEmpty()){
+            return true;
+        }else{
+            throw new UserAlreadyNickName();
+        }
     }
 }

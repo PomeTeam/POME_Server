@@ -32,4 +32,15 @@ public class ApplicationErrorResponse<T> {
                 .message(e.getMessage())
                 .build();
     }
+
+    public static <T> ApplicationErrorResponse<T> error(String message){
+        return (ApplicationErrorResponse<T>) ApplicationErrorResponse.builder()
+                .success(false)
+                .httpCode(404)
+                .errorCode("V0001")
+                .localDateTime(LocalDateTime.now())
+                .httpStatus(HttpStatus.HTTP_VERSION_NOT_SUPPORTED)
+                .message(message)
+                .build();
+    }
 }

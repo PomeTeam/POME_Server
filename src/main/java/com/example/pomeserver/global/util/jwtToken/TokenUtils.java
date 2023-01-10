@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import io.netty.handler.codec.compression.CompressionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -25,44 +26,44 @@ public class TokenUtils {
         ACCESS
     }
 
-    public static String secretKey = "";
-    public static String tokenType = "";
-    public static String accessName = "";
-    public static String refreshName = "";
-    public static String accessExTime = "";
-    public static String refreshExTime = "";
+    public static String secretKey;
+    public static String tokenType;
+    public static String accessName;
+    public static String refreshName;
+    public static String accessExTime;
+    public static String refreshExTime;
 
-//    @Value("${jwt.secret}")
-//    public void setSecretKey(String value){
-//        secretKey = value;
-//    }
-//
-//    @Value("${jwt.token_type}")
-//    public void setTokenType(String value){
-//        tokenType = value;
-//    }
-//
-//    @Value("${jwt.access_name}")
-//    public void setAccessName(String value){
-//        accessName = value;
-//    }
-//
-//    @Value("${jwt.refresh_name}")
-//    public void setRefreshName(String value){
-//        refreshName = value;
-//    }
-//
-//    @Value("${jwt.access_expired_time}")
-//    public void setAccessExpiredTime(String value){
-//        accessExTime = value;
-//    }
-//
-//    @Value("${jwt.refresh_expired_time}")
-//    public void setRefreshExpireTime(String value){
-//        refreshExTime = value;
-//    }
+    @Value("${jwt.secret}")
+    public void setSecretKey(String value){
+        secretKey = value;
+    }
 
-    public String createAccessToken(Long id, String email, String nickname, String role){
+    @Value("${jwt.token-type}")
+    public void setTokenType(String value){
+        tokenType = value;
+    }
+
+    @Value("${jwt.access-header}")
+    public void setAccessName(String value){
+        accessName = value;
+    }
+
+    @Value("${jwt.refresh-header}")
+    public void setRefreshName(String value){
+        refreshName = value;
+    }
+
+    @Value("${jwt.access-expired-time}")
+    public void setAccessExpiredTime(String value){
+        accessExTime = value;
+    }
+
+    @Value("${jwt.refresh-expired-time}")
+    public void setRefreshExpireTime(String value){
+        refreshExTime = value;
+    }
+
+    public String createAccessToken(Long id, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(accessName)
                 .setIssuedAt(new Date());
@@ -79,7 +80,7 @@ public class TokenUtils {
         return tokenType+ONE_BLOCK+accessToken;
     }
 
-    public String createRefreshToken(Long id, String email, String nickname, String role){
+    public String createRefreshToken(Long id, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(refreshName)
                 .setIssuedAt(new Date());
@@ -160,26 +161,6 @@ public class TokenUtils {
 
     public String getNicknameFromFullToken(String fullToken){
         return (String) getJwtBodyFromJustToken(parseJustTokenFromFullToken(fullToken)).get(NICKNAME);
-    }
-
-    public Long getUserIdFromJustToken(String justToken){
-        return Long.valueOf((Integer) getJwtBodyFromJustToken(justToken).get(USER_ID));
-    }
-
-    public String getNicknameFromJustToken(String justToken){
-        return (String) getJwtBodyFromJustToken(justToken).get(NICKNAME);
-    }
-
-    public String parseJustTokenFromRequestBy(TYPE type, HttpServletRequest request) {
-        String fullToken = "";
-        if(type.equals(TYPE.ACCESS)) fullToken = request.getHeader(accessName);
-        else if(type.equals(TYPE.REFRESH)) fullToken =request.getHeader(refreshName);
-        if (StringUtils.hasText(fullToken)
-                &&
-            fullToken.startsWith(Objects.requireNonNull(tokenType))
-        )
-            return fullToken.split(ONE_BLOCK)[1]; // e부터 시작하는 jwt 토큰
-        return null;
     }
 
     // "Bearer eyi35..." 로 부터 "Bearer " 이하만 떼어내는 메서드

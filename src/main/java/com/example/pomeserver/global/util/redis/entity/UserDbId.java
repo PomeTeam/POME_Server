@@ -6,18 +6,17 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 
-@RedisHash(value = "UserRefreshToken", timeToLive = 2600000000L)
+@RedisHash(value = "UserDbId", timeToLive = 30)
 @Getter
-public class UserRefreshToken {
-
+public class UserDbId {
     @Id
     private String userId;
-    private String refreshToken;
+    private Long dbId;
     private LocalDateTime createdAt;
 
-    public UserRefreshToken(String userId, String refreshToken) {
+    public UserDbId(String userId, Long dbId) {
         this.userId = userId;
-        this.refreshToken = refreshToken;
+        this.dbId = dbId;
         this.createdAt = LocalDateTime.now();
     }
 }

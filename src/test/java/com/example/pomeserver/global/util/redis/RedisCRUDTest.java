@@ -19,31 +19,6 @@ public class RedisCRUDTest {
     private RedisService redisService;
 
     @Test
-    void userIdTest() {
-
-//        String userId = "userId";
-//        Long dbId = 10L;
-//
-//        //dbId
-//        //save - get
-//        redisService.saveUserDbId(userId, dbId);
-//        Long userDbId1 = redisService.getUserDbId(userId);
-//        assertEquals(userDbId1, dbId);
-//
-//        //dbId
-//        //update
-//        redisService.updateUserDbId(userId, dbId + 1L);
-//        Long userDbId2 = redisService.getUserDbId(userId);
-//        assertEquals(userDbId2, dbId + 1L);
-
-        //dbId
-        //delete
-//        redisService.deleteUserDbId(userId);
-//        Long userDbId = redisService.getUserDbId(userId);
-//        assertNull(userDbId);
-    }
-
-    @Test
     void refreshTokenTest() {
 
         String userId = "userId";  //key

@@ -38,8 +38,8 @@ public class RedisCRUDTest {
 
         //refreshToken
         //delete
-//        redisService.deleteUserRefreshToken(userId);
-//        String userRefreshToken = redisService.getUserRefreshToken(userId);
-//        assertNull(userRefreshToken);
+        redisService.deleteUserRefreshToken(userId);
+        String userRefreshToken = redisService.getUserRefreshToken(userId);
+        assertNull(userRefreshToken);
     }
 }

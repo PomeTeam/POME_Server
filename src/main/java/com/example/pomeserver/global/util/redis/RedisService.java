@@ -79,7 +79,7 @@ public class RedisService {
 
     //refreshToken delete
     public void deleteUserRefreshToken(@NotNull String userId){
-        dbIdRepository.deleteById(userId);
+        refreshTokenRepository.deleteById(userId);
     }
 
 }

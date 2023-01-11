@@ -9,6 +9,8 @@ import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -35,6 +37,16 @@ public class RecordController {
     }
 
     @Auth
+    @GetMapping("/goal/{goalId}") /*고민*/
+    public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
+            @PathVariable Long goalId,
+            @UserId String userId,
+            Pageable pageable)
+    {
+        return recordService.findAllByUserAndGoal(goalId, userId, pageable);
+    }
+
+    @Auth
     @PutMapping("/{recordId}")
     public ApplicationResponse<RecordResponse> update(
             RecordUpdateRequest request,
@@ -46,7 +58,7 @@ public class RecordController {
 
     @Auth
     @DeleteMapping("/{recordId}")
-    public ApplicationResponse<RecordResponse> delete(
+    public ApplicationResponse<Void> delete(
             @PathVariable Long recordId,
             @UserId String userId)
     {

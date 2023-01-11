@@ -1,14 +1,17 @@
 package com.example.pomeserver.domain.user.entity;
 
-import javax.persistence.Column;
+import javax.persistence.*;
+
+import com.example.pomeserver.domain.record.entity.Record;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Entity
 @Getter
@@ -26,11 +29,18 @@ public class User {
     private String phoneNum;
     private String image;
 
+    @OneToMany(mappedBy="emotion", cascade=ALL)
+    private List<Record> records = new ArrayList<>();
+
     @Builder
     public User(String userId, String nickname, String phoneNum, String image) {
         this.userId = userId;
         this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.image = image;
+    }
+
+    public void addRecord(Record record) {
+        this.records.add(record);
     }
 }

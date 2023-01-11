@@ -24,7 +24,7 @@ public class UserIdResolver implements HandlerMethodArgumentResolver{
     @Override
     public boolean supportsParameter(MethodParameter parameter)
     {
-        return parameter.hasParameterAnnotation(UserId.class) && Long.class.equals(parameter.getParameterType());
+        return parameter.hasParameterAnnotation(UserId.class) && String.class.equals(parameter.getParameterType());
     }
 
     @Nullable
@@ -38,7 +38,7 @@ public class UserIdResolver implements HandlerMethodArgumentResolver{
         if (auth == null) {
             throw new Exception("토큰을 통해 userId를 추출하는 메서드에는 @Auth 어노테이션을 붙여주세요.");
         }
-        String userId = tokenUtils.getUserIdFromFullToken(webRequest.getHeader("tokenheadername"));//TODO
+        String userId = tokenUtils.getUserIdFromFullToken(webRequest.getHeader(""));//TODO
         if (!auth.optional() && userId == null) {
             throw new Exception(("토큰으로 부터 추출한 userId가 Null입니다."));
         }

@@ -1,16 +1,16 @@
 package com.example.pomeserver.global.util.redis;
 
-import com.example.pomeserver.global.util.redis.repository.UserDbIdRepository;
-import com.example.pomeserver.global.util.redis.repository.UserRefreshTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import org.springframework.test.annotation.Rollback;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Optional;
 
+@Rollback(false)
 @SpringBootTest
 public class RedisCRUDTest {
 
@@ -19,28 +19,27 @@ public class RedisCRUDTest {
     private RedisService redisService;
 
     @Test
+    void refreshTokenTest() {
 
-    void test() {
+        String userId = "userId";  //key
+        String refreshToken = "Bearer eyi812jfheu3....";  //value
 
-        String userId = "userId";
-        Long dbId = 10L;
-
-        //dbId
+        //refreshToken
         //save - get
-        redisService.saveUserDbId(userId, dbId);
-        Long userDbId1 = redisService.getUserDbId(userId);
-        assertEquals(userDbId1, dbId);
+        redisService.saveUserRefreshToken(userId, refreshToken);
+        String  refreshToken1 = redisService.getUserRefreshToken(userId);
+        assertEquals(refreshToken, refreshToken1);
 
-        //dbId
+        //refreshToken
         //update
-        redisService.updateUserDbId(userId, dbId + 1L);
-        Long userDbId2 = redisService.getUserDbId(userId);
-        assertEquals(userDbId2, dbId + 1L);
+        redisService.updateUserRefreshToken(userId, refreshToken+"a");
+        String refreshToken2 = redisService.getUserRefreshToken(userId);
+        assertEquals(refreshToken+"a", refreshToken2);
 
-        //dbId
+        //refreshToken
         //delete
-        redisService.deleteUserDbId(userId);
-        Long userDbId = redisService.getUserDbId(userId);
-        assertNull(userDbId);
+        redisService.deleteUserRefreshToken(userId);
+        String userRefreshToken = redisService.getUserRefreshToken(userId);
+        assertNull(userRefreshToken);
     }
 }

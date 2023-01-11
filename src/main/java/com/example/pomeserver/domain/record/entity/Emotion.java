@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,10 +20,17 @@ public class Emotion extends DateBaseEntity{
     @GeneratedValue
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "record_id")
-    private Record record;
+    @OneToMany(mappedBy="emotion", cascade=ALL)
+    private List<Record> records = new ArrayList<>();
 
     private String emotionName;
     private String image;
+
+    public void addRecord(Record record) {
+        this.records.add(record);
+    }
+
+    public void removeRecord(Record record) {
+        this.records.remove(record);
+    }
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,9 +21,17 @@ public class Record extends DateBaseEntity {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emotion_id")
     private Emotion emotion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_id")
+    private Goal goal;
 
     private int usePrice;
     private String useDate;
@@ -30,23 +39,45 @@ public class Record extends DateBaseEntity {
 
 
     @Builder
-    public static Record create(Goal goal, User user, Emotion emotion, Integer usePrice, String useDate, String useComment) {
+    public Record(Goal goal,
+                  User user,
+                  Emotion emotion,
+                  Integer usePrice,
+                  String useDate,
+                  String useComment){
         Record record = new Record();
-        record.addGoal(goal);
-        record.addUser(user);
-        record.addEmotion(emotion);
         record.usePrice = usePrice;
         record.useDate = useDate;
         record.useComment = useComment;
-        return record;
+        record.addGoal(goal);
+        record.addUser(user);
+        record.addEmotion(emotion);
     }
-    //TODO
-    private void addEmotion(Emotion emotion) {
+
+    private void addEmotion(Emotion emotion){
+        this.emotion = emotion;
+        emotion.addRecord(this);
     }
-    //TODO
-    private void addUser(User user) {
+
+    private void addUser(User user){
+        this.user = user;
+        user.addRecord(this);
     }
-    //TODO
+
     private void addGoal(Goal goal) {
+        this.goal = goal;
+        goal.addRecord(this);
+    }
+
+    public void edit(Record editRecord) {
+        this.usePrice = editRecord.getUsePrice();
+        this.useDate = editRecord.getUseDate();
+        this.useComment = editRecord.getUseComment();
+        if(!Objects.equals(this.getEmotion().getId(), editRecord.getEmotion().getId())) editEmotion(editRecord.getEmotion());
+    }
+
+    private void editEmotion(Emotion emotion) {
+        this.emotion.removeRecord(this);
+        addEmotion(emotion);
     }
 }

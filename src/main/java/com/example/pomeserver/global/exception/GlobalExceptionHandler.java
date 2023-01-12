@@ -3,6 +3,7 @@ package com.example.pomeserver.global.exception;
 import com.example.pomeserver.global.dto.response.ApiErrorResponse;
 import com.example.pomeserver.global.dto.response.ApplicationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -60,6 +61,8 @@ public class GlobalExceptionHandler {
         );
 //                .status(HttpStatus.INTERNAL_SERVER_ERROR)
 //                .body(new ApiErrorResponse(INTERNAL_SERVER_ERROR_CODE, List.of(e.getMessage())));
-
     }
+
+
+//    @ExceptionHandler(Expri)
 }

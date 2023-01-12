@@ -63,14 +63,14 @@ public class TokenUtils {
         refreshExTime = value;
     }
 
-    public String createAccessToken(Long id, String nickname){
+    public String createAccessToken(String userId, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(accessName)
                 .setIssuedAt(new Date());
-        claims.put(USER_ID, id);
+        claims.put(USER_ID, userId);
         claims.put(NICKNAME, nickname);
         Date ext = new Date();
-        ext.setTime(ext.getTime() + Integer.parseInt(Objects.requireNonNull(accessExTime)));
+        ext.setTime(ext.getTime() + Long.parseLong(Objects.requireNonNull(accessExTime)));
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setClaims(claims)
@@ -80,14 +80,14 @@ public class TokenUtils {
         return tokenType+ONE_BLOCK+accessToken;
     }
 
-    public String createRefreshToken(Long id, String nickname){
+    public String createRefreshToken(String userId, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(refreshName)
                 .setIssuedAt(new Date());
-        claims.put(USER_ID, id);
+        claims.put(USER_ID, userId);
         claims.put(NICKNAME, nickname);
         Date ext = new Date();
-        ext.setTime(ext.getTime() + Integer.parseInt(Objects.requireNonNull(refreshExTime)));
+        ext.setTime(ext.getTime() + Long.parseLong(Objects.requireNonNull(refreshExTime)));
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setClaims(claims)

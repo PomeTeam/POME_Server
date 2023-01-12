@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.record.dto.response;
+package com.example.pomeserver.domain.record.DTO.response;
 
 import com.example.pomeserver.domain.record.entity.Record;
 import lombok.Getter;

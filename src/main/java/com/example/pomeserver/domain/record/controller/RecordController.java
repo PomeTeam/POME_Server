@@ -2,7 +2,7 @@ package com.example.pomeserver.domain.record.controller;
 
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
-import com.example.pomeserver.domain.record.dto.response.RecordResponse;
+import com.example.pomeserver.domain.record.DTO.response.RecordResponse;
 import com.example.pomeserver.domain.record.service.RecordService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;

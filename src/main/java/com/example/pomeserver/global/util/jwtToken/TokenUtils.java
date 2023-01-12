@@ -1,5 +1,6 @@
 package com.example.pomeserver.global.util.jwtToken;
 
+import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
 import com.example.pomeserver.global.exception.excute.TokenIsNotValidException;
 import io.jsonwebtoken.*;
 import io.netty.handler.codec.compression.CompressionException;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ public class TokenUtils {
         REFRESH,
         ACCESS
     }
+
 
     public static String secretKey;
     public static String tokenType;
@@ -172,4 +175,11 @@ public class TokenUtils {
             return fullToken.split(ONE_BLOCK)[1]; // e부터 시작하는 jwt 토큰
         return null;
     }
+
+    @Transactional
+    public void accessExpiration(UserAuthTokenRequest userAuthTokenRequest) {
+//        String userRefreshToken = redisService.getUserRefreshToken(userAuthTokenRequest.getUserId());
+//        System.out.println("userRefreshToken = " + userRefreshToken);
+    }
+
 }

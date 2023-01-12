@@ -15,9 +15,9 @@ import java.util.Optional;
 @SpringBootTest
 public class RedisCRUDTest {
 
-//
-//    @Autowired
-//    private RedisService redisService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private RedisTemplateService redisTemplateService;
@@ -61,8 +61,8 @@ public class RedisCRUDTest {
 
         //refreshToken
         //update
-        redisService.updateUserRefreshToken(userId, refreshToken+"a");
-        String refreshToken2 = redisService.getUserRefreshToken(userId);
+        redisTemplateService.updateUserRefreshToken(userId, refreshToken+"a");
+        String refreshToken2 = redisTemplateService.getUserRefreshToken(userId);
         assertEquals(refreshToken+"a", refreshToken2);
 
         //refreshToken

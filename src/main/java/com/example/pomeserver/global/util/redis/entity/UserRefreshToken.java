@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 
-@RedisHash(value = "UserRefreshToken", timeToLive = 2600000000L)
+@RedisHash(value = "UserRefreshToken", timeToLive = 2600000)
 @Getter
 public class UserRefreshToken {
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 
 @RequiredArgsConstructor
 @Service
@@ -35,7 +36,7 @@ public class RedisTemplateService {
      */
     public void saveUserRefreshToken(@NotNull String userId, @NotNull String refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(userId, refreshToken);
+        valueOperations.set(userId, refreshToken, Duration.ofDays(30));
     }
 
     /**

@@ -1,17 +1,23 @@
 package com.example.pomeserver.global.util.jwtToken;
 
+import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
+import com.example.pomeserver.global.exception.excute.TokenExpirationException;
 import com.example.pomeserver.global.exception.excute.TokenIsNotValidException;
+import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import io.jsonwebtoken.*;
 import io.netty.handler.codec.compression.CompressionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Objects;
+
+import static com.example.pomeserver.global.exception.GlobalExceptionList.TOKEN_EXPIRATION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +32,7 @@ public class TokenUtils {
         ACCESS
     }
 
+    private final RedisTemplateService redisTemplateService;
     public static String secretKey;
     public static String tokenType;
     public static String accessName;
@@ -63,14 +70,14 @@ public class TokenUtils {
         refreshExTime = value;
     }
 
-    public String createAccessToken(Long id, String nickname){
+    public String createAccessToken(String userId, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(accessName)
                 .setIssuedAt(new Date());
-        claims.put(USER_ID, id);
+        claims.put(USER_ID, userId);
         claims.put(NICKNAME, nickname);
         Date ext = new Date();
-        ext.setTime(ext.getTime() + Integer.parseInt(Objects.requireNonNull(accessExTime)));
+        ext.setTime(ext.getTime() + Long.parseLong(Objects.requireNonNull(accessExTime)));
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setClaims(claims)
@@ -80,14 +87,14 @@ public class TokenUtils {
         return tokenType+ONE_BLOCK+accessToken;
     }
 
-    public String createRefreshToken(Long id, String nickname){
+    public String createRefreshToken(String userId, String nickname){
         Claims claims = Jwts.claims()
                 .setSubject(refreshName)
                 .setIssuedAt(new Date());
-        claims.put(USER_ID, id);
+        claims.put(USER_ID, userId);
         claims.put(NICKNAME, nickname);
         Date ext = new Date();
-        ext.setTime(ext.getTime() + Integer.parseInt(Objects.requireNonNull(refreshExTime)));
+        ext.setTime(ext.getTime() + Long.parseLong(Objects.requireNonNull(refreshExTime)));
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setClaims(claims)
@@ -172,4 +179,17 @@ public class TokenUtils {
             return fullToken.split(ONE_BLOCK)[1]; // e부터 시작하는 jwt 토큰
         return null;
     }
+
+    @Transactional
+    public String accessExpiration(UserAuthTokenRequest userAuthTokenRequest) {
+//        redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
+        System.out.println("userAuthTokenRequest.getUserId() = " + userAuthTokenRequest.getUserId());
+        String userRefreshToken = redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
+        if (userRefreshToken == null){//리프레시 토큰이 유효
+            return createAccessToken(userAuthTokenRequest.getUserId(), userAuthTokenRequest.getUserNickname());
+        }
+        //토큰이 만료되었을 경우.
+        throw new TokenExpirationException();
+    }
+
 }

@@ -1,7 +1,9 @@
 package com.example.pomeserver.global.util.jwtToken;
 
 import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
+import com.example.pomeserver.global.exception.excute.TokenExpirationException;
 import com.example.pomeserver.global.exception.excute.TokenIsNotValidException;
+import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import io.jsonwebtoken.*;
 import io.netty.handler.codec.compression.CompressionException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,8 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Objects;
+
+import static com.example.pomeserver.global.exception.GlobalExceptionList.TOKEN_EXPIRATION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +32,7 @@ public class TokenUtils {
         ACCESS
     }
 
-
+    private final RedisTemplateService redisTemplateService;
     public static String secretKey;
     public static String tokenType;
     public static String accessName;
@@ -177,9 +181,15 @@ public class TokenUtils {
     }
 
     @Transactional
-    public void accessExpiration(UserAuthTokenRequest userAuthTokenRequest) {
-//        String userRefreshToken = redisService.getUserRefreshToken(userAuthTokenRequest.getUserId());
-//        System.out.println("userRefreshToken = " + userRefreshToken);
+    public String accessExpiration(UserAuthTokenRequest userAuthTokenRequest) {
+//        redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
+        System.out.println("userAuthTokenRequest.getUserId() = " + userAuthTokenRequest.getUserId());
+        String userRefreshToken = redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
+        if (userRefreshToken == null){//리프레시 토큰이 유효
+            return createAccessToken(userAuthTokenRequest.getUserId(), userAuthTokenRequest.getUserNickname());
+        }
+        //토큰이 만료되었을 경우.
+        throw new TokenExpirationException();
     }
 
 }

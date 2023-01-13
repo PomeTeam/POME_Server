@@ -12,6 +12,7 @@ import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.RedisService;
+import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final TokenUtils tokenUtils;
-    private final RedisService redisService;
+    private final RedisTemplateService redisTemplateService;
 
     //TODO 확인
     @Transactional
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService{
         String accessToken = tokenUtils.createAccessToken(user.getUserId(), user.getNickname()); // 클라
         String refreshToken = tokenUtils.createRefreshToken(user.getUserId(), user.getNickname()); // 레디스
         tokenUtils.getUserIdFromFullToken(accessToken);
-        redisService.saveUserRefreshToken(user.getUserId(), refreshToken);
+        redisTemplateService.saveUserRefreshToken(user.getUserId(), refreshToken);
         setHeaderToken(accessToken, refreshToken);
         return accessToken;
     }
@@ -80,6 +81,9 @@ public class UserServiceImpl implements UserService{
         HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
         response.setHeader("ACCESS-TOKEN",accessToken);
         response.setHeader("REFRESH-TOKEN",refreshToken);
+    }
 
+    public String getUserNickName(String userId){
+        return userRepository.findByUserId(userId).get().getNickname();
     }
 }

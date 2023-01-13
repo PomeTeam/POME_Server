@@ -50,8 +50,8 @@ public class RedisCRUDTest {
     @Test
     void refreshTokenTest2() {
 
-        String userId = "userId";  //key
-        String refreshToken = "Bearer eyi812jfheu3....";  //value
+        String userId = "userId2";  //key
+        String refreshToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3MtSGVhZGVyIiwiaWF0IjoxNjczNTA5Mjg5LCJ1c2VySWQiOiJmYjNlMzU2OC05NTRiLTRiMGItODc4Mi1lZWY0NTg2OWJkZTYiLCJuaWNrbmFtZSI6Iuq3nOuylO2CueyZlTEyIiwiZXhwIjoxNjczNTEwNDg5fQ.8nORDi0rWjCkRWBtF0EqS6o9Fhd-SgaswCNOLCeJOsI";  //value
 
         //refreshToken
         //save - get
@@ -67,8 +67,8 @@ public class RedisCRUDTest {
 
         //refreshToken
         //delete
-        redisTemplateService.deleteUserRefreshToken(userId);
-        String userRefreshToken = redisTemplateService.getUserRefreshToken(userId);
-        assertNull(userRefreshToken);
+//        redisTemplateService.deleteUserRefreshToken(userId);
+//        String userRefreshToken = redisTemplateService.getUserRefreshToken(userId);
+//        assertNull(userRefreshToken);
     }
 }

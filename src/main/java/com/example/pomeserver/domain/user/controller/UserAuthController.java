@@ -1,5 +1,6 @@
 package com.example.pomeserver.domain.user.controller;
 
+import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import io.swagger.annotations.Api;
@@ -17,11 +18,11 @@ public class UserAuthController {
 
     private final TokenUtils tokenUtils;
 
-//    @PostMapping("/token")
-//    public ApplicationResponse<String> accessToken(@RequestBody UserAuthTokenRequest userAuthTokenRequest){
-//        tokenUtils.accessExpiration(userAuthTokenRequest);
-//        return ApplicationResponse.ok("ㅁㅣ완.");
-//    }
+    @PostMapping("/renew")
+    public ApplicationResponse<String> accessToken(@RequestBody UserAuthTokenRequest userAuthTokenRequest){
+        String s = tokenUtils.accessExpiration(userAuthTokenRequest);
+        return ApplicationResponse.ok("ㅁㅣ완.");
+    }
 
 
 }

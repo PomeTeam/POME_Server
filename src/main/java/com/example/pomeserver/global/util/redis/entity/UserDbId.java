@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 
-@RedisHash(value = "UserDbId", timeToLive = 30)
+@RedisHash(value = "UserDbId", timeToLive = 2600000L)
 @Getter
 public class UserDbId {
     @Id

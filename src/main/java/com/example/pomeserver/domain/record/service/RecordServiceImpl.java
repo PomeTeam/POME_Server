@@ -4,8 +4,6 @@ import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.record.DTO.response.RecordResponse;
-import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
-import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.entity.Emotion;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.record.exception.emotion.excute.EmotionNotFoundException;
@@ -13,7 +11,7 @@ import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFou
 import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUser;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
-import com.example.pomeserver.domain.user.dto.assembler.RecordAssembler;
+import com.example.pomeserver.domain.user.DTO.assembler.RecordAssembler;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
@@ -38,7 +36,7 @@ public class RecordServiceImpl implements RecordService{
     @Transactional
     @Override
     public ApplicationResponse<RecordResponse> create(
-            RecordCreateRequest request,
+            com.example.pomeserver.domain.record.dto.request.RecordCreateRequest request,
             String userId)
     {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
@@ -70,7 +68,7 @@ public class RecordServiceImpl implements RecordService{
 
     @Override
     public ApplicationResponse<RecordResponse> update(
-            RecordUpdateRequest request,
+            com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest request,
             Long recordId,
             String userId)
     {

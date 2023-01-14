@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -19,9 +21,8 @@ public class UserAuthController {
     private final TokenUtils tokenUtils;
 
     @PostMapping("/renew")
-    public ApplicationResponse<String> accessToken(@RequestBody UserAuthTokenRequest userAuthTokenRequest){
-        String s = tokenUtils.accessExpiration(userAuthTokenRequest);
-        return ApplicationResponse.ok("ㅁㅣ완.");
+    public ApplicationResponse<String> accessToken(@RequestBody @Valid UserAuthTokenRequest userAuthTokenRequest){
+        return ApplicationResponse.ok(tokenUtils.accessExpiration(userAuthTokenRequest));
     }
 
 

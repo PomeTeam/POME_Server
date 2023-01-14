@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.dto.assembler;
+package com.example.pomeserver.domain.user.DTO.assembler;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;

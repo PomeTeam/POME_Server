@@ -50,7 +50,7 @@ public class RedisCRUDTest {
     @Test
     void refreshTokenTest2() {
 
-        String userId = "userId2";  //key
+        String userId = "userId";  //key
         String refreshToken = "Bearer eyi812jfheu3....";  //value
 
         //refreshToken

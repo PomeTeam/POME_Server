@@ -10,7 +10,7 @@ public class RecordResponse{
 
     private Long id;
     private int usePrice;
-    private String useDate;
+    private String useDate; //2023-02-11
     private String useComment;
 
 

@@ -18,8 +18,6 @@ public class RedisTemplateService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-
-
     /**
      * redis 리프레시 토큰 조회 기능
      * @Author 이찬영
@@ -35,10 +33,11 @@ public class RedisTemplateService {
      * redis 리프레시 토큰 저장 기능
      * @Author 이찬영
      */
-    public void saveUserRefreshToken(@NotNull String userId, @NotNull String refreshToken) {
+    public void saveUserRefreshToken(@NotNull String userId, @NotNull String refreshToken){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(userId, refreshToken, Duration.ofDays(30));
-        redisTemplate.expire(userId,30, TimeUnit.DAYS);
+//        redisTemplate.expire(userId, 60, TimeUnit.SECONDS);
+//        redisTemplate.expire(userId,30, TimeUnit.DAYS);
     }
 
     /**

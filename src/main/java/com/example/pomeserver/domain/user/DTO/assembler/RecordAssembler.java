@@ -1,8 +1,8 @@
-package com.example.pomeserver.domain.user.dto.assembler;
+package com.example.pomeserver.domain.user.DTO.assembler;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
-import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
-import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
+import com.example.pomeserver.domain.record.DTO.request.RecordCreateRequest;
+import com.example.pomeserver.domain.record.DTO.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.entity.Emotion;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.User;

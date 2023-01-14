@@ -13,7 +13,7 @@ import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFou
 import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUser;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
-import com.example.pomeserver.domain.user.DTO.assembler.RecordAssembler;
+import com.example.pomeserver.domain.user.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;

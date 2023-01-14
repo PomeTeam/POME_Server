@@ -185,11 +185,11 @@ public class TokenUtils {
 //        redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
         System.out.println("userAuthTokenRequest.getUserId() = " + userAuthTokenRequest.getUserId());
         String userRefreshToken = redisTemplateService.getUserRefreshToken(userAuthTokenRequest.getUserId());
-        if (userRefreshToken == null){//리프레시 토큰이 유효
-            return createAccessToken(userAuthTokenRequest.getUserId(), userAuthTokenRequest.getUserNickname());
+        if (userRefreshToken == null){//리프레시 토큰이 만료
+            throw new TokenExpirationException();
         }
         //토큰이 만료되었을 경우.
-        throw new TokenExpirationException();
+        return createAccessToken(userAuthTokenRequest.getUserId(), userAuthTokenRequest.getUserNickname());
     }
 
 }

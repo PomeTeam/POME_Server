@@ -1,6 +1,6 @@
 package com.example.pomeserver.domain.user.controller;
 
-import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
+import com.example.pomeserver.domain.user.dto.request.UserAuthTokenRequest;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import io.swagger.annotations.Api;

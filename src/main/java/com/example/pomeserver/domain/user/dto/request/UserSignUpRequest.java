@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.DTO.request;
+package com.example.pomeserver.domain.user.dto.request;
 
 import com.example.pomeserver.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;

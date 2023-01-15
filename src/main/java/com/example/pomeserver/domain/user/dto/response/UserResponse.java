@@ -1,7 +1,6 @@
-package com.example.pomeserver.domain.user.DTO.response;
+package com.example.pomeserver.domain.user.dto.response;
 
 import com.example.pomeserver.domain.user.entity.User;
-import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

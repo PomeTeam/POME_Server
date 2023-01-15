@@ -1,11 +1,10 @@
 package com.example.pomeserver.domain.user.service;
 
-import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
-import com.example.pomeserver.domain.user.DTO.response.FriendSearchResponse;
-import com.example.pomeserver.domain.user.DTO.response.UserResponse;
-import com.example.pomeserver.domain.user.DTO.request.UserSignInRequest;
-import com.example.pomeserver.domain.user.DTO.request.UserSignUpRequest;
-import org.springframework.data.domain.Page;
+import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
+import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
+import com.example.pomeserver.domain.user.dto.response.UserResponse;
+import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletResponse;

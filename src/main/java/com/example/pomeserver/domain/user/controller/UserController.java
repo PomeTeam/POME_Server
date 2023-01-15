@@ -1,18 +1,16 @@
 package com.example.pomeserver.domain.user.controller;
 
-import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
-import com.example.pomeserver.domain.user.DTO.request.UserSignInRequest;
-import com.example.pomeserver.domain.user.DTO.request.UserSignUpRequest;
-import com.example.pomeserver.domain.user.DTO.response.FriendSearchResponse;
-import com.example.pomeserver.domain.user.DTO.response.UserResponse;
+import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
+import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
+import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.service.UserService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
-import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
 import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,6 @@
 package com.example.pomeserver.global.util.jwtToken;
 
-import com.example.pomeserver.domain.user.DTO.request.UserAuthTokenRequest;
+import com.example.pomeserver.domain.user.dto.request.UserAuthTokenRequest;
 import com.example.pomeserver.global.exception.excute.TokenExpirationException;
 import com.example.pomeserver.global.exception.excute.TokenIsNotValidException;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
@@ -13,11 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Objects;
-
-import static com.example.pomeserver.global.exception.GlobalExceptionList.TOKEN_EXPIRATION;
 
 @Slf4j
 @RequiredArgsConstructor

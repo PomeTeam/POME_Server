@@ -1,20 +1,18 @@
 package com.example.pomeserver.domain.user.service;
 
-import com.example.pomeserver.domain.user.DTO.request.UserNicknameRequest;
-import com.example.pomeserver.domain.user.DTO.response.FriendSearchResponse;
-import com.example.pomeserver.domain.user.DTO.response.UserResponse;
+import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
+import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
+import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
-import com.example.pomeserver.domain.user.DTO.request.UserSignInRequest;
-import com.example.pomeserver.domain.user.DTO.request.UserSignUpRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
-import com.example.pomeserver.global.util.redis.RedisService;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +22,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

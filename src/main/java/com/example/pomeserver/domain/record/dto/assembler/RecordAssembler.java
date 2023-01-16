@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.user.dto.assembler;
+package com.example.pomeserver.domain.record.dto.assembler;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
@@ -23,11 +23,7 @@ public class RecordAssembler {
     }
 
     public Record toEntity(RecordUpdateRequest request, Emotion emotion){
-        return Record.builder()
-                .emotion(emotion)
-                .usePrice(request.getUsePrice())
-                .useDate(request.getUseDate())
-                .useComment(request.getUseComment())
-                .build();
+        return Record.toUpdateEntity(emotion, request.getUsePrice(), request.getUseDate(), request.getUseComment());
     }
+
 }

@@ -1,8 +1,10 @@
 package com.example.pomeserver.domain.goal.entity;
 
 import com.example.pomeserver.domain.record.entity.Record;
+import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.entity.DateBaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.CascadeType.ALL;
 
@@ -22,19 +25,83 @@ public class Goal extends DateBaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="goal_category_id")
     private GoalCategory goalCategory;
 
     @OneToMany(mappedBy="goal", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private String startDate;
+    private String endDate;
     private String oneLineMind;
     private int price;
     private boolean isPublic;
 
     public void addRecord(Record record) {
         this.records.add(record);
+    }
+
+    @Builder
+    public Goal(GoalCategory goalCategory,
+                User user,
+                String startDate,
+                String endDate,
+                String oneLineMind,
+                int price,
+                boolean isPublic){
+        this.addGoalCategory(goalCategory);
+        this.addUser(user);
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.oneLineMind = oneLineMind;
+        this.price = price;
+        this.isPublic = isPublic;
+    }
+
+    public static Goal toUpdateEntity(
+            GoalCategory goalCategory,
+            String startDate,
+            String endDate,
+            String oneLineMind,
+            int price,
+            boolean isPublic
+    )
+    {
+        Goal goal = new Goal();
+        goal.goalCategory = goalCategory;
+        goal.startDate = startDate;
+        goal.endDate = endDate;
+        goal.oneLineMind = oneLineMind;
+        goal.price = price;
+        goal.isPublic = isPublic;
+        return goal;
+    }
+
+    private void addUser(User user){
+        this.user = user;
+        user.addGoal(this);
+    }
+
+    private void addGoalCategory(GoalCategory goalCategory) {
+        this.goalCategory = goalCategory;
+        goalCategory.addGoal(this);
+    }
+
+    public void edit(Goal editGoal) {
+        this.startDate = editGoal.getStartDate();
+        this.endDate = editGoal.getEndDate();
+        this.oneLineMind = editGoal.getOneLineMind();
+        this.price = editGoal.getPrice();
+        this.isPublic = editGoal.isPublic();
+        if(!Objects.equals(this.getGoalCategory().getId(), editGoal.getGoalCategory().getId())) editGoalCategory(editGoal.getGoalCategory());
+    }
+
+    private void editGoalCategory(GoalCategory goalCategory){
+        this.goalCategory.removeGoal(this);
+        this.addGoalCategory(goalCategory);
     }
 }

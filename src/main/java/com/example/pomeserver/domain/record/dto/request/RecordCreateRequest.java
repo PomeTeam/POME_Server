@@ -1,8 +1,9 @@
 package com.example.pomeserver.domain.record.dto.request;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@NoArgsConstructor
 @Data
 public class RecordCreateRequest {
     private Long goalId;

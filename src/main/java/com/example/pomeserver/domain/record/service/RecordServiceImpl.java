@@ -10,10 +10,10 @@ import com.example.pomeserver.domain.record.entity.Emotion;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.record.exception.emotion.excute.EmotionNotFoundException;
 import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFoundException;
-import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUser;
+import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUserException;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
-import com.example.pomeserver.domain.user.dto.assembler.RecordAssembler;
+import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
@@ -46,7 +46,7 @@ public class RecordServiceImpl implements RecordService{
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         Record record = recordAssembler.toEntity(request, goal, user, emotion);
         recordRepository.save(record);
-        return ApplicationResponse.create("created", RecordResponse.toDto(record));
+        return ApplicationResponse.create(RecordResponse.toDto(record));
     }
 
     @Override
@@ -68,6 +68,7 @@ public class RecordServiceImpl implements RecordService{
                 recordRepository.findAllByUserAndGoal(user, goal, pageable).map(RecordResponse::toDto));
     }
 
+    @Transactional
     @Override
     public ApplicationResponse<RecordResponse> update(
             RecordUpdateRequest request,
@@ -76,18 +77,19 @@ public class RecordServiceImpl implements RecordService{
     {
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);//TODO 감정을 변경할 수 없다면 이건 빼기
-        if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUser();
+        if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
         record.edit(recordAssembler.toEntity(request, emotion));
         return ApplicationResponse.ok(RecordResponse.toDto(record));
     }
 
+    @Transactional
     @Override
     public ApplicationResponse<Void> delete(
             Long recordId,
             String userId)
     {
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
-        if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUser();
+        if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
         recordRepository.delete(record);
         return ApplicationResponse.ok();
     }

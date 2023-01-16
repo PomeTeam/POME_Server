@@ -54,6 +54,19 @@ public class Record extends DateBaseEntity {
         record.addEmotion(emotion);
     }
 
+    public static Record toUpdateEntity(
+            Emotion emotion,
+            Integer usePrice,
+            String useDate,
+            String useComment){
+        Record record = new Record();
+        record.usePrice = usePrice;
+        record.useDate = useDate;
+        record.useComment = useComment;
+        record.emotion = emotion;
+        return record;
+    }
+
     private void addEmotion(Emotion emotion){
         this.emotion = emotion;
         emotion.addRecord(this);

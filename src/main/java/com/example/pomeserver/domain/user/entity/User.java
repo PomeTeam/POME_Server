@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.user.entity;
 
 import javax.persistence.*;
 
+import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.entity.Record;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,8 +30,11 @@ public class User {
     private String phoneNum;
     private String image;
 
-    @OneToMany(mappedBy="emotion", cascade=ALL)
+    @OneToMany(mappedBy="user", cascade=ALL)
     private List<Record> records = new ArrayList<>();
+
+    @OneToMany(mappedBy="user", cascade=ALL)
+    private List<Goal> goals = new ArrayList<>();
 
     @Builder
     public User(String userId, String nickname, String phoneNum, String image) {
@@ -42,5 +46,9 @@ public class User {
 
     public void addRecord(Record record) {
         this.records.add(record);
+    }
+
+    public void addGoal(Goal goal) {
+        this.goals.add(goal);
     }
 }

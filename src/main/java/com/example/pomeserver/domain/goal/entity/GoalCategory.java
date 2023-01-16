@@ -24,4 +24,12 @@ public class GoalCategory extends DateBaseEntity {
 
     @OneToMany(mappedBy = "goalCategory", cascade = ALL)
     private List<Goal> goals = new ArrayList<>();
+
+    public void addGoal(Goal goal) {
+        this.goals.add(goal);
+    }
+
+    public void removeGoal(Goal goal) {
+        this.goals.remove(goal);
+    }
 }

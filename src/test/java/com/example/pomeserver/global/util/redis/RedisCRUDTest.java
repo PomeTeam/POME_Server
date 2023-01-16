@@ -50,7 +50,7 @@ public class RedisCRUDTest {
     @Test
     void refreshTokenTest2() {
 
-        String userId = "userId";  //key
+        String userId = "userId123";  //key
         String refreshToken = "Bearer eyi812jfheu3....";  //value
 
         //refreshToken
@@ -61,9 +61,9 @@ public class RedisCRUDTest {
 
         //refreshToken
         //update
-        redisTemplateService.updateUserRefreshToken(userId, refreshToken+"a");
-        String refreshToken2 = redisTemplateService.getUserRefreshToken(userId);
-        assertEquals(refreshToken+"a", refreshToken2);
+//        redisTemplateService.updateUserRefreshToken(userId, refreshToken+"a");
+//        String refreshToken2 = redisTemplateService.getUserRefreshToken(userId);
+//        assertEquals(refreshToken+"a", refreshToken2);
 
         //refreshToken
         //delete

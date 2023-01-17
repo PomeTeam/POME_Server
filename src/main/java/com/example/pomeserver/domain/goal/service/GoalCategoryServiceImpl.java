@@ -13,12 +13,11 @@ import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

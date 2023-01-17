@@ -4,9 +4,6 @@ import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.goal.service.GoalService;
-import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
-import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
-import com.example.pomeserver.domain.record.dto.response.RecordResponse;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
@@ -14,7 +11,14 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/goals")
@@ -25,21 +29,24 @@ public class GoalController {
     private final GoalService goalService;
 
     /**
-     * 목표 작성 기능
-     * @Author 이찬영
+     * Goal 생성
+     * 단, Goal Category가 존재해야 한다.
+     *
+     * @author 이은비
      */
     @Auth
     @PostMapping
     public ApplicationResponse<GoalResponse> create(
-            GoalCreateRequest request,
+            @RequestBody GoalCreateRequest request,
             @UserId String userId)
     {
         return goalService.create(request, userId);
     }
 
     /**
-     * 목표 한개 조회 기능
-     * @Author 이찬영
+     * Goal 단일 조회.
+     *
+     * @author 이찬영
      */
     @GetMapping("/{goalId}")
     public ApplicationResponse<GoalResponse> findById(@PathVariable Long goalId)
@@ -48,11 +55,12 @@ public class GoalController {
     }
 
     /**
-     * 특정 사용자의 모든 목표들 조회 기능
-     * @Author 이찬영
+     * 유저가 가진 Goal Category에 해당하는 Goal 전체 조회.
+     *
+     * @author 이은비
      */
     @Auth
-    @GetMapping("/{goalCategoryId}")
+    @GetMapping("/category/{goalCategoryId}")
     public ApplicationResponse<Page<GoalResponse>> findAllByUser(
             @UserId String userId,
             @PathVariable Long goalCategoryId,
@@ -62,13 +70,14 @@ public class GoalController {
     }
 
     /**
-     * 목표 수정 기능
-     * @Author 이찬영
+     * Goal 수정.
+     *
+     * @author 이은비
      */
     @Auth
     @PutMapping("/{goalId}")
     public ApplicationResponse<GoalResponse> update(
-            GoalUpdateRequest request,
+            @RequestBody GoalUpdateRequest request,
             @PathVariable Long goalId,
             @UserId String userId)
     {
@@ -76,8 +85,9 @@ public class GoalController {
     }
 
     /**
-     * 목표 삭제 기능
-     * @Author 이찬영
+     * Goal 삭제.
+     *
+     * @author 이은비
      */
     @Auth
     @DeleteMapping("/{goalId}")

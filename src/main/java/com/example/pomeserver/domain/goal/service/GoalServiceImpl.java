@@ -39,10 +39,10 @@ public class GoalServiceImpl implements GoalService{
     {
         // (1) 목표 카테고리 조회
         GoalCategory goalCategory = goalCategoryRepository.findById(request.getGoalCategoryId()).orElseThrow(GoalCategoryNotFoundException::new);
-
+        System.out.println(goalCategory.getGoals().size());
         // (2) DTO <-> Entity
         Goal goal = goalAssembler.toEntity(request, goalCategory);
-
+        System.out.println(goal.getPrice());
         // (3) Goal 저장
         Goal saved = goalRepository.save(goal);
 
@@ -86,7 +86,7 @@ public class GoalServiceImpl implements GoalService{
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
         // (3) 유저가 보유한 Goal Category 인지 확인
-        if(!goalCategory.getUser().getUserId().equals(userId)) throw new ThisGoalCategoryIsNotByThisUserException();
+        if(!goalCategory.getUser().getUserId().equals(userId)) throw new ThisGoalIsNotByThisUserException();
 
         // (4) Goal 수정
         goal.edit(goalAssembler.toEntity(request, goalCategory));

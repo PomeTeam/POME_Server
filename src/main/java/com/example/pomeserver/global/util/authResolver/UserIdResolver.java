@@ -38,8 +38,14 @@ public class UserIdResolver implements HandlerMethodArgumentResolver{
         if (auth == null) {
             throw new Exception("토큰을 통해 userId를 추출하는 메서드에는 @Auth 어노테이션을 붙여주세요.");
         }
+        String header = webRequest.getHeader("ACCESS-TOKEN");
+        System.out.println("header = " + header);
+        String userIdFromFullToken = tokenUtils.getUserIdFromFullToken(header);
+        System.out.println("userIdFromFullToken = " + userIdFromFullToken);
+        System.out.println(tokenUtils.getUserIdFromFullToken(webRequest.getHeader("ACCESS-TOKEN")));
+        System.out.println(tokenUtils.getUserIdFromFullToken(webRequest.getHeader("ACCESS-TOKEN")));
+
         String userId = tokenUtils.getUserIdFromFullToken(webRequest.getHeader("ACCESS-TOKEN"));
-        //TODO 여기서 엑세스 만료되면
 
         if (!auth.optional() && userId == null) {
             throw new Exception(("토큰으로 부터 추출한 userId가 Null입니다."));

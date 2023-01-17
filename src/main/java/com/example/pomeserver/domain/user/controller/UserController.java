@@ -32,8 +32,8 @@ public class UserController {
      */
     //TODO 사진
     @PostMapping("/sign-up")
-    public ApplicationResponse<UserResponse> signUp(HttpServletResponse response, @RequestBody @Valid UserSignUpRequest request) {
-        return ApplicationResponse.create("회원가입에 성공하셨습니다.", userService.signUp(response,request));
+    public ApplicationResponse<UserResponse> signUp(@RequestBody @Valid UserSignUpRequest request) {
+        return ApplicationResponse.create("회원가입에 성공하셨습니다.", userService.signUp(request));
     }
 
     /**

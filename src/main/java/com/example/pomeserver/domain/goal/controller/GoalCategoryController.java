@@ -34,8 +34,8 @@ public class GoalCategoryController {
     @Auth
     @PostMapping
     public ApplicationResponse<GoalCategoryResponse> create(
-            GoalCategoryCreateRequest request,
-            @Admin String userId)
+            @RequestBody GoalCategoryCreateRequest request,
+            @UserId String userId)
     {
         return goalCategoryService.create(request, userId);
     }
@@ -46,9 +46,9 @@ public class GoalCategoryController {
      */
     @Auth
     @GetMapping
-    public ApplicationResponse<List<GoalCategoryResponse>> findAll()
+    public ApplicationResponse<List<GoalCategoryResponse>> findAll(@UserId String userId)
     {
-        return goalCategoryService.findAll();
+        return goalCategoryService.findAll(userId);
     }
 
     /**

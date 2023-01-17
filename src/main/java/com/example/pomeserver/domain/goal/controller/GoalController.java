@@ -52,12 +52,13 @@ public class GoalController {
      * @Author 이찬영
      */
     @Auth
-    @GetMapping
+    @GetMapping("/{goalCategoryId}")
     public ApplicationResponse<Page<GoalResponse>> findAllByUser(
             @UserId String userId,
+            @PathVariable Long goalCategoryId,
             Pageable pageable)
     {
-        return goalService.findAllByUser(userId, pageable);
+        return goalService.findAllByUser(userId, goalCategoryId, pageable);
     }
 
     /**

@@ -10,10 +10,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GoalAssembler {
-    public Goal toEntity(GoalCreateRequest request, User user, GoalCategory goalCategory){
+    public Goal toEntity(GoalCreateRequest request, GoalCategory goalCategory){
         return Goal.builder()
                 .goalCategory(goalCategory)
-                .user(user)
                 .price(request.getPrice())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())

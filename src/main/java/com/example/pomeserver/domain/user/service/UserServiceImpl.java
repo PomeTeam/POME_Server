@@ -36,13 +36,18 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public UserResponse signUp(UserSignUpRequest userSignUpRequest){
-        userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
-        userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
+        if (userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).isPresent()){
+            throw new UserAlreadyPhoneNum();
+        }
+        if (userRepository.findByNickname(userSignUpRequest.getNickname()).isPresent()){
+            throw new UserAlreadyNickName();
+        }
+
+//        userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
+//        userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
         User user = userRepository.save(userSignUpRequest.toEntity());
         return UserResponse.toDto(user, getSaveToken(user));
     }
-
-
 
     @Override
     public UserResponse signIn(UserSignInRequest userSignInRequest) {

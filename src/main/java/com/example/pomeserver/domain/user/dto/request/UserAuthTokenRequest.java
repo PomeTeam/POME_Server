@@ -18,8 +18,5 @@ public class UserAuthTokenRequest {
     @NotBlank(message = "유저 닉네임을 입력해주세요")
     private String userNickname;
 
-    @NotNull(message = "엑세스 토큰을 입력해주세요.")
-    @NotBlank(message = "엑세스 토큰을 입력해주세요.")
-    private String accessToken;
 
 }

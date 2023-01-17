@@ -1,14 +1,14 @@
 package com.example.pomeserver.domain.user.service;
 
 import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
+import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
+import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
-import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
-import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
-import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
@@ -42,9 +42,6 @@ public class UserServiceImpl implements UserService{
         if (userRepository.findByNickname(userSignUpRequest.getNickname()).isPresent()){
             throw new UserAlreadyNickName();
         }
-
-//        userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
-//        userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
         User user = userRepository.save(userSignUpRequest.toEntity());
         return UserResponse.toDto(user, getSaveToken(user));
     }
@@ -75,14 +72,13 @@ public class UserServiceImpl implements UserService{
         String refreshToken = tokenUtils.createRefreshToken(user.getUserId(), user.getNickname()); // 레디스
         tokenUtils.getUserIdFromFullToken(accessToken);
         redisTemplateService.saveUserRefreshToken(user.getUserId(), refreshToken);
-        setHeaderToken(accessToken, refreshToken);
+        setHeaderToken(accessToken);
         return accessToken;
     }
 
-    public void setHeaderToken(String accessToken, String refreshToken){
+    public void setHeaderToken(String accessToken){
         HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
         response.setHeader("ACCESS-TOKEN",accessToken);
-        response.setHeader("REFRESH-TOKEN",refreshToken);
     }
 
     public String getUserNickName(String userId){

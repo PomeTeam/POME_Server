@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService{
     //TODO 확인
     @Transactional
     @Override
-    public UserResponse signUp(HttpServletResponse response, UserSignUpRequest userSignUpRequest){
+    public UserResponse signUp(UserSignUpRequest userSignUpRequest){
         userRepository.findByPhoneNum(userSignUpRequest.getPhoneNum()).orElseThrow(UserAlreadyPhoneNum::new);
         userRepository.findByNickname(userSignUpRequest.getNickname()).orElseThrow(UserAlreadyNickName::new);
         User user = userRepository.save(userSignUpRequest.toEntity());

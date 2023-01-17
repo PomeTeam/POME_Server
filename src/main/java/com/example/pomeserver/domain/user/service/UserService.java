@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface UserService {
-    UserResponse signUp(HttpServletResponse response, UserSignUpRequest userSignUpRequest);
+    UserResponse signUp(UserSignUpRequest userSignUpRequest);
     UserResponse signIn(UserSignInRequest userSignInRequest);
 
     Boolean checkNickname(UserNicknameRequest userNicknameRequest);

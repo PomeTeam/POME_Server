@@ -4,6 +4,7 @@ import com.example.pomeserver.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,11 @@ public class UserSignUpRequest {
             .phoneNum(this.phoneNum)
             .image(this.imageKey)
             .build();
+    }
+
+    public UserSignUpRequest(String nickname, String phoneNum, String imageKey) {
+        this.nickname = nickname;
+        this.phoneNum = phoneNum;
+        this.imageKey = imageKey;
     }
 }

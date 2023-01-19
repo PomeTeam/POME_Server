@@ -1,20 +1,24 @@
 package com.example.pomeserver.domain.goal.entity;
 
+import static javax.persistence.CascadeType.ALL;
+
 import com.example.pomeserver.domain.record.entity.Record;
-import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.entity.DateBaseEntity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static javax.persistence.CascadeType.ALL;
 
 @Entity
 @Getter
@@ -23,10 +27,6 @@ public class Goal extends DateBaseEntity {
     @Id @Column(name = "goal_id")
     @GeneratedValue
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
-    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="goal_category_id")
@@ -47,14 +47,12 @@ public class Goal extends DateBaseEntity {
 
     @Builder
     public Goal(GoalCategory goalCategory,
-                User user,
                 String startDate,
                 String endDate,
                 String oneLineMind,
                 int price,
                 boolean isPublic){
         this.addGoalCategory(goalCategory);
-        this.addUser(user);
         this.startDate = startDate;
         this.endDate = endDate;
         this.oneLineMind = oneLineMind;
@@ -79,11 +77,6 @@ public class Goal extends DateBaseEntity {
         goal.price = price;
         goal.isPublic = isPublic;
         return goal;
-    }
-
-    private void addUser(User user){
-        this.user = user;
-        user.addGoal(this);
     }
 
     private void addGoalCategory(GoalCategory goalCategory) {

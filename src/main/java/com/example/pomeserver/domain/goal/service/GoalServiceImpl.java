@@ -37,11 +37,16 @@ public class GoalServiceImpl implements GoalService{
             GoalCreateRequest request,
             String userId)
     {
-        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        // (1) 목표 카테고리 조회
         GoalCategory goalCategory = goalCategoryRepository.findById(request.getGoalCategoryId()).orElseThrow(GoalCategoryNotFoundException::new);
-        Goal goal = goalAssembler.toEntity(request, user, goalCategory);
-        goalRepository.save(goal);
-        return ApplicationResponse.create(GoalResponse.toDto(goal));
+        System.out.println(goalCategory.getGoals().size());
+        // (2) DTO <-> Entity
+        Goal goal = goalAssembler.toEntity(request, goalCategory);
+        System.out.println(goal.getPrice());
+        // (3) Goal 저장
+        Goal saved = goalRepository.save(goal);
+
+        return ApplicationResponse.create(GoalResponse.toDto(saved));
     }
 
     @Override
@@ -54,10 +59,17 @@ public class GoalServiceImpl implements GoalService{
     @Override
     public ApplicationResponse<Page<GoalResponse>> findAllByUser(
             String userId,
-            Pageable pageable)
+        Long goalCategoryId, Pageable pageable)
     {
+        // (1) 유저 데이터 조회
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
-        return ApplicationResponse.ok(goalRepository.findAllByUser(user, pageable).map(GoalResponse::toDto));
+        // (2) 유저가 보유한 목표 카테고리 리스트에서 goalCategoryId를 가진 데이터 조회
+        GoalCategory goalCategory = user.getGoalCategories().stream()
+            .filter(category -> category.getId().equals(goalCategoryId))
+            .findFirst()
+            .orElseThrow(GoalCategoryNotFoundException::new);
+        // (3) GoalCategory가 갖는 Goal 리스트 조회
+        return ApplicationResponse.ok(goalRepository.findAllByGoalCategory(goalCategory, pageable).map(GoalResponse::toDto));
     }
 
     @Transactional
@@ -67,22 +79,38 @@ public class GoalServiceImpl implements GoalService{
             Long goalId,
             String userId)
     {
+        // (1) GoalCategory 조회
         GoalCategory goalCategory = goalCategoryRepository.findById(request.getGoalCategoryId()).orElseThrow(GoalCategoryNotFoundException::new);
-        Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
-        if(!goal.getUser().getUserId().equals(userId)) throw new ThisGoalIsNotByThisUserException();
-        goal.edit(goalAssembler.toEntity(request, goalCategory));
-        return null;
-    }
 
+        // (2) Goal 조회
+        Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
+
+        // (3) 유저가 보유한 Goal Category 인지 확인
+        if(!goalCategory.getUser().getUserId().equals(userId)) throw new ThisGoalIsNotByThisUserException();
+
+        // (4) Goal 수정
+        goal.edit(goalAssembler.toEntity(request, goalCategory));
+
+        // (5) Goal 저장
+        Goal saved = goalRepository.save(goal);
+
+        return ApplicationResponse.ok(GoalResponse.toDto(saved));
+    }
     @Transactional
     @Override
     public ApplicationResponse<Void> delete(
             Long goalId,
             String userId)
     {
+        // (1) Goal 조회
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
-        if(!goal.getUser().getUserId().equals(userId)) throw new ThisGoalIsNotByThisUserException();
+
+        // (2) 유저의 삭제 권한 확인
+        if(!goal.getGoalCategory().getUser().getUserId().equals(userId)) throw new ThisGoalIsNotByThisUserException();
+
+        // (3) Goal 삭제
         goalRepository.deleteById(goalId);
+
         return ApplicationResponse.ok();
     }
 }

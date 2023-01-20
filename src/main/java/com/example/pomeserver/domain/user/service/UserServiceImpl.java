@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -65,6 +66,13 @@ public class UserServiceImpl implements UserService{
                 .friendId(user.getNickname())
                 .imageKey(user.getImage())
                 .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean addFriend(String friendId, String userId) {
+        userRepository.findByUserId(userId).get();
+
+        return null;
     }
 
     private String getSaveToken(User user) {

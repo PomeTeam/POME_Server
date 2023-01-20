@@ -14,8 +14,12 @@ import javax.persistence.*;
 public class Follow extends DateBaseEntity {
 
     @Id @Column(name = "to_user_id", insertable = false, updatable = false)
-    private Long toUserId;
+    private Long toUserId; //팔로잉 받은 유저
 
     @Id @Column(name = "from_user_id", insertable = false, updatable = false)
-    private Long fromUserId;
+    private Long fromUserId; //팔로우 거는 유저
+
+    private void addFriend(User toUser, User fromUser){
+
+    }
 }

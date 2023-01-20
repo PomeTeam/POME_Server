@@ -10,6 +10,8 @@ import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +32,7 @@ public class UserController {
      * 회원가입 기능
      * @Author 한규범
      */
-    //TODO 사진
+    @Operation(summary = "회원 가입 기능",description = "회원가입을 진행합니다.")
     @PostMapping("/sign-up")
     public ApplicationResponse<UserResponse> signUp(@RequestBody @Valid UserSignUpRequest request) {
         return ApplicationResponse.create("회원가입에 성공하셨습니다.", userService.signUp(request));
@@ -40,6 +42,7 @@ public class UserController {
      * 로그인
      * @Author 한규범
      */
+    @Operation(summary = "로그인 기능",description = "로그인 기능을 수행합니다.")
     @PostMapping("/sign-in")
     public ApplicationResponse<UserResponse> signIn(@RequestBody @Valid UserSignInRequest request) {
         return ApplicationResponse.ok(userService.signIn(request));
@@ -49,6 +52,7 @@ public class UserController {
      * 닉네임 중복 확인
      * @Author 한규범
     */
+    @Operation(summary = "닉네임 중복 확인",description = "true/false 형태로 반환합니다.")
     @PostMapping("/check-nickname")
     public ApplicationResponse<Boolean> checkNickname(@RequestBody @Valid UserNicknameRequest userNicknameRequest){
         return ApplicationResponse.create("멋진 닉네임이네요!",userService.checkNickname(userNicknameRequest));
@@ -58,6 +62,7 @@ public class UserController {
      * 친구찾기
      * @Author 한규범
      */
+    @Operation(summary = "친구찾기 기능",description = "닉네임을 기반으로 검색됩니다.")
     @Auth
     @GetMapping("/friend/{friendId}")
     public ApplicationResponse<List<FriendSearchResponse>> searchFriends(
@@ -65,6 +70,20 @@ public class UserController {
             @UserId String userId,
             Pageable pageable){
         return ApplicationResponse.ok(userService.searchFriends(friendId,userId,pageable));
+    }
+
+    /**
+     * 친구 등록
+     * @Author 한규범
+     */
+    @Operation(summary = "친구 등록",description = "친구 등록을 진행합니다.")
+    @Auth
+    @PostMapping("/friend/{friendId}")
+    public ApplicationResponse<Boolean> addFriend(
+            @PathVariable("friendId") String friendId,
+            @UserId String userId
+            ){
+        return ApplicationResponse.ok(userService.addFriend(friendId,userId));
     }
 
 }

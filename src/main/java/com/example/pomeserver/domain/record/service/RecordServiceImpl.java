@@ -76,9 +76,8 @@ public class RecordServiceImpl implements RecordService{
             String userId)
     {
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
-        Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);//TODO 감정을 변경할 수 없다면 이건 빼기
         if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
-        record.edit(recordAssembler.toEntity(request, emotion));
+        record.edit(recordAssembler.toEntity(request));
         return ApplicationResponse.ok(RecordResponse.toDto(record));
     }
 

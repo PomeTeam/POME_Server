@@ -55,7 +55,6 @@ public class Record extends DateBaseEntity {
     }
 
     public static Record toUpdateEntity(
-            Emotion emotion,
             Integer usePrice,
             String useDate,
             String useComment){
@@ -63,7 +62,6 @@ public class Record extends DateBaseEntity {
         record.usePrice = usePrice;
         record.useDate = useDate;
         record.useComment = useComment;
-        record.emotion = emotion;
         return record;
     }
 
@@ -86,7 +84,6 @@ public class Record extends DateBaseEntity {
         this.usePrice = editRecord.getUsePrice();
         this.useDate = editRecord.getUseDate();
         this.useComment = editRecord.getUseComment();
-        if(!Objects.equals(this.getEmotion().getId(), editRecord.getEmotion().getId())) editEmotion(editRecord.getEmotion());
     }
 
     private void editEmotion(Emotion emotion) {

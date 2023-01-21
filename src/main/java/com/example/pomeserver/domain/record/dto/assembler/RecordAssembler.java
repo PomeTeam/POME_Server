@@ -22,8 +22,8 @@ public class RecordAssembler {
                 .build();
     }
 
-    public Record toEntity(RecordUpdateRequest request, Emotion emotion){
-        return Record.toUpdateEntity(emotion, request.getUsePrice(), request.getUseDate(), request.getUseComment());
+    public Record toEntity(RecordUpdateRequest request){
+        return Record.toUpdateEntity(request.getUsePrice(), request.getUseDate(), request.getUseComment());
     }
 
 }

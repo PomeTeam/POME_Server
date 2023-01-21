@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/records")
 @RestController
@@ -28,7 +30,7 @@ public class RecordController {
     @Auth
     @PostMapping
     public ApplicationResponse<RecordResponse> create(
-            RecordCreateRequest request,
+            @RequestBody @Valid RecordCreateRequest request,
             @UserId String userId)
     {
         return recordService.create(request, userId);
@@ -49,7 +51,7 @@ public class RecordController {
      * @Author 이찬영
      */
     @Auth
-    @GetMapping("/goal/{goalId}") /*고민*/
+    @GetMapping("/goal/{goalId}")
     public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
             @PathVariable Long goalId,
             @UserId String userId,

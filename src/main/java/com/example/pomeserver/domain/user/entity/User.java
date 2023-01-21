@@ -4,6 +4,7 @@ import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import javax.persistence.*;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
+import com.example.pomeserver.domain.record.entity.EmotionRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,6 +38,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<GoalCategory> goalCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private List<EmotionRecord> emotionRecords = new ArrayList<>();
+
     @Builder
     public User(String userId, String nickname, String phoneNum, String image) {
         this.userId = userId;
@@ -45,15 +49,15 @@ public class User {
         this.image = image;
     }
 
-    public void addRecord(Record record) {
-        this.records.add(record);
-    }
-
     public void addGoalCategory(GoalCategory goalCategory) {
         this.goalCategories.add(goalCategory);
     }
 
     public void removeGoalCategory(GoalCategory goalCategory) {
         this.goalCategories.remove(goalCategory);
+    }
+
+    public void addEmotionRecord(EmotionRecord emotionRecord) {
+        this.emotionRecords.add(emotionRecord);
     }
 }

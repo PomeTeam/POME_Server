@@ -9,7 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,6 +37,9 @@ public class Record extends DateBaseEntity {
     @JoinColumn(name = "goal_id")
     private Goal goal;
 
+    @OneToMany(mappedBy="record", cascade=ALL)
+    private List<EmotionRecord> emotionRecords = new ArrayList<>();
+
     private int usePrice;
     private String useDate;
     private String useComment;
@@ -41,7 +48,6 @@ public class Record extends DateBaseEntity {
     @Builder
     public Record(Goal goal,
                   User user,
-                  Emotion emotion,
                   Integer usePrice,
                   String useDate,
                   String useComment){
@@ -51,7 +57,6 @@ public class Record extends DateBaseEntity {
         record.useComment = useComment;
         record.addGoal(goal);
         record.addUser(user);
-        record.addEmotion(emotion);
     }
 
     public static Record toUpdateEntity(
@@ -65,14 +70,8 @@ public class Record extends DateBaseEntity {
         return record;
     }
 
-    private void addEmotion(Emotion emotion){
-        this.emotion = emotion;
-        emotion.addRecord(this);
-    }
-
     private void addUser(User user){
         this.user = user;
-        user.addRecord(this);
     }
 
     private void addGoal(Goal goal) {
@@ -86,8 +85,7 @@ public class Record extends DateBaseEntity {
         this.useComment = editRecord.getUseComment();
     }
 
-    private void editEmotion(Emotion emotion) {
-        this.emotion.removeRecord(this);
-        addEmotion(emotion);
+    public void addEmotionRecord(EmotionRecord emotionRecord) {
+        this.emotionRecords.add(emotionRecord);
     }
 }

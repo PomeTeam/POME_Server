@@ -1,6 +1,8 @@
 package com.example.pomeserver.domain.record.controller;
 
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
+import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
+import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.dto.response.RecordResponse;
 import com.example.pomeserver.domain.record.service.RecordService;
@@ -34,6 +36,34 @@ public class RecordController {
             @UserId String userId)
     {
         return recordService.create(request, userId);
+    }
+
+    /**
+     * 기록에 두번째 감정 남기기 기능
+     * @Author 이찬영
+     */
+    @Auth
+    @PostMapping("/{recordId}/second-emotion")
+    public ApplicationResponse<RecordResponse> writeSecondEmotion(
+            @RequestBody @Valid RecordSecondEmotionRequest request,
+            @PathVariable Long recordId,
+            @UserId String userId)
+    {
+        return recordService.writeSecondEmotion(request, recordId, userId);
+    }
+
+    /**
+     * 친구의 기록에 감정 남기기 기능
+     * @Author 이찬영
+     */
+    @Auth
+    @PostMapping("/{recordId}/friend-emotion")
+    public ApplicationResponse<RecordResponse> writeEmotionToFriend(
+            @RequestBody @Valid RecordToFriendEmotionRequest request,
+            @PathVariable Long recordId,
+            @UserId String userId)
+    {
+        return recordService.writeEmotionToFriend(request, recordId, userId);
     }
 
     /**

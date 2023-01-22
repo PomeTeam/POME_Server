@@ -37,6 +37,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<GoalCategory> goalCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "toUser", cascade = ALL)
+    private List<Follow> toUser = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fromUser", cascade = ALL)
+    private List<Follow> fromUser = new ArrayList<>();
+
     @Builder
     public User(String userId, String nickname, String phoneNum, String image) {
         this.userId = userId;
@@ -55,5 +61,13 @@ public class User {
 
     public void removeGoalCategory(GoalCategory goalCategory) {
         this.goalCategories.remove(goalCategory);
+    }
+
+    public void addFromUser(Follow fromUser){
+        this.fromUser.add(fromUser);
+    }
+
+    public void addToUser(Follow toUser){
+        this.toUser.add(toUser);
     }
 }

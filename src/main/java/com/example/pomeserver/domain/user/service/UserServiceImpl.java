@@ -5,10 +5,13 @@ import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
+import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
+import com.example.pomeserver.domain.user.exception.excute.FollowAlreadyException;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
 import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
+    private final EntityManager em;
     private final TokenUtils tokenUtils;
     private final RedisTemplateService redisTemplateService;
 
@@ -63,15 +69,40 @@ public class UserServiceImpl implements UserService{
     public List<FriendSearchResponse> searchFriends(String friendId, String userId, Pageable pageable) {
         List<User> users = userRepository.findByNicknameStartsWithAndUserIdNot(friendId,userId);
         return users.stream().map(user -> FriendSearchResponse.builder()
-                .friendId(user.getNickname())
+                .friendNickname(user.getNickname())
                 .imageKey(user.getImage())
                 .build()).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public Boolean addFriend(String friendId, String userId) {
-        userRepository.findByUserId(userId).get();
+        User fromUser = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        User toUser = userRepository.findByNickname(friendId).orElseThrow(UserNotFoundException::new);
 
+        Optional<Follow> byToUserAndFromUser = followRepository.findByToUserAndFromUser(toUser, fromUser);
+
+        if (followRepository.findByToUserAndFromUser(toUser,fromUser).isPresent()) throw new FollowAlreadyException();
+
+        Follow save = followRepository.save(Follow.builder()
+                .toUser(toUser)
+                .fromUser(fromUser)
+                .build());
+
+        System.out.println(save.getFromUser().getUserId());
+        return true;
+    }
+
+    @Override
+    public List<FriendSearchResponse> myFriends(String userId, Pageable pageable) {
+        Long fromUserId = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId();
+        List<Follow> follows = followRepository.findByFromUserId(fromUserId);
+        FriendSearchResponse friendSearchResponse = new FriendSearchResponse();
+//        for (Follow follow : follows) {
+//
+//        }
+//        follows.stream().map(follows -> FriendSearchResponse.builder()
+//            .friendNickname())
         return null;
     }
 

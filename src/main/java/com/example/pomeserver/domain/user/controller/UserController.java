@@ -86,4 +86,13 @@ public class UserController {
         return ApplicationResponse.ok(userService.addFriend(friendId,userId));
     }
 
+    @Operation(summary = "내 친구 목록 조회", description = "해당 유저가 추가한 친구 목록을 조회합니다.")
+    @Auth
+    @GetMapping("/friends")
+    public ApplicationResponse<List<FriendSearchResponse>> myFriends(
+            @UserId String userId,
+            Pageable pageable){
+        return ApplicationResponse.ok(userService.myFriends(userId,pageable));
+    }
+
 }

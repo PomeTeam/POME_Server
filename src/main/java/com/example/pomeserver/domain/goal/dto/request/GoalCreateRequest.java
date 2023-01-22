@@ -1,5 +1,6 @@
 package com.example.pomeserver.domain.goal.dto.request;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+@ApiModel("목표 작성 요청 객체")
 @NoArgsConstructor
 @Data
 public class GoalCreateRequest {
@@ -34,6 +36,6 @@ public class GoalCreateRequest {
     @NotNull(message = "금액은 필수값입니다.")
     private int price;
 
-    @NotNull(message = "금액은 필수값입니다.")
+    @NotNull(message = "공개 여부는 필수값입니다.")
     private Boolean isPublic;
 }

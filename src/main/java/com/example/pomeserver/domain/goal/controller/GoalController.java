@@ -8,6 +8,7 @@ import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,8 @@ public class GoalController {
         return goalService.create(request, userId);
     }
 
+    @Operation(summary = "목표 한개 조회",
+            description = "사용자가 목표 하나를 조회한다.")
     /**
      * Goal 단일 조회.
      *

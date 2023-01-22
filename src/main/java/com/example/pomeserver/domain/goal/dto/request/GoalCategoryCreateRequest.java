@@ -4,10 +4,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@ApiModel("목표 카테고리 작성 요청 객체")
 @NoArgsConstructor
 @Data
 public class GoalCategoryCreateRequest {

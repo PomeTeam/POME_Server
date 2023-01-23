@@ -99,6 +99,10 @@ public class UserController {
         return ApplicationResponse.ok(userService.myFriends(userId,pageable));
     }
 
+    /**
+     * 친구 삭제 기능
+     * @Author 한규범
+     */
     @Operation(summary = "친구 삭제", description = "기존의 친구를 삭제합니다.")
     @Auth
     @DeleteMapping("/friend/{friendId}")

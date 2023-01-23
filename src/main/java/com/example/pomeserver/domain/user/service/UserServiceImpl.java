@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -77,26 +78,24 @@ public class UserServiceImpl implements UserService{
         User fromUser = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         User toUser = userRepository.findByNickname(friendId).orElseThrow(UserNotFoundException::new);
 
-        Optional<Follow> byToUserAndFromUser = followRepository.findByToUserAndFromUser(toUser, fromUser);
-
         if (followRepository.findByToUserAndFromUser(toUser,fromUser).isPresent()) throw new FollowAlreadyException();
-
-        Follow save = followRepository.save(Follow.builder()
+        followRepository.save(Follow.builder()
                 .toUser(toUser)
                 .fromUser(fromUser)
                 .build());
 
-        System.out.println(save.getFromUser().getUserId());
         return true;
     }
 
     @Override
     public List<FriendSearchResponse> myFriends(String userId, Pageable pageable) {
         Long fromUserId = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId();
-        List<Follow> follows = followRepository.findByFromUserId(fromUserId);
-        FriendSearchResponse friendSearchResponse = new FriendSearchResponse();
+        List<Follow> followList = followRepository.findByFromUserId(fromUserId);
 
-        return null;
+        return followList.stream().map(follow -> FriendSearchResponse.builder()
+                .friendNickname(follow.getToUser().getNickname())
+                .imageKey(follow.getToUser().getImage())
+                .build()).collect(Collectors.toList());
     }
 
     @Transactional

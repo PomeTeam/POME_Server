@@ -22,7 +22,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   redis:
-    host: ENC(sMlJjYXXaW+NF0l8NmfErEWCrdUyWEP2)
+    host: ENC(dqWGAouH23IUMTg7tXQ8Xti271oGEUop)
     port: 6379
 
 jasypt:
@@ -56,6 +56,13 @@ sms:
   secret-key: ENC(m4bqtTEsHWdFabh0qVqyunARg1Qm+r9v9N9TVrz+9RnTJoGMFjE+YloqOVaK+hiQuGTZ9Hvs1PI=)
   phone-num: ENC(42M3V/I2lZaJJ/mF4vfW1L3HBpykydka)
 
+jwt:
+  secret: ENC(kFyergO+nlIqq0vnPfSKdDCewKTDZAY2)
+  token-type: ENC(kB4scBl7UZNs7D4+oQS0kA==)
+  access-header: ENC(YVcSaDhY0eW9ptAstEkB2cO3WgvumW8S)
+  refresh-header: ENC(PLjwqyNhcZtPwz+nHi33M9E3avnatw20)
+  access-expired-time: ENC(ta72CBPrazeD/2eL5P+v9w==)          # 20분
+  refresh-expired-time: ENC(wKNz85sWCuHRpaMjtJVwbUX+9XCWEkkh) # 약 30일
 
 ---
 spring:

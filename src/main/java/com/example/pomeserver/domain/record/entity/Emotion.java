@@ -6,20 +6,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Emotion extends DateBaseEntity {
+public class Emotion extends DateBaseEntity{
 
     @Id @Column(name = "emotion_id")
     @GeneratedValue
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "record_id")
-    private Record record;
+    @OneToMany(mappedBy="emotion", cascade=ALL)
+    private List<EmotionRecord> emotionRecords = new ArrayList<>();
 
     private String emotionName;
     private String image;
+
+    public void addEmotionRecord(EmotionRecord emotionRecord) {
+        this.emotionRecords.add(emotionRecord);
+    }
 }

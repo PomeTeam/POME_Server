@@ -5,10 +5,10 @@ import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
+import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
-import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
-import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
-import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.exception.excute.*;
+import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
@@ -19,9 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
+    private final EntityManager em;
     private final TokenUtils tokenUtils;
     private final RedisTemplateService redisTemplateService;
 
@@ -62,9 +67,45 @@ public class UserServiceImpl implements UserService{
     public List<FriendSearchResponse> searchFriends(String friendId, String userId, Pageable pageable) {
         List<User> users = userRepository.findByNicknameStartsWithAndUserIdNot(friendId,userId);
         return users.stream().map(user -> FriendSearchResponse.builder()
-                .friendId(user.getNickname())
+                .friendNickname(user.getNickname())
                 .imageKey(user.getImage())
                 .build()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public Boolean addFriend(String friendId, String userId) {
+        User fromUser = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        User toUser = userRepository.findByNickname(friendId).orElseThrow(UserNotFoundException::new);
+
+        if (followRepository.findByToUserAndFromUser(toUser,fromUser).isPresent()) throw new FollowAlreadyException();
+        followRepository.save(Follow.builder()
+                .toUser(toUser)
+                .fromUser(fromUser)
+                .build());
+
+        return true;
+    }
+
+    @Override
+    public List<FriendSearchResponse> myFriends(String userId, Pageable pageable) {
+        Long fromUserId = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId();
+        List<Follow> followList = followRepository.findByFromUserId(fromUserId);
+
+        return followList.stream().map(follow -> FriendSearchResponse.builder()
+                .friendNickname(follow.getToUser().getNickname())
+                .imageKey(follow.getToUser().getImage())
+                .build()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public Boolean deleteFriend(String friendNickName, String userId) {
+        User fromUser = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        User toUser = userRepository.findByNickname(friendNickName).orElseThrow(UserNotFoundException::new);
+        Follow follow = followRepository.findByToUserAndFromUser(toUser, fromUser).orElseThrow(FollowNotFoundException::new);
+        followRepository.delete(follow);
+        return true;
     }
 
     private String getSaveToken(User user) {

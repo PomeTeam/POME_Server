@@ -17,4 +17,10 @@ public interface UserService {
     Boolean checkNickname(UserNicknameRequest userNicknameRequest);
 
     List<FriendSearchResponse> searchFriends(String friendId, String userId, Pageable pageable);
+
+    Boolean addFriend(String friendId, String userId);
+
+    List<FriendSearchResponse> myFriends(String userId, Pageable pageable);
+
+    Boolean deleteFriend(String friendNickName, String userId);
 }

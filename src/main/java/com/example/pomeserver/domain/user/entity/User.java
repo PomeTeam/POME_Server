@@ -38,6 +38,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<GoalCategory> goalCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "toUser", cascade = ALL)
+    private List<Follow> toUser = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fromUser", cascade = ALL)
+    private List<Follow> fromUser = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<EmotionRecord> emotionRecords = new ArrayList<>();
 
@@ -59,5 +65,13 @@ public class User {
 
     public void addEmotionRecord(EmotionRecord emotionRecord) {
         this.emotionRecords.add(emotionRecord);
+    }
+
+    public void addFromUser(Follow fromUser){
+        this.fromUser.add(fromUser);
+    }
+
+    public void addToUser(Follow toUser){
+        this.toUser.add(toUser);
     }
 }

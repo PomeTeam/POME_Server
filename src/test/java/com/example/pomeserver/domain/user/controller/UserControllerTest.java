@@ -128,10 +128,10 @@ class UserControllerTest {
     String userIdFromFullToken = tokenUtils.getUserIdFromFullToken(accessToken);
 
     // Response
-    List<FriendSearchResponse> response = new ArrayList<>();
-    response.add(FriendSearchResponse.builder().friendId(friendId).imageKey("image002").build());
-
-    given(userService.searchFriends(friendId, userId, Pageable.ofSize(8))).willReturn(response);
+//    List<FriendSearchResponse> response = new ArrayList<>();
+//    response.add(FriendSearchResponse.builder().friendId(friendId).imageKey("image002").build());
+//
+//    given(userService.searchFriends(friendId, userId, Pageable.ofSize(8))).willReturn(response);
 
     // when-then
 //    mvc.perform(get("/api/v1/users/friend/{friendId}", friendId)

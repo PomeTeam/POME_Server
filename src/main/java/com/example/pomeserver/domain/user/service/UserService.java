@@ -21,4 +21,6 @@ public interface UserService {
     Boolean addFriend(String friendId, String userId);
 
     List<FriendSearchResponse> myFriends(String userId, Pageable pageable);
+
+    Boolean deleteFriend(String friendNickName, String userId);
 }

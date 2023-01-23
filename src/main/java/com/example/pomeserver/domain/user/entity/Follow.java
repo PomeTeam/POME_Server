@@ -20,11 +20,11 @@ public class Follow extends DateBaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_user_id")
-    private User toUser;
+    private User toUser; //팔로운 받은 사람
 
     @ManyToOne
     @JoinColumn(name = "from_user_id")
-    private User fromUser;
+    private User fromUser; //팔로우 건 사람
 
     @Builder
     public Follow(User toUser, User fromUser) {

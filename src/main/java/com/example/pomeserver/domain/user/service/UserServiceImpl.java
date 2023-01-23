@@ -7,10 +7,7 @@ import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
-import com.example.pomeserver.domain.user.exception.excute.FollowAlreadyException;
-import com.example.pomeserver.domain.user.exception.excute.UserAlreadyNickName;
-import com.example.pomeserver.domain.user.exception.excute.UserAlreadyPhoneNum;
-import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.exception.excute.*;
 import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
@@ -98,12 +95,18 @@ public class UserServiceImpl implements UserService{
         Long fromUserId = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId();
         List<Follow> follows = followRepository.findByFromUserId(fromUserId);
         FriendSearchResponse friendSearchResponse = new FriendSearchResponse();
-//        for (Follow follow : follows) {
-//
-//        }
-//        follows.stream().map(follows -> FriendSearchResponse.builder()
-//            .friendNickname())
+
         return null;
+    }
+
+    @Transactional
+    @Override
+    public Boolean deleteFriend(String friendNickName, String userId) {
+        User fromUser = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        User toUser = userRepository.findByNickname(friendNickName).orElseThrow(UserNotFoundException::new);
+        Follow follow = followRepository.findByToUserAndFromUser(toUser, fromUser).orElseThrow(FollowNotFoundException::new);
+        followRepository.delete(follow);
+        return true;
     }
 
     private String getSaveToken(User user) {

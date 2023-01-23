@@ -86,6 +86,10 @@ public class UserController {
         return ApplicationResponse.ok(userService.addFriend(friendId,userId));
     }
 
+    /**
+     * 친구 목록 조회
+     * @Author 한규범
+     */
     @Operation(summary = "내 친구 목록 조회", description = "해당 유저가 추가한 친구 목록을 조회합니다.")
     @Auth
     @GetMapping("/friends")
@@ -93,6 +97,16 @@ public class UserController {
             @UserId String userId,
             Pageable pageable){
         return ApplicationResponse.ok(userService.myFriends(userId,pageable));
+    }
+
+    @Operation(summary = "친구 삭제", description = "기존의 친구를 삭제합니다.")
+    @Auth
+    @DeleteMapping("/friend/{friendId}")
+    public ApplicationResponse<Boolean> deleteFriend(
+            @PathVariable("friendId") String friendNickName,
+            @UserId String userId
+            ){
+        return ApplicationResponse.ok(userService.deleteFriend(friendNickName,userId));
     }
 
 }

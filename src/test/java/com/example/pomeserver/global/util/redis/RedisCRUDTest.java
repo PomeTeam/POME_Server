@@ -15,10 +15,6 @@ import java.util.Optional;
 @SpringBootTest
 public class RedisCRUDTest {
 
-
-    @Autowired
-    private RedisService redisService;
-
     @Autowired
     private RedisTemplateService redisTemplateService;
 
@@ -48,7 +44,7 @@ public class RedisCRUDTest {
 //    }
 
     @Test
-    void refreshTokenTest2() {
+    void refreshTokenTest2(){
 
         String userId = "userId123";  //key
         String refreshToken = "Bearer eyi812jfheu3....";  //value

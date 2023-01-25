@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 public class FriendSearchResponse {
 
+    private String friendUserId;
     private String friendNickName;
     private String imageKey;
 
     @Builder
-    public FriendSearchResponse(String friendNickname, String imageKey) {
+    public FriendSearchResponse(String friendUserId, String friendNickname, String imageKey) {
+        this.friendUserId = friendUserId;
         this.friendNickName = friendNickname;
         this.imageKey = imageKey;
     }

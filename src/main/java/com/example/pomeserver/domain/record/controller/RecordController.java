@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/records")
@@ -86,10 +87,26 @@ public class RecordController {
     }
 
     /**
+     * 특정 User의 기록 조회 페이징 기능
+     * @Author 이찬영
+     */
+    @Operation(summary = "기록 페이징 조회 By User",
+            description = "특정 사용자의 기록들을 페이징 조회한다. 이때 사용자의 userId로 기록을 불러온다. "+
+            "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
+            " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
+    @GetMapping("/users/{userId}")
+    public ApplicationResponse<List<RecordResponse>> findByUser(
+            @PathVariable String userId,
+            Pageable pageable)
+    {
+        return recordService.findAllByUser(userId, pageable);
+    }
+
+    /**
      * Goal에 해당하는 기록들 페이징 조회 기능
      * @Author 이찬영
      */
-    @Operation(summary = "기록 페이징 조회",
+    @Operation(summary = "기록 페이징 조회 By User, Goal",
             description = "특정 사용자와 특정 목표의 기록을 페이징 조회한다. 즉 사용자+목표의 조합으로 기록들을 불러오는 것이다." +
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
                     " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")

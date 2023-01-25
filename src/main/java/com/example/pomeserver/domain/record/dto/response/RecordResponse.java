@@ -28,6 +28,9 @@ public class RecordResponse{
     @ApiModelProperty(value = "기록 코멘트", example = "이런저런 소비를 하였다(^.^)", required = true, dataType = "string")
     private String useComment;
 
+    @ApiModelProperty(value = "목표 한줄 다짐", example = "하루에 커피는 1잔만", required = true, dataType = "string")
+    private String oneLineMind;
+
     @ApiModelProperty(value = "감정 응답(나의 첫번째, 두번째, 친구들 감정 포함)",
             example = "{firstEmotion:, secondEmotion:, friendEmotions:[]}", required = true, dataType = "json")
     private EmotionResponse emotionResponse;
@@ -39,9 +42,8 @@ public class RecordResponse{
         response.usePrice = record.getUsePrice();
         response.useDate = record.getUseDate();
         response.useComment = record.getUseComment();
+        response.oneLineMind = record.getGoal().getOneLineMind();
         response.emotionResponse = EmotionResponse.toDto(record);
         return response;
     }
-
-
 }

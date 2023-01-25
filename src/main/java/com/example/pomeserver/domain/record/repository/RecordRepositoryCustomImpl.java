@@ -1,0 +1,26 @@
+package com.example.pomeserver.domain.record.repository;
+
+import com.example.pomeserver.domain.record.entity.Record;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+@RequiredArgsConstructor
+@Repository
+public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
+
+    private final EntityManager em;
+
+    @Override
+    public List<Record> findAllByUserCustom(String userId, Pageable pageable) {
+        String query = "select r from Record r join fetch r.user u where u.userId=:userId order by r.useDate desc";
+        return em.createQuery(query, Record.class)
+                .setParameter("userId", userId)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
+}

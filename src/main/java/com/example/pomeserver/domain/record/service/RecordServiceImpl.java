@@ -30,6 +30,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -88,6 +91,16 @@ public class RecordServiceImpl implements RecordService{
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND);
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(RecordResponse.toDto(record));
+    }
+
+    @Override
+    public ApplicationResponse<List<RecordResponse>> findAllByUser(
+            String userId,
+            Pageable pageable)
+    {
+        ArrayList<RecordResponse> result = new ArrayList<>();
+        recordRepository.findAllByUserCustom(userId, pageable).forEach(r ->result.add(RecordResponse.toDto(r)));
+        return ApplicationResponse.ok(result);
     }
 
     @Override

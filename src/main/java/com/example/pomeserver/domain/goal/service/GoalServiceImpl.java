@@ -1,11 +1,14 @@
 package com.example.pomeserver.domain.goal.service;
 
 import com.example.pomeserver.domain.goal.dto.assembler.GoalAssembler;
+import com.example.pomeserver.domain.goal.dto.assembler.GoalCategoryAssembler;
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.goal.entity.GoalCategory;
+import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryDuplicationException;
+import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryListSizeException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.ThisGoalIsNotByThisUserException;
@@ -31,22 +34,41 @@ public class GoalServiceImpl implements GoalService{
     private final GoalCategoryRepository goalCategoryRepository;
     private final GoalAssembler goalAssembler;
 
+    private final GoalCategoryAssembler goalCategoryAssembler;
+
+
     @Transactional
     @Override
     public ApplicationResponse<GoalResponse> create(
             GoalCreateRequest request,
             String userId)
     {
-        // (1) 목표 카테고리 조회
-        GoalCategory goalCategory = goalCategoryRepository.findById(request.getGoalCategoryId()).orElseThrow(GoalCategoryNotFoundException::new);
-        System.out.println(goalCategory.getGoals().size());
-        // (2) DTO <-> Entity
-        Goal goal = goalAssembler.toEntity(request, goalCategory);
-        System.out.println(goal.getPrice());
-        // (3) Goal 저장
-        Goal saved = goalRepository.save(goal);
+        // (1) 카테고리 리스트의 개수 초과 여부 확인
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
 
-        return ApplicationResponse.create(GoalResponse.toDto(saved));
+        if (user.getGoalCategories().size() == 10) {
+            throw new GoalCategoryListSizeException();
+        }
+
+        // (2) 유저가 보유하고 있는 카테고리명 중복 확인
+        boolean distinct = user.getGoalCategories().stream()
+            .anyMatch(goalCategory -> goalCategory.getName().equals(request.getName()));
+        if (distinct) {
+            throw new GoalCategoryDuplicationException();
+        }
+
+        // (3) 카테고리 생성
+        GoalCategory goalCategory = goalCategoryAssembler.toEntity(request.getName(), user);
+        GoalCategory saved = goalCategoryRepository.save(goalCategory);
+
+
+        // (2) DTO <-> Entity
+        Goal goal = goalAssembler.toEntity(request, saved);
+
+        // (3) Goal 저장
+        Goal savedGoal = goalRepository.save(goal);
+
+        return ApplicationResponse.create(GoalResponse.toDto(savedGoal));
     }
 
     @Override

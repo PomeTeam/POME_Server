@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,6 +22,19 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 .setParameter("userId", userId)
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
+
+    @Override
+    public List<Record> findAllByFriends(
+            ArrayList<String> friendIds,
+            Pageable pageable)
+    {
+        String query = "select r from Record r join fetch r.user u where u.userId in (:friendIds) order by r.useDate desc";
+        return em.createQuery(query, Record.class)
+                .setParameter("friendIds", friendIds)
+                .setFirstResult((int) 0)
+                .setMaxResults(3)
                 .getResultList();
     }
 }

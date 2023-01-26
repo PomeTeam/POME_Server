@@ -47,7 +47,7 @@ public class GoalCategoryServiceImpl implements GoalCategoryService {
         }
 
         // (3) 카테고리 생성
-        GoalCategory goalCategory = goalCategoryAssembler.toEntity(request, user);
+        GoalCategory goalCategory = goalCategoryAssembler.toEntity(request.getName(), user);
         GoalCategory saved = goalCategoryRepository.save(goalCategory);
 
         return ApplicationResponse.create("목표 카테고리를 생성했습니다.", GoalCategoryResponse.toDto(saved));

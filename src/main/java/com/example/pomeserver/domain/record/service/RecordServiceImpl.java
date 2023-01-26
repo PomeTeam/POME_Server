@@ -6,7 +6,8 @@ import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.record.dto.assembler.EmotionRecordAssembler;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
-import com.example.pomeserver.domain.record.dto.response.RecordResponse;
+import com.example.pomeserver.domain.record.dto.response.record.MyRecordResponse;
+import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.entity.Emotion;
@@ -20,8 +21,10 @@ import com.example.pomeserver.domain.record.repository.EmotionRecordRepository;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
+import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -42,10 +48,11 @@ public class RecordServiceImpl implements RecordService{
     private final EmotionRecordRepository emotionRecordRepository;
     private final RecordAssembler recordAssembler;
     private final EmotionRecordAssembler emotionRecordAssembler;
+    private final FollowRepository followRepository;
 
     @Transactional
     @Override
-    public ApplicationResponse<RecordResponse> create(
+    public ApplicationResponse<MyRecordResponse> create(
             RecordCreateRequest request,
             String userId)
     {
@@ -59,11 +66,11 @@ public class RecordServiceImpl implements RecordService{
         // 감정기록 엔티티 생성 및 저장
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, emotion, EmotionType.MY_FIRST);
         emotionRecordRepository.save(emotionRecord);
-        return ApplicationResponse.create(RecordResponse.toDto(record));
+        return ApplicationResponse.create(MyRecordResponse.toDto(record));
     }
 
     @Override
-    public ApplicationResponse<RecordResponse> writeSecondEmotion(
+    public ApplicationResponse<MyRecordResponse> writeSecondEmotion(
             RecordSecondEmotionRequest request,
             Long recordId,
             String userId)
@@ -73,7 +80,7 @@ public class RecordServiceImpl implements RecordService{
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, emotion, EmotionType.MY_SECOND);
         emotionRecordRepository.save(emotionRecord);
-        return ApplicationResponse.create(RecordResponse.toDto(record));
+        return ApplicationResponse.create(MyRecordResponse.toDto(record));
     }
 
     @Override
@@ -87,14 +94,41 @@ public class RecordServiceImpl implements RecordService{
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND);
         emotionRecordRepository.save(emotionRecord);
-        return ApplicationResponse.create(RecordResponse.toDto(record));
+        return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
     }
 
     @Override
-    public ApplicationResponse<RecordResponse> findById(Long recordId)
+    public ApplicationResponse<List<RecordResponse>> findAllByUser(
+            String userId,
+            Pageable pageable)
+    {
+        ArrayList<RecordResponse> result = new ArrayList<>();
+        recordRepository.findAllByUserCustom(userId, pageable).forEach(r ->result.add(RecordResponse.toDto(r, userId)));
+        return ApplicationResponse.ok(result);
+    }
+
+    @Override
+    public ApplicationResponse<List<RecordResponse>> findByFriends(
+            String userId,
+            Pageable pageable
+    )
+    {
+        List<Follow> friends = followRepository.findByFromUserId(
+                userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId());
+
+        ArrayList<String> friendIds = new ArrayList<>();
+        friends.forEach((f)->friendIds.add(f.getToUser().getUserId()));
+
+        ArrayList<RecordResponse> result = new ArrayList<>();
+        recordRepository.findAllByFriends(friendIds, pageable).forEach(r -> result.add(RecordResponse.toDto(r, userId)));
+        return ApplicationResponse.ok(result);
+    }
+
+    @Override
+    public ApplicationResponse<MyRecordResponse> findById(Long recordId)
     {
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
-        return ApplicationResponse.ok(RecordResponse.toDto(record));
+        return ApplicationResponse.ok(MyRecordResponse.toDto(record));
     }
 
     @Override
@@ -106,12 +140,12 @@ public class RecordServiceImpl implements RecordService{
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
         return ApplicationResponse.ok(
-                recordRepository.findAllByUserAndGoal(user, goal, pageable).map(RecordResponse::toDto));
+                recordRepository.findAllByUserAndGoal(user, goal, pageable).map(r->RecordResponse.toDto(r,userId)));
     }
 
     @Transactional
     @Override
-    public ApplicationResponse<RecordResponse> update(
+    public ApplicationResponse<MyRecordResponse> update(
             RecordUpdateRequest request,
             Long recordId,
             String userId)
@@ -119,7 +153,7 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
         record.edit(recordAssembler.toEntity(request));
-        return ApplicationResponse.ok(RecordResponse.toDto(record));
+        return ApplicationResponse.ok(MyRecordResponse.toDto(record));
     }
 
     @Transactional

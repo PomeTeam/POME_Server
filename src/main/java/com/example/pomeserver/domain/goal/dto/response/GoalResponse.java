@@ -14,6 +14,7 @@ public class GoalResponse {
     private String oneLineMind;
     private int price;
     private Boolean isPublic;
+    private String nickname;
 
     public static GoalResponse toDto(Goal goal){
         GoalResponse response = new GoalResponse();
@@ -24,6 +25,7 @@ public class GoalResponse {
         response.oneLineMind = goal.getOneLineMind();
         response.price = goal.getPrice();
         response.isPublic = goal.isPublic();
+        response.nickname = goal.getGoalCategory().getUser().getNickname();
         return response;
     }
 }

@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService{
     public List<FriendSearchResponse> searchFriends(String friendId, String userId, Pageable pageable) {
         List<User> users = userRepository.findByNicknameStartsWithAndUserIdNot(friendId,userId);
         return users.stream().map(user -> FriendSearchResponse.builder()
+                .friendUserId(user.getUserId())
                 .friendNickname(user.getNickname())
                 .imageKey(user.getImage())
                 .build()).collect(Collectors.toList());
@@ -93,6 +94,7 @@ public class UserServiceImpl implements UserService{
         List<Follow> followList = followRepository.findByFromUserId(fromUserId);
 
         return followList.stream().map(follow -> FriendSearchResponse.builder()
+                .friendUserId(follow.getToUser().getUserId())
                 .friendNickname(follow.getToUser().getNickname())
                 .imageKey(follow.getToUser().getImage())
                 .build()).collect(Collectors.toList());

@@ -20,12 +20,15 @@ import com.example.pomeserver.domain.record.repository.EmotionRecordRepository;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
+import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +48,7 @@ public class RecordServiceImpl implements RecordService{
     private final EmotionRecordRepository emotionRecordRepository;
     private final RecordAssembler recordAssembler;
     private final EmotionRecordAssembler emotionRecordAssembler;
+    private final FollowRepository followRepository;
 
     @Transactional
     @Override
@@ -100,6 +104,21 @@ public class RecordServiceImpl implements RecordService{
     {
         ArrayList<RecordResponse> result = new ArrayList<>();
         recordRepository.findAllByUserCustom(userId, pageable).forEach(r ->result.add(RecordResponse.toDto(r)));
+        return ApplicationResponse.ok(result);
+    }
+
+    @Override //TODO 리팩토링
+    public ApplicationResponse<List<RecordResponse>> findByFriends(
+            String userId,
+            Pageable pageable
+    )
+    {
+        Long fromUserId = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId();
+        List<Follow> friends = followRepository.findByFromUserId(fromUserId);
+        ArrayList<String> friendIds = new ArrayList<>();
+        friends.forEach((f)->friendIds.add(f.getToUser().getUserId()));
+        ArrayList<RecordResponse> result = new ArrayList<>();
+        recordRepository.findAllByFriends(friendIds, pageable).forEach(r -> result.add(RecordResponse.toDto(r)));
         return ApplicationResponse.ok(result);
     }
 

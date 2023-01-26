@@ -59,7 +59,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean checkNickname(UserNicknameRequest userNicknameRequest) {
-        userRepository.findByNickname(userNicknameRequest.getNickName()).orElseThrow(UserAlreadyNickName::new);
+        if(userRepository.findByNickname(userNicknameRequest.getNickName()).isPresent()) throw new UserAlreadyNickName();
+//        userRepository.findByNickname(userNicknameRequest.getNickName()).orElseThrow(UserAlreadyNickName::new);
         return true;
     }
 

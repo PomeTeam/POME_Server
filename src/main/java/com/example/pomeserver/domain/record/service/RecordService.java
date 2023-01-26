@@ -20,4 +20,5 @@ public interface RecordService{
     ApplicationResponse<RecordResponse> writeSecondEmotion(RecordSecondEmotionRequest request, Long recordId, String userId);
     ApplicationResponse<RecordResponse> writeEmotionToFriend(RecordToFriendEmotionRequest request, Long recordId, String senderId);
     ApplicationResponse<List<RecordResponse>> findAllByUser(String userId, Pageable pageable);
+    ApplicationResponse<List<RecordResponse>> findByFriends(String userId, Pageable pageable);
 }

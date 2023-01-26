@@ -87,6 +87,23 @@ public class RecordController {
     }
 
     /**
+     * 내 친구들의 기록 조회 페이징 기능
+     * @Author 이찬영
+     */
+    @Operation(summary = "기록 페이징 조회 By 친구들",
+            description = "특정 사용자 친구들의 기록들을 페이징 조회한다."+
+                    "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
+                    " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
+    @Auth
+    @GetMapping("/friends")
+    public ApplicationResponse<List<RecordResponse>> findByFriends(
+            @UserId String userId,
+            Pageable pageable)
+    {
+        return recordService.findByFriends(userId, pageable);
+    }
+
+    /**
      * 특정 User의 기록 조회 페이징 기능
      * @Author 이찬영
      */

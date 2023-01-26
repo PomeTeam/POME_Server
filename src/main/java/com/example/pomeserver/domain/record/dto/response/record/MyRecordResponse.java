@@ -1,23 +1,22 @@
-package com.example.pomeserver.domain.record.dto.response;
+package com.example.pomeserver.domain.record.dto.response.record;
 
-import com.example.pomeserver.domain.record.entity.EmotionRecord;
+import com.example.pomeserver.domain.record.dto.response.emotion.MyEmotionResponse;
 import com.example.pomeserver.domain.record.entity.Record;
-import com.example.pomeserver.domain.record.entity.vo.EmotionType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@ApiModel("기록 응답 객체")
+@ApiModel("기록 응답 객체 (기록자 자신이 조회)")
 @NoArgsConstructor
 @Getter
-public class RecordResponse{
+public class MyRecordResponse {
 
     @ApiModelProperty(value = "기록 ID", example = "1", required = true, dataType = "number")
     private Long id;
+
+    @ApiModelProperty(value = "기록자 닉네임", example = "커트코베Z", required = true, dataType = "string")
+    private String nickname;
 
     @ApiModelProperty(value = "기록 소비 금액", example = "30000", required = true, dataType = "number")
     private int usePrice;
@@ -33,17 +32,18 @@ public class RecordResponse{
 
     @ApiModelProperty(value = "감정 응답(나의 첫번째, 두번째, 친구들 감정 포함)",
             example = "{firstEmotion:, secondEmotion:, friendEmotions:[]}", required = true, dataType = "json")
-    private EmotionResponse emotionResponse;
+    private MyEmotionResponse myEmotionResponse;
 
 
-    public static RecordResponse toDto(Record record){
-        RecordResponse response = new RecordResponse();
+    public static MyRecordResponse toDto(Record record){
+        MyRecordResponse response = new MyRecordResponse();
         response.id = record.getId();
+        response.nickname = record.getUser().getNickname();
         response.usePrice = record.getUsePrice();
         response.useDate = record.getUseDate();
         response.useComment = record.getUseComment();
         response.oneLineMind = record.getGoal().getOneLineMind();
-        response.emotionResponse = EmotionResponse.toDto(record);
+        response.myEmotionResponse = MyEmotionResponse.toDto(record);
         return response;
     }
 }

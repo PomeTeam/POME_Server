@@ -4,7 +4,8 @@ import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
-import com.example.pomeserver.domain.record.dto.response.RecordResponse;
+import com.example.pomeserver.domain.record.dto.response.record.MyRecordResponse;
+import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.service.RecordService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;
@@ -35,7 +36,7 @@ public class RecordController {
                description = "사용자가 자신의 목표에 대한 소비 기록을 작성한다.")
     @Auth
     @PostMapping
-    public ApplicationResponse<RecordResponse> create(
+    public ApplicationResponse<MyRecordResponse> create(
             @RequestBody @Valid RecordCreateRequest request,
             @UserId String userId)
     {
@@ -50,7 +51,7 @@ public class RecordController {
                description = "사용자가 자신의 기록에 대한 두번째 감정을 남긴다.")
     @Auth
     @PostMapping("/{recordId}/second-emotion")
-    public ApplicationResponse<RecordResponse> writeSecondEmotion(
+    public ApplicationResponse<MyRecordResponse> writeSecondEmotion(
             @RequestBody @Valid RecordSecondEmotionRequest request,
             @PathVariable Long recordId,
             @UserId String userId)
@@ -81,7 +82,7 @@ public class RecordController {
     @Operation(summary = "기록 조회",
             description = "기록 한개 상세 조회")
     @GetMapping("/{recordId}")
-    public ApplicationResponse<RecordResponse> findById(@PathVariable Long recordId)
+    public ApplicationResponse<MyRecordResponse> findById(@PathVariable Long recordId)
     {
         return recordService.findById(recordId);
     }
@@ -146,7 +147,7 @@ public class RecordController {
             description = "사용자가 작성한 기록을 수정한다. 소비 순간의 감정을 제외하고 모든 것(소비 금액, 소비 날짜, 소비 코멘트)을 수정할 수 있다.")
     @Auth
     @PutMapping("/{recordId}")
-    public ApplicationResponse<RecordResponse> update(
+    public ApplicationResponse<MyRecordResponse> update(
             RecordUpdateRequest request,
             @PathVariable Long recordId,
             @UserId String userId)

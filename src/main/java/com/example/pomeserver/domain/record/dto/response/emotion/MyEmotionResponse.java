@@ -1,4 +1,4 @@
-package com.example.pomeserver.domain.record.dto.response;
+package com.example.pomeserver.domain.record.dto.response.emotion;
 
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
 import com.example.pomeserver.domain.record.entity.Record;
@@ -14,7 +14,7 @@ import java.util.List;
 @ApiModel("기록의 감정 응답 객체")
 @NoArgsConstructor
 @Getter
-public class EmotionResponse {
+public class MyEmotionResponse {
 
     @ApiModelProperty(value = "첫번째 감정 id", example = "1", required = true, dataType = "number")
     private Long firstEmotion;
@@ -26,9 +26,9 @@ public class EmotionResponse {
     private List<Long> friendEmotions = new ArrayList<>();
 
 
-    public static EmotionResponse toDto(Record record) {
+    public static MyEmotionResponse toDto(Record record) {
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
-        EmotionResponse response = new EmotionResponse();
+        MyEmotionResponse response = new MyEmotionResponse();
         if(emotionRecords.isEmpty()) return null;
         for (EmotionRecord er : emotionRecords) {
             if(er.getEmotionType().equals(EmotionType.MY_FIRST))

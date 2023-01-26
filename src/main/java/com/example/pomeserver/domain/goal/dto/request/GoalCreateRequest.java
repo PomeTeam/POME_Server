@@ -14,8 +14,10 @@ import javax.validation.constraints.Size;
 @Data
 public class GoalCreateRequest {
 
-    @NotNull(message = "목표 카테고리 ID는 필수값입니다.")
-    private Long goalCategoryId;
+    @NotNull(message = "목표 카테고리는 필수값입니다.")
+    @NotBlank(message = "목표 카테고리 빈 문자열일 수 없습니다.")
+    @Size(max = 9, message = "목표 카테고리는 8자 이하만 가능합니다.")
+    private String name;
 
     //@Pattern(regexp = "(19|20)\\\\d{2}\\\\.((11|12)|(0?(\\\\d)))\\\\.(30|31|((0|1|2)?\\\\d))", message = "날짜의 패턴은 yyyy.mm.dd이어야 합니다.")
     @NotNull(message = "시작 날짜는 필수값입니다.")

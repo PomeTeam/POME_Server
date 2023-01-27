@@ -113,4 +113,9 @@ public class UserController {
         return ApplicationResponse.ok(userService.deleteFriend(friendNickName,userId));
     }
 
+    @Operation(summary = "유저 확인", description = "기존 유저 : true \n 신규 유저 : false")
+    @PostMapping("")
+    public ApplicationResponse<Boolean> checkUser(@RequestBody @Valid UserSignInRequest userSignInRequest){
+        return ApplicationResponse.ok(userService.checkUser(userSignInRequest));
+    }
 }

@@ -111,6 +111,11 @@ public class UserServiceImpl implements UserService{
         return true;
     }
 
+    @Override
+    public Boolean checkUser(UserSignInRequest userSignInRequest) {
+        return userRepository.findByPhoneNum(userSignInRequest.getPhoneNum()).isPresent();
+    }
+
     private String getSaveToken(User user) {
         String accessToken = tokenUtils.createAccessToken(user.getUserId(), user.getNickname()); // 클라
         String refreshToken = tokenUtils.createRefreshToken(user.getUserId(), user.getNickname()); // 레디스

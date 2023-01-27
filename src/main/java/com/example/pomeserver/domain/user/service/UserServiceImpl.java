@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService{
         if (userRepository.findByNickname(userSignUpRequest.getNickname()).isPresent()){
             throw new UserAlreadyNickName();
         }
+        if (userSignUpRequest.getImageKey().equals("default")) userSignUpRequest.setImageKey("userprof847");
         User user = userRepository.save(userSignUpRequest.toEntity());
         return UserResponse.toDto(user, getSaveToken(user));
     }

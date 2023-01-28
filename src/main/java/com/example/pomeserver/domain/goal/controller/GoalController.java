@@ -9,6 +9,7 @@ import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public class GoalController {
     @Auth
     @PostMapping
     public ApplicationResponse<GoalResponse> create(
-            @RequestBody GoalCreateRequest request,
+            @RequestBody @Valid GoalCreateRequest request,
             @UserId String userId)
     {
         return goalService.create(request, userId);
@@ -80,7 +81,7 @@ public class GoalController {
     @Auth
     @PutMapping("/{goalId}")
     public ApplicationResponse<GoalResponse> update(
-            @RequestBody GoalUpdateRequest request,
+            @RequestBody @Valid GoalUpdateRequest request,
             @PathVariable Long goalId,
             @UserId String userId)
     {

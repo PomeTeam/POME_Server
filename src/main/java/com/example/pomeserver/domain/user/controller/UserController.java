@@ -62,7 +62,7 @@ public class UserController {
      * 친구찾기
      * @Author 한규범
      */
-    @Operation(summary = "친구찾기 기능",description = "닉네임을 기반으로 검색됩니다.")
+    @Operation(summary = "친구찾기 기능",description = "닉네임을 기반으로 검색됩니다. \n 친구 일 경우 true, 아닐 경우 false")
     @Auth
     @GetMapping("/friend/{friendId}")
     public ApplicationResponse<List<FriendSearchResponse>> searchFriends(

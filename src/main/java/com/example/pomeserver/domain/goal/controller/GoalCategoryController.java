@@ -8,6 +8,7 @@ import com.example.pomeserver.global.util.authResolver.Auth;
 import com.example.pomeserver.global.util.authResolver.UserId;
 import io.swagger.annotations.Api;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ public class GoalCategoryController {
     @Auth
     @PostMapping
     public ApplicationResponse<GoalCategoryResponse> create(
-            @RequestBody GoalCategoryCreateRequest request,
+            @RequestBody @Valid GoalCategoryCreateRequest request,
             @UserId String userId)
     {
         return goalCategoryService.create(request, userId);

@@ -25,6 +25,10 @@ spring:
     host: ENC(dqWGAouH23IUMTg7tXQ8Xti271oGEUop)
     port: 6379
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor

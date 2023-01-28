@@ -67,11 +67,18 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<FriendSearchResponse> searchFriends(String friendId, String userId, Pageable pageable) {
+        //유저
+        User fromUser = userRepository.findByUserId(userId).get();
+
+        //찾은 친구들
         List<User> users = userRepository.findByNicknameStartsWithAndUserIdNot(friendId,userId);
+
         return users.stream().map(user -> FriendSearchResponse.builder()
                 .friendUserId(user.getUserId())
-                .friendNickname(user.getNickname())
+                .friendNickName(user.getNickname())
                 .imageKey(user.getImage())
+                //친구 일 경우 true, 아닐 경우 false
+                .isFriend(followRepository.findByToUserAndFromUser(user,fromUser).isPresent())
                 .build()).collect(Collectors.toList());
     }
 
@@ -97,7 +104,7 @@ public class UserServiceImpl implements UserService{
 
         return followList.stream().map(follow -> FriendSearchResponse.builder()
                 .friendUserId(follow.getToUser().getUserId())
-                .friendNickname(follow.getToUser().getNickname())
+                .friendNickName(follow.getToUser().getNickname())
                 .imageKey(follow.getToUser().getImage())
                 .build()).collect(Collectors.toList());
     }

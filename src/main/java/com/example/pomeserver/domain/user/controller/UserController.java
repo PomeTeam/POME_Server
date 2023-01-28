@@ -62,7 +62,7 @@ public class UserController {
      * 친구찾기
      * @Author 한규범
      */
-    @Operation(summary = "친구찾기 기능",description = "닉네임을 기반으로 검색됩니다.")
+    @Operation(summary = "친구찾기 기능",description = "닉네임을 기반으로 검색됩니다. \n 친구 일 경우 true, 아닐 경우 false")
     @Auth
     @GetMapping("/friend/{friendId}")
     public ApplicationResponse<List<FriendSearchResponse>> searchFriends(
@@ -113,6 +113,10 @@ public class UserController {
         return ApplicationResponse.ok(userService.deleteFriend(friendNickName,userId));
     }
 
+    /**
+     * 회원가입 이전 유저 확인 기능
+     * @Author 한규범
+     */
     @Operation(summary = "유저 확인", description = "기존 유저 : true \n 신규 유저 : false")
     @PostMapping("")
     public ApplicationResponse<Boolean> checkUser(@RequestBody @Valid UserSignInRequest userSignInRequest){

@@ -74,4 +74,8 @@ public class User {
     public void addToUser(Follow toUser){
         this.toUser.add(toUser);
     }
+
+    public void addRecord(Record record) {
+        this.records.add(record);
+    }
 }

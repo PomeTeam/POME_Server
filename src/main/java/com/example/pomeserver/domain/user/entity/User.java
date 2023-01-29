@@ -33,6 +33,9 @@ public class User {
     private String image;
 
     @OneToMany(mappedBy="user", cascade=ALL)
+    private List<Goal> goals = new ArrayList<>();
+
+    @OneToMany(mappedBy="user", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL)
@@ -55,6 +58,10 @@ public class User {
         this.image = image;
     }
 
+    public void addGoal(Goal goal) {
+        this.goals.add(goal);
+    }
+
     public void addGoalCategory(GoalCategory goalCategory) {
         this.goalCategories.add(goalCategory);
     }
@@ -73,5 +80,9 @@ public class User {
 
     public void addToUser(Follow toUser){
         this.toUser.add(toUser);
+    }
+
+    public void addRecord(Record record) {
+        this.records.add(record);
     }
 }

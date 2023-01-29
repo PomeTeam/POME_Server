@@ -18,6 +18,9 @@ import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,7 +82,7 @@ public class GoalServiceImpl implements GoalService{
     }
 
     @Override
-    public ApplicationResponse<Page<GoalResponse>> findAllByUser(
+    public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
             String userId,
         Long goalCategoryId, Pageable pageable)
     {
@@ -134,5 +137,15 @@ public class GoalServiceImpl implements GoalService{
         goalRepository.deleteById(goalId);
 
         return ApplicationResponse.ok();
+    }
+
+    @Override
+    public ApplicationResponse<Page<GoalResponse>> findAllByUser(String userId, Pageable pageable) {
+
+        // (1) User 데이터 조회
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+
+        // (2) User가 갖는 목표 카테고리로부터 목표 전체 조회
+        return ApplicationResponse.ok(goalRepository.findAllByUser(user, pageable).map(GoalResponse::toDto));
     }
 }

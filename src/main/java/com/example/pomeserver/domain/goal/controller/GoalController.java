@@ -65,12 +65,26 @@ public class GoalController {
      */
     @Auth
     @GetMapping("/category/{goalCategoryId}")
-    public ApplicationResponse<Page<GoalResponse>> findAllByUser(
+    public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
             @UserId String userId,
             @PathVariable Long goalCategoryId,
             Pageable pageable)
     {
-        return goalService.findAllByUser(userId, goalCategoryId, pageable);
+        return goalService.findAllByUserCategory(userId, goalCategoryId, pageable);
+    }
+
+    /**
+     * 유저가 가진 Goal 전체 조회.
+     *
+     * @author 이은비
+     */
+    @Auth
+    @GetMapping("/users")
+    public ApplicationResponse<Page<GoalResponse>> findAllByUser(
+        @UserId String userId,
+        Pageable pageable)
+    {
+        return goalService.findAllByUser(userId, pageable);
     }
 
     /**

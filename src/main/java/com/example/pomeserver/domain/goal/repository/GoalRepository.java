@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface GoalRepository extends JpaRepository<Goal, Long> {
 
     Page<Goal> findAllByGoalCategory(GoalCategory goalCategory, Pageable pageable);
+
+    Page<Goal> findAllByUser(User user, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package com.example.pomeserver.domain.goal.entity;
 import static javax.persistence.CascadeType.ALL;
 
 import com.example.pomeserver.domain.record.entity.Record;
+import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.entity.DateBaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,10 @@ public class Goal extends DateBaseEntity {
     @JoinColumn(name="goal_category_id")
     private GoalCategory goalCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id")
+    private User user;
+
     @OneToMany(mappedBy="goal", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
@@ -44,6 +49,11 @@ public class Goal extends DateBaseEntity {
     public void addRecord(Record record) {
         this.records.add(record);
     }
+    private void addUser(User user){
+        this.user = user;
+        user.addGoal(this);
+    }
+
 
     @Builder
     public Goal(GoalCategory goalCategory,
@@ -53,6 +63,7 @@ public class Goal extends DateBaseEntity {
                 int price,
                 boolean isPublic){
         this.addGoalCategory(goalCategory);
+        this.addUser(goalCategory.getUser());
         this.startDate = startDate;
         this.endDate = endDate;
         this.oneLineMind = oneLineMind;

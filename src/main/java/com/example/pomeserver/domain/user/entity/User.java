@@ -33,6 +33,9 @@ public class User {
     private String image;
 
     @OneToMany(mappedBy="user", cascade=ALL)
+    private List<Goal> goals = new ArrayList<>();
+
+    @OneToMany(mappedBy="user", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL)
@@ -53,6 +56,10 @@ public class User {
         this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.image = image;
+    }
+
+    public void addGoal(Goal goal) {
+        this.goals.add(goal);
     }
 
     public void addGoalCategory(GoalCategory goalCategory) {

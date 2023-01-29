@@ -1,7 +1,9 @@
 package com.example.pomeserver.domain.goal.dto.response;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
-import java.sql.Date;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,10 +32,17 @@ public class GoalResponse {
         response.price = goal.getPrice();
         response.isPublic = goal.isPublic();
 
-        if (LocalDate.parse(goal.getEndDate()).isBefore(LocalDate.now())) {
-            response.isEnd = true;
-        } else
-            response.isEnd = goal.getRecords().isEmpty();
+        SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy.MM.dd");
+        try {
+            Date fromDate = fromFormat.parse(goal.getEndDate());
+            Date now = new Date();
+            if (fromDate.before(now)) {
+                response.isEnd = true;
+            } else
+                response.isEnd = goal.getRecords().isEmpty();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         response.nickname = goal.getGoalCategory().getUser().getNickname();
         return response;

@@ -51,12 +51,11 @@ public class Record extends DateBaseEntity {
                   Integer usePrice,
                   String useDate,
                   String useComment){
-        Record record = new Record();
-        record.usePrice = usePrice;
-        record.useDate = useDate;
-        record.useComment = useComment;
-        record.addGoal(goal);
-        record.addUser(user);
+        this.usePrice = usePrice;
+        this.useDate = useDate;
+        this.useComment = useComment;
+        this.addGoal(goal);
+        this.addUser(user);
     }
 
     public static Record toUpdateEntity(
@@ -72,6 +71,7 @@ public class Record extends DateBaseEntity {
 
     private void addUser(User user){
         this.user = user;
+        user.addRecord(this);
     }
 
     private void addGoal(Goal goal) {

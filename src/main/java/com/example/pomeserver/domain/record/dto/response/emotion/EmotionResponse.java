@@ -26,7 +26,7 @@ public class EmotionResponse {
     private Long myEmotion;
 
     @ApiModelProperty(value = "친구들의 감정 리스트", example = "[1, 2, 2, 3]", required = true, dataType = "number")
-    private List<Long> friendEmotions = new ArrayList<>();
+    private List<FriendEmotion> friendEmotions = new ArrayList<>();
 
 
     public static EmotionResponse toDto(Record record, String viewerUserId) {
@@ -40,7 +40,7 @@ public class EmotionResponse {
                 response.firstEmotion = er.getEmotion().getId();
             else if(er.getEmotionType().equals(EmotionType.MY_SECOND))
                 response.secondEmotion = er.getEmotion().getId();
-            else response.friendEmotions.add(er.getEmotion().getId());
+            else response.friendEmotions.add(FriendEmotion.toDto(er.getUser().getNickname(), er.getEmotion().getId()));
         }
         return response;
     }

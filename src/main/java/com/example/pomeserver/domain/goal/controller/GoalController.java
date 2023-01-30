@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/goals")
@@ -40,7 +41,7 @@ public class GoalController {
     @PostMapping
     public ApplicationResponse<GoalResponse> create(
             @RequestBody @Valid GoalCreateRequest request,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return goalService.create(request, userId);
     }
@@ -66,7 +67,7 @@ public class GoalController {
     @Auth
     @GetMapping("/category/{goalCategoryId}")
     public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
-            @UserId String userId,
+            @ApiIgnore @UserId String userId,
             @PathVariable Long goalCategoryId,
             Pageable pageable)
     {
@@ -81,7 +82,7 @@ public class GoalController {
     @Auth
     @GetMapping("/users")
     public ApplicationResponse<Page<GoalResponse>> findAllByUser(
-        @UserId String userId,
+        @ApiIgnore @UserId String userId,
         Pageable pageable)
     {
         return goalService.findAllByUser(userId, pageable);
@@ -97,7 +98,7 @@ public class GoalController {
     public ApplicationResponse<GoalResponse> update(
             @RequestBody @Valid GoalUpdateRequest request,
             @PathVariable Long goalId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return goalService.update(request, goalId, userId);
     }
@@ -111,7 +112,7 @@ public class GoalController {
     @DeleteMapping("/{goalId}")
     public ApplicationResponse<Void> delete(
             @PathVariable Long goalId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return goalService.delete(goalId, userId);
     }

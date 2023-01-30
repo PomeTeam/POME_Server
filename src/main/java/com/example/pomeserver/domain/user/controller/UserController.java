@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -68,7 +69,7 @@ public class UserController {
     @GetMapping("/friend/{friendId}")
     public ApplicationResponse<List<FriendSearchResponse>> searchFriends(
             @PathVariable("friendId") String friendId,
-            @UserId String userId,
+            @ApiIgnore @UserId String userId,
             Pageable pageable){
         return ApplicationResponse.ok(userService.searchFriends(friendId,userId,pageable));
     }
@@ -82,7 +83,7 @@ public class UserController {
     @PostMapping("/friend/{friendId}")
     public ApplicationResponse<Boolean> addFriend(
             @PathVariable("friendId") String friendId,
-            @UserId String userId
+            @ApiIgnore @UserId String userId
             ){
         return ApplicationResponse.ok(userService.addFriend(friendId,userId));
     }
@@ -95,7 +96,7 @@ public class UserController {
     @Auth
     @GetMapping("/friends")
     public ApplicationResponse<List<FriendSearchResponse>> myFriends(
-            @UserId String userId,
+            @ApiIgnore @UserId String userId,
             Pageable pageable){
         return ApplicationResponse.ok(userService.myFriends(userId,pageable));
     }

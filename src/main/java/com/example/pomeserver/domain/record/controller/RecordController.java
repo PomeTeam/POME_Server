@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,7 +39,7 @@ public class RecordController {
     @PostMapping
     public ApplicationResponse<MyRecordResponse> create(
             @RequestBody @Valid RecordCreateRequest request,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return recordService.create(request, userId);
     }
@@ -54,7 +55,7 @@ public class RecordController {
     public ApplicationResponse<MyRecordResponse> writeSecondEmotion(
             @RequestBody @Valid RecordSecondEmotionRequest request,
             @PathVariable Long recordId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return recordService.writeSecondEmotion(request, recordId, userId);
     }
@@ -70,7 +71,7 @@ public class RecordController {
     public ApplicationResponse<RecordResponse> writeEmotionToFriend(
             @RequestBody @Valid RecordToFriendEmotionRequest request,
             @PathVariable Long recordId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return recordService.writeEmotionToFriend(request, recordId, userId);
     }
@@ -98,7 +99,7 @@ public class RecordController {
     @Auth
     @GetMapping("/friends")
     public ApplicationResponse<List<RecordResponse>> findByFriends(
-            @UserId String userId,
+            @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
         return recordService.findByFriends(userId, pageable);
@@ -132,7 +133,7 @@ public class RecordController {
     @GetMapping("/goal/{goalId}")
     public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
             @PathVariable Long goalId,
-            @UserId String userId,
+            @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
         return recordService.findAllByUserAndGoal(goalId, userId, pageable);
@@ -150,7 +151,7 @@ public class RecordController {
     public ApplicationResponse<MyRecordResponse> update(
             RecordUpdateRequest request,
             @PathVariable Long recordId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return recordService.update(request, recordId, userId);
     }
@@ -165,7 +166,7 @@ public class RecordController {
     @DeleteMapping("/{recordId}")
     public ApplicationResponse<Void> delete(
             @PathVariable Long recordId,
-            @UserId String userId)
+            @ApiIgnore @UserId String userId)
     {
         return recordService.delete(recordId, userId);
     }

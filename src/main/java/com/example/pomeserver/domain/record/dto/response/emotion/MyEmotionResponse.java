@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApiModel("기록의 감정 응답 객체")
+//@ApiModel("기록의 감정 응답 객체")
 @NoArgsConstructor
 @Getter
 public class MyEmotionResponse {

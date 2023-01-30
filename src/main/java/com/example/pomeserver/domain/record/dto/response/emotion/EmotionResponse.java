@@ -16,16 +16,16 @@ import java.util.List;
 @Getter
 public class EmotionResponse {
 
-    @ApiModelProperty(value = "첫번째 감정 id", example = "1", required = true, dataType = "number")
+    @ApiModelProperty(value = "첫번째 감정 id", example = "1", required = true)
     private Long firstEmotion;
 
-    @ApiModelProperty(value = "두번째 감정 id", example = "2", required = true, dataType = "number")
+    @ApiModelProperty(value = "두번째 감정 id", example = "2", required = true)
     private Long secondEmotion;
 
-    @ApiModelProperty(value = "내가 남긴 감정 id", example = "2", required = true, dataType = "number")
+    @ApiModelProperty(value = "내가 남긴 감정 id", example = "2", required = true)
     private Long myEmotion;
 
-    @ApiModelProperty(value = "친구들의 감정 리스트", example = "[1, 2, 2, 3]", required = true, dataType = "number")
+    @ApiModelProperty(value = "친구들의 감정 리스트", required = true)
     private List<FriendEmotion> friendEmotions = new ArrayList<>();
 
 

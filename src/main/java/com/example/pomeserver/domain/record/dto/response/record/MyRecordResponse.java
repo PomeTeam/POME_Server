@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@ApiModel("기록 응답 객체 (기록자 자신이 조회)")
+//@ApiModel("나의 기록 응답 객체 (기록자 자신이 조회)")
 @NoArgsConstructor
 @Getter
 public class MyRecordResponse {

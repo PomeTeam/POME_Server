@@ -68,7 +68,7 @@ public class RecordServiceImpl implements RecordService{
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(MyRecordResponse.toDto(record));
     }
-
+    @Transactional
     @Override
     public ApplicationResponse<MyRecordResponse> writeSecondEmotion(
             RecordSecondEmotionRequest request,
@@ -82,7 +82,7 @@ public class RecordServiceImpl implements RecordService{
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(MyRecordResponse.toDto(record));
     }
-
+    @Transactional
     @Override
     public ApplicationResponse<RecordResponse> writeEmotionToFriend(
             RecordToFriendEmotionRequest request,
@@ -98,17 +98,17 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllByUser(
+    public ApplicationResponse<List<MyRecordResponse>> findAllByUser(
             String userId,
             Pageable pageable)
     {
-        ArrayList<RecordResponse> result = new ArrayList<>();
-        recordRepository.findAllByUserCustom(userId, pageable).forEach(r ->result.add(RecordResponse.toDto(r, userId)));
+        ArrayList<MyRecordResponse> result = new ArrayList<>();
+        recordRepository.findAllByUserCustom(userId, pageable).forEach(r ->result.add(MyRecordResponse.toDto(r)));
         return ApplicationResponse.ok(result);
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findByFriends(
+    public ApplicationResponse<List<RecordResponse>> findAllByFriends(
             String userId,
             Pageable pageable
     )
@@ -132,7 +132,7 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
+    public ApplicationResponse<Page<MyRecordResponse>> findAllByUserAndGoal(
             Long goalId,
             String userId,
             Pageable pageable)
@@ -140,7 +140,7 @@ public class RecordServiceImpl implements RecordService{
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
         return ApplicationResponse.ok(
-                recordRepository.findAllByUserAndGoal(user, goal, pageable).map(r->RecordResponse.toDto(r,userId)));
+                recordRepository.findAllByUserAndGoal(user, goal, pageable).map(MyRecordResponse::toDto));
     }
 
     @Transactional

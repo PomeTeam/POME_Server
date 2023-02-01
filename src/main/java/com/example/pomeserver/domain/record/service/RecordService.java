@@ -15,11 +15,11 @@ import java.util.List;
 public interface RecordService{
     ApplicationResponse<MyRecordResponse> create(RecordCreateRequest request, String userId);
     ApplicationResponse<MyRecordResponse> findById(Long recordId);
-    ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(Long goalId, String userId, Pageable pageable);
+    ApplicationResponse<Page<MyRecordResponse>> findAllByUserAndGoal(Long goalId, String userId, Pageable pageable);
     ApplicationResponse<MyRecordResponse> update(RecordUpdateRequest request, Long recordId, String userId);
     ApplicationResponse<Void> delete(Long recordId, String userId);
     ApplicationResponse<MyRecordResponse> writeSecondEmotion(RecordSecondEmotionRequest request, Long recordId, String userId);
     ApplicationResponse<RecordResponse> writeEmotionToFriend(RecordToFriendEmotionRequest request, Long recordId, String senderId);
-    ApplicationResponse<List<RecordResponse>> findAllByUser(String userId, Pageable pageable);
-    ApplicationResponse<List<RecordResponse>> findByFriends(String userId, Pageable pageable);
+    ApplicationResponse<List<MyRecordResponse>> findAllByUser(String userId, Pageable pageable);
+    ApplicationResponse<List<RecordResponse>> findAllByFriends(String userId, Pageable pageable);
 }

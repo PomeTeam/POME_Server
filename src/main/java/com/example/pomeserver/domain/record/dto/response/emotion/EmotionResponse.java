@@ -25,7 +25,7 @@ public class EmotionResponse {
     @ApiModelProperty(value = "내가 남긴 감정 id", example = "2", required = true)
     private Long myEmotion;
 
-    @ApiModelProperty(value = "친구들의 감정 리스트", required = true)
+    @ApiModelProperty(value = "친구들의 감정 리스트", example = "[{nickname:string, emotionId:number}, ,,,,]", required = true)
     private List<FriendEmotion> friendEmotions = new ArrayList<>();
 
 
@@ -34,13 +34,16 @@ public class EmotionResponse {
         EmotionResponse response = new EmotionResponse();
         if(emotionRecords.isEmpty()) return null;
         for (EmotionRecord er : emotionRecords){
-            if(er.getUser().getUserId().equals(viewerUserId))
+            if(er.getUser().getUserId().equals(viewerUserId)){
                 response.myEmotion = er.getEmotion().getId();
+                response.friendEmotions.add(FriendEmotion.toDto(er.getUser().getNickname(), er.getEmotion().getId()));
+            }
             else if(er.getEmotionType().equals(EmotionType.MY_FIRST))
                 response.firstEmotion = er.getEmotion().getId();
             else if(er.getEmotionType().equals(EmotionType.MY_SECOND))
                 response.secondEmotion = er.getEmotion().getId();
-            else response.friendEmotions.add(FriendEmotion.toDto(er.getUser().getNickname(), er.getEmotion().getId()));
+            else if(er.getEmotionType().equals(EmotionType.FRIEND))
+                response.friendEmotions.add(FriendEmotion.toDto(er.getUser().getNickname(), er.getEmotion().getId()));
         }
         return response;
     }

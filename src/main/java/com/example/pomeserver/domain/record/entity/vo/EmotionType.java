@@ -8,5 +8,11 @@ import lombok.RequiredArgsConstructor;
 public enum EmotionType {
     MY_FIRST,
     MY_SECOND,
-    FRIEND
+    FRIEND;
+
+    private boolean isWriter;
+
+    public boolean isWriter() {
+        return isWriter;
+    }
 }

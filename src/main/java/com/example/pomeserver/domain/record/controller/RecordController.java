@@ -4,7 +4,6 @@ import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
-import com.example.pomeserver.domain.record.dto.response.record.MyRecordResponse;
 import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.service.RecordService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
@@ -37,7 +36,7 @@ public class RecordController {
                description = "사용자가 자신의 목표에 대한 소비 기록을 작성한다.")
     @Auth
     @PostMapping
-    public ApplicationResponse<MyRecordResponse> create(
+    public ApplicationResponse<RecordResponse> create(
             @RequestBody @Valid RecordCreateRequest request,
             @ApiIgnore @UserId String userId)
     {
@@ -52,7 +51,7 @@ public class RecordController {
                description = "사용자가 자신의 기록에 대한 두번째 감정을 남긴다.")
     @Auth
     @PostMapping("/{recordId}/second-emotion")
-    public ApplicationResponse<MyRecordResponse> writeSecondEmotion(
+    public ApplicationResponse<RecordResponse> writeSecondEmotion(
             @RequestBody @Valid RecordSecondEmotionRequest request,
             @PathVariable Long recordId,
             @ApiIgnore @UserId String userId)
@@ -80,12 +79,12 @@ public class RecordController {
      * 기록 조회 기능
      * @Author 이찬영
      */
-    @Operation(summary = "기록 조회",
+    @Operation(summary = "나의 기록 상세 조회",
             description = "기록 한개 상세 조회")
     @GetMapping("/{recordId}")
-    public ApplicationResponse<MyRecordResponse> findById(@PathVariable Long recordId)
+    public ApplicationResponse<RecordResponse> findById(@PathVariable Long recordId, @ApiIgnore @UserId String userId)
     {
-        return recordService.findById(recordId);
+        return recordService.findById(recordId, userId);
     }
 
     /**
@@ -102,14 +101,14 @@ public class RecordController {
             @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
-        return recordService.findByFriends(userId, pageable);
+        return recordService.findAllByFriends(userId, pageable);
     }
 
     /**
      * 특정 User의 기록 조회 페이징 기능
      * @Author 이찬영
      */
-    @Operation(summary = "기록 페이징 조회 By User",
+    @Operation(summary = "나의 기록들 페이징 조회 By User",
             description = "특정 사용자의 기록들을 페이징 조회한다. 이때 사용자의 userId로 기록을 불러온다. "+
             "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
             " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
@@ -148,7 +147,7 @@ public class RecordController {
             description = "사용자가 작성한 기록을 수정한다. 소비 순간의 감정을 제외하고 모든 것(소비 금액, 소비 날짜, 소비 코멘트)을 수정할 수 있다.")
     @Auth
     @PutMapping("/{recordId}")
-    public ApplicationResponse<MyRecordResponse> update(
+    public ApplicationResponse<RecordResponse> update(
             RecordUpdateRequest request,
             @PathVariable Long recordId,
             @ApiIgnore @UserId String userId)

@@ -80,7 +80,7 @@ public class RecordController {
      * 기록 조회 기능
      * @Author 이찬영
      */
-    @Operation(summary = "기록 조회",
+    @Operation(summary = "나의 기록 상세 조회",
             description = "기록 한개 상세 조회")
     @GetMapping("/{recordId}")
     public ApplicationResponse<MyRecordResponse> findById(@PathVariable Long recordId)
@@ -102,19 +102,19 @@ public class RecordController {
             @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
-        return recordService.findByFriends(userId, pageable);
+        return recordService.findAllByFriends(userId, pageable);
     }
 
     /**
      * 특정 User의 기록 조회 페이징 기능
      * @Author 이찬영
      */
-    @Operation(summary = "기록 페이징 조회 By User",
+    @Operation(summary = "나의 기록들 페이징 조회 By User",
             description = "특정 사용자의 기록들을 페이징 조회한다. 이때 사용자의 userId로 기록을 불러온다. "+
             "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
             " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @GetMapping("/users/{userId}")
-    public ApplicationResponse<List<RecordResponse>> findByUser(
+    public ApplicationResponse<List<MyRecordResponse>> findByUser(
             @PathVariable String userId,
             Pageable pageable)
     {
@@ -131,7 +131,7 @@ public class RecordController {
                     " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @Auth
     @GetMapping("/goal/{goalId}")
-    public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
+    public ApplicationResponse<Page<MyRecordResponse>> findAllByUserAndGoal(
             @PathVariable Long goalId,
             @ApiIgnore @UserId String userId,
             Pageable pageable)

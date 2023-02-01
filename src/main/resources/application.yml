@@ -66,7 +66,12 @@ jwt:
   access-header: ENC(YVcSaDhY0eW9ptAstEkB2cO3WgvumW8S)
   refresh-header: ENC(PLjwqyNhcZtPwz+nHi33M9E3avnatw20)
   access-expired-time: ENC(ta72CBPrazeD/2eL5P+v9w==)          # 20분
-  refresh-expired-time: ENC(wKNz85sWCuHRpaMjtJVwbUX+9XCWEkkh) # 약 30일
+  refresh-expired-time: ENC(ebp0DZkgwyR39LEeA9F9AOAU3U1FCW4P)
+
+aws:
+  s3:
+    buket: ENC(6PBKLpJ6kCkEvchrS7VfNrHeMpznXwcRnMgFTviGuJWjvEmj/Z73p7Hni+5+eNQkRUyKO5xcQFxScrjDYxN4btFju2/9BL9Z)
+
 
 ---
 spring:

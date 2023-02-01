@@ -1,6 +1,7 @@
 package com.example.pomeserver.domain.user.dto.response;
 
 import com.example.pomeserver.domain.user.entity.User;
+import com.example.pomeserver.global.util.aws.s3.ImageService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,7 @@ public class UserResponse {
         UserResponse userResponse = new UserResponse();
         userResponse.userId = user.getUserId();
         userResponse.nickName = user.getNickname();
-        userResponse.imageURL = user.getImage(); //TO-DO
+        userResponse.imageURL = ImageService.getImageURL(user.getImage()); //TO-DO
         userResponse.accessToken = AccessToken;
         return userResponse;
     }

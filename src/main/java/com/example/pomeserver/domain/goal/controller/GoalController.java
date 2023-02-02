@@ -38,6 +38,8 @@ public class GoalController {
      *
      * @author 이은비
      */
+    @Operation(summary = "목표 생성하기",
+                description = "사용자가 목표를 생성한다.")
     @Auth
     @PostMapping
     public ApplicationResponse<GoalResponse> create(
@@ -47,8 +49,8 @@ public class GoalController {
         return goalService.create(request, userId);
     }
 
-    @Operation(summary = "목표 한개 조회",
-            description = "사용자가 목표 하나를 조회한다.")
+    @Operation(summary = "목표 한개 조회하기",
+            description = "사용자가 목표ID를 통해 특정 목표를 조회한다.")
     /**
      * Goal 단일 조회.
      *
@@ -65,6 +67,8 @@ public class GoalController {
      *
      * @author 이은비
      */
+    @Operation(summary = "특정 목표 카테고리에 따른 목표 리스트 조회하기",
+        description = "사용자가 보유한 목표 카테고리 리스트 중 목표 카테고리 ID를 통해 특정 목표 카테고리에 속하는 목표 리스트 조회한다.")
     @Auth
     @GetMapping("/category/{goalCategoryId}")
     public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
@@ -80,6 +84,11 @@ public class GoalController {
      *
      * @author 이은비
      */
+    @Operation(summary = "사용자가 보유한 목표 리스트 조회하기",
+        description = "사용자가 보유한 모든 목표 리스트를 조회한다. " +
+                        "이때 클라이언트는 반드시 쿼리스트링으로 sort를 명시해주어야 한다. " +
+                        "ex) /api/v1/goals/users?sort=endDate,desc" +
+                        " --> 목표 종료일자 최신순으로 조회하기")
     @Auth
     @GetMapping("/users")
     public ApplicationResponse<Page<GoalResponse>> findAllByUser(
@@ -94,6 +103,8 @@ public class GoalController {
      *
      * @author 이은비
      */
+    @Operation(summary = "목표 수정하기",
+        description = "사용자가 생성할 때 작성했던 데이터를 수정한다. (종료, 한 줄 코멘트, 소비금액)을 제외하고 수정할 수 있다.")
     @Auth
     @PutMapping("/{goalId}")
     public ApplicationResponse<GoalResponse> update(
@@ -109,6 +120,8 @@ public class GoalController {
      *
      * @author 이은비
      */
+    @Operation(summary = "목표 삭제하기",
+        description = "사용자가 목표를 삭제한다.")
     @Auth
     @DeleteMapping("/{goalId}")
     public ApplicationResponse<Void> delete(
@@ -123,6 +136,10 @@ public class GoalController {
      *
      * @author 이은비
      * */
+    @Operation(summary = "목표 종료하기",
+        description = "사용자가 목표를 종료한다. 종료 시, 한줄 코멘트를 입력해야 한다." +
+                        " 목표 종료일자가 오늘보다 이전이거나 소비 기록이 하나도 없을 경우 종료할 수 있다." +
+                        " 목표가 가진 소비 기록에 대해 2번째 감정을 기록하지 않은 경우가 있다면, 목표를 종료할 수 없다.")
     @Auth
     @PutMapping("/end/{goalId}")
     public ApplicationResponse<GoalResponse> terminate(
@@ -133,6 +150,13 @@ public class GoalController {
         return goalService.terminate(goalId, request, userId);
     }
 
+    /**
+     * 사용자의 종료된 목표 리스트 조회.
+     *
+     * @author 이은비
+     * */
+    @Operation(summary = "종료된 목표 조회하기",
+        description = "사용자가 종료된 목표를 조회한다.")
     @Auth
     @GetMapping("/users/end")
     public ApplicationResponse<Page<GoalResponse>> findByUsersAndEnd(

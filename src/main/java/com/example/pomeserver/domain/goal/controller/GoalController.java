@@ -1,6 +1,7 @@
 package com.example.pomeserver.domain.goal.controller;
 
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
+import com.example.pomeserver.domain.goal.dto.request.GoalTerminateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.goal.service.GoalService;
@@ -115,5 +116,20 @@ public class GoalController {
             @ApiIgnore @UserId String userId)
     {
         return goalService.delete(goalId, userId);
+    }
+
+    /**
+     * Goal 종료.
+     *
+     * @author 이은비
+     * */
+    @Auth
+    @PutMapping("/end/{goalId}")
+    public ApplicationResponse<GoalResponse> terminate(
+        @PathVariable Long goalId,
+        @RequestBody GoalTerminateRequest request,
+        @ApiIgnore @UserId String userId
+    ) {
+        return goalService.terminate(goalId, request, userId);
     }
 }

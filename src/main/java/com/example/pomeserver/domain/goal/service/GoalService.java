@@ -1,6 +1,7 @@
 package com.example.pomeserver.domain.goal.service;
 
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
+import com.example.pomeserver.domain.goal.dto.request.GoalTerminateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
@@ -20,4 +21,6 @@ public interface GoalService {
     ApplicationResponse<Void> delete(Long goalId, String userId);
 
     ApplicationResponse<Page<GoalResponse>> findAllByUser(String userId, Pageable pageable);
+
+  ApplicationResponse<GoalResponse> terminate(Long goalId, GoalTerminateRequest request, String userId);
 }

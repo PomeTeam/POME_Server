@@ -76,8 +76,6 @@ public class Goal extends DateBaseEntity {
         this.oneLineMind = oneLineMind;
         this.price = price;
         this.isPublic = isPublic;
-        this.isEnd = false; // 최초 생성 시, 종료가 아닌 상태
-        this.usePrice = 0; // 최초 생성 시, 사용금액 0원
     }
 
     public static Goal toUpdateEntity(
@@ -120,12 +118,6 @@ public class Goal extends DateBaseEntity {
         this.addGoalCategory(goalCategory);
     }
 
-    /**
-     * 기록 생성 시, 사용 금액 누적 함수
-     * */
-    public void editUsePrice(int usePrice) {
-        this.usePrice += usePrice;
-    }
 
     /**
     * 목표 종료 시, 데이터 변경하는 함수

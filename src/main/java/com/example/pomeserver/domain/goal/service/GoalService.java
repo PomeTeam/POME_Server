@@ -23,4 +23,6 @@ public interface GoalService {
     ApplicationResponse<Page<GoalResponse>> findAllByUser(String userId, Pageable pageable);
 
   ApplicationResponse<GoalResponse> terminate(Long goalId, GoalTerminateRequest request, String userId);
+
+  ApplicationResponse<Page<GoalResponse>> findByUserAndEnd(String userId, Pageable pageable);
 }

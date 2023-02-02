@@ -132,4 +132,13 @@ public class GoalController {
     ) {
         return goalService.terminate(goalId, request, userId);
     }
+
+    @Auth
+    @GetMapping("/users/end")
+    public ApplicationResponse<Page<GoalResponse>> findByUsersAndEnd(
+        @ApiIgnore @UserId String userId,
+        Pageable pageable
+    ) {
+        return goalService.findByUserAndEnd(userId, pageable);
+    }
 }

@@ -176,4 +176,13 @@ public class GoalServiceImpl implements GoalService{
         return ApplicationResponse.ok(GoalResponse.toDto(saved));
     }
 
+    @Override
+    public ApplicationResponse<Page<GoalResponse>> findByUserAndEnd(String userId, Pageable pageable) {
+        // (1) User 데이터 조회
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+
+        // (2) 유저가 보유한 종료된 목표 조회
+
+        return ApplicationResponse.ok(goalRepository.findAllByUserAndIsEnd(user, true, pageable).map(GoalResponse::toDto));
+    }
 }

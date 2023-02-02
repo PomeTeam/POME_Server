@@ -65,4 +65,8 @@ public class EmotionRecord extends DateBaseEntity {
         this.addEmotion(emotion);
         this.addRecord(record);
     }
+
+    public void editEmotion(Emotion emotion){
+        this.emotion = emotion;
+    }
 }

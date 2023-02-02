@@ -91,9 +91,22 @@ public class RecordServiceImpl implements RecordService{
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
-        EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND);
-        emotionRecordRepository.save(emotionRecord);
+        List<EmotionRecord> emotionRecords = record.getEmotionRecords();
+        if(alreadyHaveFriendEmotion(emotionRecords, senderId))
+            editEmotion(senderId, emotionRecords, emotion);
+        else emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
         return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
+    }
+
+    private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion){
+        for (EmotionRecord er : emotionRecords)
+            if(er.getUser().getUserId().equals(senderId)) er.editEmotion(emotion);
+    }
+
+    private boolean alreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
+        for (EmotionRecord er : emotionRecords)
+            if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND)) return true;
+        return false;
     }
 
     @Override

@@ -55,21 +55,16 @@ public class GoalServiceImpl implements GoalService{
         }
 
         // (2) 유저가 보유하고 있는 카테고리명 중복 확인
-        boolean distinct = user.getGoalCategories().stream()
-            .anyMatch(goalCategory -> goalCategory.getName().equals(request.getName()));
-        if (distinct) {
-            throw new GoalCategoryDuplicationException();
-        }
+        // 중복이라면 목표 카테고리의 목표 리스트에 추가 || 중복이 아니라면 목표 카테고리 새로 생성
+        GoalCategory distinct = user.getGoalCategories().stream()
+            .filter(goalCategory -> goalCategory.getName().equals(request.getName()))
+            .findFirst()
+            .orElse(goalCategoryRepository.save(goalCategoryAssembler.toEntity(request.getName(), user)));
 
-        // (3) 카테고리 생성
-        GoalCategory goalCategory = goalCategoryAssembler.toEntity(request.getName(), user);
-        GoalCategory saved = goalCategoryRepository.save(goalCategory);
+        // (3) DTO <-> Entity
+        Goal goal = goalAssembler.toEntity(request, distinct);
 
-
-        // (2) DTO <-> Entity
-        Goal goal = goalAssembler.toEntity(request, saved);
-
-        // (3) Goal 저장
+        // (4) Goal 저장
         Goal savedGoal = goalRepository.save(goal);
 
         return ApplicationResponse.create(GoalResponse.toDto(savedGoal));

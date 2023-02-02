@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.goal.entity;
 
 import static javax.persistence.CascadeType.ALL;
 
+import com.example.pomeserver.domain.goal.dto.request.GoalTerminateRequest;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.entity.DateBaseEntity;
@@ -40,11 +41,17 @@ public class Goal extends DateBaseEntity {
     @OneToMany(mappedBy="goal", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
-    private String startDate;
-    private String endDate;
-    private String oneLineMind;
-    private int price;
-    private boolean isPublic;
+    private String startDate; // 시작일자
+    private String endDate; // 목표일자
+    private String oneLineMind; // 한줄 다짐
+    private int price; // 목표 금액
+    private boolean isPublic; // 공개여부
+
+    private boolean isEnd; // 종료여부
+
+    private int usePrice; // 사용 금액
+
+    private String oneLineComment; // 한줄 코멘트
 
     public void addRecord(Record record) {
         this.records.add(record);
@@ -69,6 +76,8 @@ public class Goal extends DateBaseEntity {
         this.oneLineMind = oneLineMind;
         this.price = price;
         this.isPublic = isPublic;
+        this.isEnd = false; // 최초 생성 시, 종료가 아닌 상태
+        this.usePrice = 0; // 최초 생성 시, 사용금액 0원
     }
 
     public static Goal toUpdateEntity(
@@ -102,10 +111,27 @@ public class Goal extends DateBaseEntity {
         this.price = editGoal.getPrice();
         this.isPublic = editGoal.isPublic();
         if(!Objects.equals(this.getGoalCategory().getId(), editGoal.getGoalCategory().getId())) editGoalCategory(editGoal.getGoalCategory());
+        this.isEnd = editGoal.isEnd;
+        this.oneLineComment = editGoal.oneLineComment;
     }
 
     private void editGoalCategory(GoalCategory goalCategory){
         this.goalCategory.removeGoal(this);
         this.addGoalCategory(goalCategory);
+    }
+
+    /**
+     * 기록 생성 시, 사용 금액 누적 함수
+     * */
+    public void editUsePrice(int usePrice) {
+        this.usePrice += usePrice;
+    }
+
+    /**
+    * 목표 종료 시, 데이터 변경하는 함수
+    * */
+    public void terminate(GoalTerminateRequest request) {
+        this.isEnd = true;
+        this.oneLineComment = request.getOneLineComment();
     }
 }

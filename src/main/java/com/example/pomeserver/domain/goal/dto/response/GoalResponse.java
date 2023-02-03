@@ -1,6 +1,7 @@
 package com.example.pomeserver.domain.goal.dto.response;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
+import com.example.pomeserver.domain.record.entity.Record;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,6 +33,10 @@ public class GoalResponse {
         response.isPublic = goal.isPublic();
         response.isEnd = goal.isEnd();
         response.oneLineComment = goal.getOneLineComment();
+        // Goal이 갖는 Record의 usePrice의 합으로 갱신
+        for (Record record : goal.getRecords()) {
+            goal.addUsePrice(record.getUsePrice());
+        }
         response.usePrice = goal.getUsePrice();
         response.nickname = goal.getGoalCategory().getUser().getNickname();
         return response;

@@ -126,4 +126,8 @@ public class Goal extends DateBaseEntity {
         this.isEnd = true;
         this.oneLineComment = request.getOneLineComment();
     }
+
+    public void addUsePrice(int usePrice) {
+        this.usePrice += usePrice;
+    }
 }

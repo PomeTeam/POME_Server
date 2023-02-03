@@ -160,7 +160,7 @@ public class RecordController {
     @Auth
     @PutMapping("/{recordId}")
     public ApplicationResponse<RecordResponse> update(
-            RecordUpdateRequest request,
+            @RequestBody RecordUpdateRequest request,
             @PathVariable Long recordId,
             @ApiIgnore @UserId String userId)
     {

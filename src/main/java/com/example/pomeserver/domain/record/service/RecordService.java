@@ -21,5 +21,5 @@ public interface RecordService{
     ApplicationResponse<RecordResponse> writeEmotionToFriend(RecordToFriendEmotionRequest request, Long recordId, String senderId);
     ApplicationResponse<List<RecordResponse>> findAllByUser(String userId, Pageable pageable);
     ApplicationResponse<List<RecordResponse>> findAllByFriends(String userId, Pageable pageable);
-    ApplicationResponse<List<RecordResponse>> findAllOneWeek(String userId, int offset, int size);
+    ApplicationResponse<List<RecordResponse>> findAllOneWeek(String userId, Pageable pageable);
 }

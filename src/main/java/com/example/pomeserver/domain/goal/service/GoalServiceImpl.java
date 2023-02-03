@@ -10,7 +10,6 @@ import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import com.example.pomeserver.domain.goal.exception.excute.GoalAlreadyEndException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCanNotEndException;
-import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryDuplicationException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryListSizeException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;

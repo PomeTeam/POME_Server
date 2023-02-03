@@ -3,7 +3,6 @@ package com.example.pomeserver.domain.record.dto.assembler;
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
-import com.example.pomeserver.domain.record.entity.Emotion;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.User;
 import org.springframework.stereotype.Component;

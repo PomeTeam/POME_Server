@@ -3,7 +3,6 @@ package com.example.pomeserver.domain.record.dto.response.emotion;
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.record.entity.vo.EmotionType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

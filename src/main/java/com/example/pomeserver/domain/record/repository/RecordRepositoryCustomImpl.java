@@ -1,8 +1,8 @@
 package com.example.pomeserver.domain.record.repository;
 
-import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.entity.Record;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -32,15 +32,29 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
             Pageable pageable)
     {
         String query = "select r from Record r join fetch r.user u where u.userId in (:friendIds) order by r.useDate desc";
+
+        System.out.println("pageable = " + pageable.getOffset());
         return em.createQuery(query, Record.class)
                 .setParameter("friendIds", friendIds)
-                .setFirstResult((int) 0) //0번째 부터
-                .setMaxResults(3)// 10개
+                .setFirstResult((int) (pageable.getOffset()))
+                .setMaxResults(pageable.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public List<RecordResponse> findAllOneWeek(String userId, int offset, int size) {
-        return null;
+    public List<Record> findAllOneWeek(String userId, String beforeDate, Pageable pageable) {
+
+        String query = "select r from Record r" +
+                " join fetch r.user u" +
+                " where u.userId=:userId and" +
+                " r.useDate <= :beforeDate" +
+                " order by r.useDate desc";
+        System.out.println("userId = " + userId);
+        return em.createQuery(query, Record.class)
+                .setParameter("userId", userId)
+                .setParameter("beforeDate", beforeDate)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
     }
 }

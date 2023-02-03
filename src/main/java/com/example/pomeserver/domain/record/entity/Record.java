@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static javax.persistence.CascadeType.ALL;
 
@@ -39,7 +38,6 @@ public class Record extends DateBaseEntity {
 
     @OneToMany(mappedBy="record", cascade=ALL)
     private List<EmotionRecord> emotionRecords = new ArrayList<>();
-
     private int usePrice;
     private String useDate;
     private String useComment;

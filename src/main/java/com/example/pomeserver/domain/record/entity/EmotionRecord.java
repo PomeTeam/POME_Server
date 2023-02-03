@@ -1,6 +1,5 @@
 package com.example.pomeserver.domain.record.entity;
 
-import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import com.example.pomeserver.domain.record.entity.vo.EmotionType;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.entity.DateBaseEntity;
@@ -10,10 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

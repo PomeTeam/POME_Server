@@ -147,9 +147,10 @@ public class RecordController {
     @Auth
     @GetMapping("/one-week")
     public ApplicationResponse<List<RecordResponse>> findAllOneWeek(
-            @ApiIgnore @UserId String userId)
+            @ApiIgnore @UserId String userId,
+            Pageable pageable)
     {
-        return recordService.findAllOneWeek(userId);
+        return recordService.findAllOneWeek(userId, pageable);
     }
     /**
      * 기록 수정 기능

@@ -137,6 +137,11 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
+    public ApplicationResponse<List<RecordResponse>> findAllOneWeek(String userId, int offset, int size) {
+        return ApplicationResponse.ok(recordRepository.findAllOneWeek(userId, offset, size));
+    }
+
+    @Override
     public ApplicationResponse<RecordResponse> findById(Long recordId, String userId)
     {
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);

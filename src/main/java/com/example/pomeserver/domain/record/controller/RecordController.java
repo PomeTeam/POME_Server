@@ -97,7 +97,7 @@ public class RecordController {
                     " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @Auth
     @GetMapping("/friends")
-    public ApplicationResponse<List<RecordResponse>> findByFriends(
+    public ApplicationResponse<List<RecordResponse>> findAllByFriends(
             @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
@@ -113,7 +113,7 @@ public class RecordController {
             "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
             " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @GetMapping("/users/{userId}")
-    public ApplicationResponse<List<RecordResponse>> findByUser(
+    public ApplicationResponse<List<RecordResponse>> findAllByUser(
             @PathVariable String userId,
             Pageable pageable)
     {
@@ -138,7 +138,19 @@ public class RecordController {
         return recordService.findAllByUserAndGoal(goalId, userId, pageable);
     }
 
-
+    /**
+     * 기록일로부터 1주일이 지난 기록들 조회 기능
+     * @Author 이찬영
+     */
+    @Operation(summary = "일주일이 지난 나의 기록들 조회",
+            description = "첫번째 소비 기록일(==기록 생성일)로 부터 1주가 지난 기록들(즉 2차 감정을 남겨여하는 기록들) 조회")
+    @Auth
+    @GetMapping("/one-week")
+    public ApplicationResponse<List<RecordResponse>> findAllOneWeek(
+            @ApiIgnore @UserId String userId)
+    {
+        return recordService.findAllOneWeek(userId);
+    }
     /**
      * 기록 수정 기능
      * @Author 이찬영

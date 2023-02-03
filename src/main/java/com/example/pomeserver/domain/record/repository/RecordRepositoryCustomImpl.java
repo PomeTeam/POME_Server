@@ -1,5 +1,6 @@
 package com.example.pomeserver.domain.record.repository;
 
+import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.entity.Record;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +34,13 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         String query = "select r from Record r join fetch r.user u where u.userId in (:friendIds) order by r.useDate desc";
         return em.createQuery(query, Record.class)
                 .setParameter("friendIds", friendIds)
-                .setFirstResult((int) 0)
-                .setMaxResults(3)
+                .setFirstResult((int) 0) //0번째 부터
+                .setMaxResults(3)// 10개
                 .getResultList();
+    }
+
+    @Override
+    public List<RecordResponse> findAllOneWeek(String userId, int offset, int size) {
+        return null;
     }
 }

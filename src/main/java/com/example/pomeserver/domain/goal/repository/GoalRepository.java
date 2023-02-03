@@ -15,4 +15,6 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     Page<Goal> findAllByGoalCategory(GoalCategory goalCategory, Pageable pageable);
 
     Page<Goal> findAllByUser(User user, Pageable pageable);
+
+    Page<Goal> findAllByUserAndIsEnd(User user, boolean isEnd, Pageable pageable);
 }

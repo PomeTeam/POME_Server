@@ -14,6 +14,8 @@ public enum GoalExceptionList {
     GOAL_CATEGORY_DUPLICATION("G0004", HttpStatus.BAD_REQUEST, "해당 이름을 가진 Goal Category가 이미 존재합니다."),
 
     GOAL_CATEGORY_LIST_SIZE_OUT_OF_INDEX("G0005", HttpStatus.CONFLICT, "목표 카테고리의 개수가 10개를 초과합니다."),
+    GOAL_ALREADY_END("G0006", HttpStatus.BAD_REQUEST, "이미 종료된 목표입니다."),
+    GOAL_CAN_NOT_END("G0007", HttpStatus.BAD_REQUEST, "2번째 감정이 없는 기록이 포함된 목표입니다."),
     ;
 
     public final String CODE;

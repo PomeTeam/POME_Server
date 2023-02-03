@@ -33,7 +33,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -134,6 +136,18 @@ public class RecordServiceImpl implements RecordService{
         ArrayList<RecordResponse> result = new ArrayList<>();
         recordRepository.findAllByFriends(friendIds, pageable).forEach(r -> result.add(RecordResponse.toDto(r, userId)));
         return ApplicationResponse.ok(result);
+    }
+
+    @Override
+    public ApplicationResponse<List<RecordResponse>> findAllOneWeek(String userId, Pageable pageable) {
+        Calendar week = Calendar.getInstance();
+        week.add(Calendar.DATE , -7);
+        String beforeWeek = new java.text.SimpleDateFormat("yyyy.MM.dd").format(week.getTime());
+        return ApplicationResponse.ok
+                (recordRepository.findAllOneWeek(userId, beforeWeek, pageable).stream()
+                        .map((r)->RecordResponse.toDto(r, userId)).
+                        collect(Collectors.toList())
+                );
     }
 
     @Override

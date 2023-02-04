@@ -35,9 +35,8 @@ public class GoalResponse {
         response.oneLineComment = goal.getOneLineComment();
         // Goal이 갖는 Record의 usePrice의 합으로 갱신
         for (Record record : goal.getRecords()) {
-            goal.addUsePrice(record.getUsePrice());
+            response.usePrice += record.getUsePrice();
         }
-        response.usePrice = goal.getUsePrice();
         response.nickname = goal.getGoalCategory().getUser().getNickname();
         return response;
     }

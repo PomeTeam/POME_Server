@@ -8,4 +8,5 @@ import java.util.List;
 public interface RecordRepositoryCustom {
     List<Record> findAllByUserCustom(String userId, Pageable pageable);
     List<Record> findAllByFriends(ArrayList<String> friendIds, Pageable pageable);
+    List<Record> findAllOneWeek(String userId, String beforeWeek, Pageable pageable);
 }

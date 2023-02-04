@@ -80,6 +80,7 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, emotion, EmotionType.MY_SECOND);
+        record.hasSecond();
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(RecordResponse.toDto(record, userId));
     }

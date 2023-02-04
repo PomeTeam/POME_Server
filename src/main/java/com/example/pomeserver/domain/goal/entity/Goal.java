@@ -49,8 +49,6 @@ public class Goal extends DateBaseEntity {
 
     private boolean isEnd; // 종료여부
 
-    private int usePrice; // 사용 금액
-
     private String oneLineComment; // 한줄 코멘트
 
     public void addRecord(Record record) {
@@ -127,7 +125,4 @@ public class Goal extends DateBaseEntity {
         this.oneLineComment = request.getOneLineComment();
     }
 
-    public void addUsePrice(int usePrice) {
-        this.usePrice += usePrice;
-    }
 }

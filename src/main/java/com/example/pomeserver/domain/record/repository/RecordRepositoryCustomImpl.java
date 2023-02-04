@@ -47,7 +47,8 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         String query = "select r from Record r" +
                 " join fetch r.user u" +
                 " where u.userId=:userId and" +
-                " r.useDate <= :beforeDate" +
+                " r.useDate <= :beforeDate and" +
+                " r.hasSecond = false" +
                 " order by r.useDate desc";
         System.out.println("userId = " + userId);
         return em.createQuery(query, Record.class)

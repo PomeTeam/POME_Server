@@ -29,10 +29,6 @@ public class Record extends DateBaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emotion_id")
-    private Emotion emotion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id")
     private Goal goal;
 
@@ -41,7 +37,7 @@ public class Record extends DateBaseEntity {
     private int usePrice;
     private String useDate;
     private String useComment;
-
+    private boolean hasSecond;
 
     @Builder
     public Record(Goal goal,
@@ -52,6 +48,7 @@ public class Record extends DateBaseEntity {
         this.usePrice = usePrice;
         this.useDate = useDate;
         this.useComment = useComment;
+        this.hasSecond = false;
         this.addGoal(goal);
         this.addUser(user);
     }
@@ -65,6 +62,10 @@ public class Record extends DateBaseEntity {
         record.useDate = useDate;
         record.useComment = useComment;
         return record;
+    }
+
+    public void hasSecond(){
+        this.hasSecond = true;
     }
 
     private void addUser(User user){

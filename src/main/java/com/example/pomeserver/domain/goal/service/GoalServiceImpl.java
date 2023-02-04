@@ -110,9 +110,9 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (3) 유저가 보유한 Goal Category 인지 확인
-      if (!goalCategory.getUser().getUserId().equals(userId)) {
-          throw new ThisGoalIsNotByThisUserException();
-      }
+    if (!goalCategory.getUser().getUserId().equals(userId)) {
+      throw new ThisGoalIsNotByThisUserException();
+    }
 
     // (4) Goal 수정
     goal.edit(goalAssembler.toEntity(request, goalCategory));
@@ -132,12 +132,17 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (2) 유저의 삭제 권한 확인
-      if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
-          throw new ThisGoalIsNotByThisUserException();
-      }
+    if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
+      throw new ThisGoalIsNotByThisUserException();
+    }
+
+    Long goalCategoryId = goal.getGoalCategory().getId();
 
     // (3) Goal 삭제
     goalRepository.deleteById(goalId);
+
+    // (4) Goal Category 삭제
+    goalCategoryRepository.deleteById(goalCategoryId);
 
     return ApplicationResponse.ok();
   }
@@ -161,9 +166,9 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (2) User 권한 조회
-      if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
-          throw new ThisGoalIsNotByThisUserException();
-      }
+    if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
+      throw new ThisGoalIsNotByThisUserException();
+    }
 
     // (3) 종료 상태여부 확인
     if (goal.isEnd()) {

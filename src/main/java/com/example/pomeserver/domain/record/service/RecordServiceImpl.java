@@ -140,16 +140,27 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllOneWeek(String userId, Pageable pageable) {
+    public ApplicationResponse<List<RecordResponse>> findAllOneWeekByUserAndGoal(String userId, Long goalId, Pageable pageable){
         Calendar week = Calendar.getInstance();
         week.add(Calendar.DATE , -7);
         String beforeWeek = new java.text.SimpleDateFormat("yyyy.MM.dd").format(week.getTime());
-        return ApplicationResponse.ok
-                (recordRepository.findAllOneWeek(userId, beforeWeek, pageable).stream()
-                        .map((r)->RecordResponse.toDto(r, userId)).
-                        collect(Collectors.toList())
+        return ApplicationResponse.ok(
+                recordRepository.findAllOneWeekByUserAndGoal(userId, goalId, beforeWeek, pageable).stream()
+                        .map((r)->RecordResponse.toDto(r, userId))
+                        .collect(Collectors.toList())
                 );
     }
+
+    @Override
+    public ApplicationResponse<List<RecordResponse>> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable) {
+        return ApplicationResponse.ok(
+                recordRepository.findAllEmotionAllByGoalAndUser(userId, goalId, pageable).stream()
+                        .map((r)->RecordResponse.toDto(r, userId))
+                        .collect(Collectors.toList())
+        );
+    }
+
+
 
     @Override
     public ApplicationResponse<RecordResponse> findById(Long recordId, String userId)
@@ -159,7 +170,7 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public ApplicationResponse<Page<RecordResponse>> findAllByUserAndGoal(
+    public ApplicationResponse<Page<RecordResponse>> findAllRetrospectionByUserAndGoal(
             Long goalId,
             String userId,
             Pageable pageable)
@@ -169,6 +180,16 @@ public class RecordServiceImpl implements RecordService{
         return ApplicationResponse.ok(
                 recordRepository.findAllByUserAndGoal(user, goal, pageable)
                         .map((record)->RecordResponse.toDto(record, userId)));
+    }
+
+    @Override
+    public ApplicationResponse<List<RecordResponse>> findAllRecordTabByUserAndGoal(Long goalId, String userId, Pageable pageable) {
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
+        return ApplicationResponse.ok(
+                recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), pageable).stream()
+                        .map((record)->RecordResponse.toDto(record, userId))
+                        .collect(Collectors.toList()));
     }
 
     @Transactional

@@ -22,6 +22,7 @@ import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +50,9 @@ public class GoalServiceImpl implements GoalService {
     // (1) 카테고리 리스트의 개수 초과 여부 확인
     User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
 
-    if (user.getGoalCategories().size() == 10) {
+    // 활성화된 목표 + 유저가 종료 처리하지 않은 기한이 지난 목표 = 10개 제한
+    // isEnd -> 유저가 종료처리한 목표
+    if (user.getGoals().stream().filter(goal -> !goal.isEnd()).count() == 10) {
       throw new GoalCategoryListSizeException();
     }
 

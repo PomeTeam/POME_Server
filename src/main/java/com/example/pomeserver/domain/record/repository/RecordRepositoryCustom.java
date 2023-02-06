@@ -11,5 +11,5 @@ public interface RecordRepositoryCustom {
     List<Record> findAllByFriends(ArrayList<String> friendIds, Pageable pageable);
     List<Record> findAllOneWeekByUserAndGoal(String userId, Long goalId, String beforeWeek, Pageable pageable);
     List<Record> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable);
-    List<Record> findAllSecondEmotionIsFalseByGoalAndUser(String userId, Long goalId, Pageable pageable);
+    List<Record> findAllSecondEmotionIsFalseByGoalAndUser(String userId, Long goalId, String beforeDate, Pageable pageable);
 }

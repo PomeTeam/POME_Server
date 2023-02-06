@@ -140,7 +140,7 @@ public class RecordController {
 
     /* 기록탭: 기록탭은 첫번째 감정만 남긴(두번째 감정은 남기지 않은)기록들만 조회된다. */
     @Operation(summary = "[기록탭] 기록 페이징 조회",
-            description = "기록탭 기록 조회. 조회 조건: User, Goal, 두번째 감정이 존재하지 않음" +
+            description = "기록탭 기록 조회. 조회 조건: User, Goal, 두번째 감정이 존재하지 않음, 일주일이 지나지 않음이다." +
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다.")
     @Auth
     @GetMapping("/goal/{goalId}/record-tab")

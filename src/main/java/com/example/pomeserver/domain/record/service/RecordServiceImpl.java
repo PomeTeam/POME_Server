@@ -186,8 +186,11 @@ public class RecordServiceImpl implements RecordService{
     public ApplicationResponse<List<RecordResponse>> findAllRecordTabByUserAndGoal(Long goalId, String userId, Pageable pageable) {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
+        Calendar week = Calendar.getInstance();
+        week.add(Calendar.DATE , -7);
+        String beforeWeek = new java.text.SimpleDateFormat("yyyy.MM.dd").format(week.getTime());
         return ApplicationResponse.ok(
-                recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), pageable).stream()
+                recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), beforeWeek, pageable).stream()
                         .map((record)->RecordResponse.toDto(record, userId))
                         .collect(Collectors.toList()));
     }

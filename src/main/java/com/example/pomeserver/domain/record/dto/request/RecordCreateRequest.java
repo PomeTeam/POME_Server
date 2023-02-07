@@ -32,7 +32,7 @@ public class RecordCreateRequest {
     private String useDate;   // "2023.01.13"
 
     @ApiModelProperty(value = "기록 코멘트", example = "이런저런 소비를 하였다. ^.^", required = true, dataType = "string")
-    @Size(max = 21, message = "코멘트는 20자 이하만 가능합니다.")
+    @Size(max = 151, message = "코멘트는 150자 이하만 가능합니다.")
     private String useComment;
 }
 

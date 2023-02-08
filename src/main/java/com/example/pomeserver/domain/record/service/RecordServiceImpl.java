@@ -4,6 +4,7 @@ import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.record.dto.assembler.EmotionRecordAssembler;
+import com.example.pomeserver.domain.record.dto.paramResolver.param.RecordFilteringParam;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
 import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
@@ -113,17 +114,16 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllByUser(
+    public ApplicationResponse<Page<RecordResponse>> findAllByUser(
             String userId,
             Pageable pageable)
     {
-        ArrayList<RecordResponse> result = new ArrayList<>();
-        recordRepository.findAllByUserCustom(userId, pageable).forEach(record ->result.add(RecordResponse.toDto(record, userId)));
-        return ApplicationResponse.ok(result);
+        return ApplicationResponse.ok(recordRepository.findAllByUserCustom(userId, pageable)
+                .map((record)->RecordResponse.toDto(record, userId)));
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllByFriends(
+    public ApplicationResponse<Page<RecordResponse>> findAllByFriends(
             String userId,
             Pageable pageable
     )
@@ -133,31 +133,25 @@ public class RecordServiceImpl implements RecordService{
 
         ArrayList<String> friendIds = new ArrayList<>();
         friends.forEach((f)->friendIds.add(f.getToUser().getUserId()));
-
-        ArrayList<RecordResponse> result = new ArrayList<>();
-        recordRepository.findAllByFriends(friendIds, pageable).forEach(r -> result.add(RecordResponse.toDto(r, userId)));
-        return ApplicationResponse.ok(result);
+        return ApplicationResponse.ok(recordRepository.findAllByFriends(friendIds, pageable)
+                .map((record)->RecordResponse.toDto(record, userId)));
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllOneWeekByUserAndGoal(String userId, Long goalId, Pageable pageable){
+    public ApplicationResponse<Page<RecordResponse>> findAllOneWeekByUserAndGoal(String userId, Long goalId, Pageable pageable){
         Calendar week = Calendar.getInstance();
         week.add(Calendar.DATE , -7);
         String beforeWeek = new java.text.SimpleDateFormat("yyyy.MM.dd").format(week.getTime());
         return ApplicationResponse.ok(
-                recordRepository.findAllOneWeekByUserAndGoal(userId, goalId, beforeWeek, pageable).stream()
-                        .map((r)->RecordResponse.toDto(r, userId))
-                        .collect(Collectors.toList())
-                );
+                recordRepository.findAllOneWeekByUserAndGoal(userId, goalId, beforeWeek, pageable)
+                        .map((record)->RecordResponse.toDto(record, userId)));
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable) {
+    public ApplicationResponse<Page<RecordResponse>> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable) {
         return ApplicationResponse.ok(
-                recordRepository.findAllEmotionAllByGoalAndUser(userId, goalId, pageable).stream()
-                        .map((r)->RecordResponse.toDto(r, userId))
-                        .collect(Collectors.toList())
-        );
+                recordRepository.findAllEmotionAllByGoalAndUser(userId, goalId, pageable)
+                        .map((record)->RecordResponse.toDto(record, userId)));
     }
 
 
@@ -173,26 +167,27 @@ public class RecordServiceImpl implements RecordService{
     public ApplicationResponse<Page<RecordResponse>> findAllRetrospectionByUserAndGoal(
             Long goalId,
             String userId,
+            RecordFilteringParam emotionParam,
             Pageable pageable)
     {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
-        return ApplicationResponse.ok(
-                recordRepository.findAllByUserAndGoal(user, goal, pageable)
-                        .map((record)->RecordResponse.toDto(record, userId)));
+
+        return ApplicationResponse.ok(recordRepository
+                .findAllByUserAndGoalAndEmotionFiltering(user.getUserId(), goal.getId(), emotionParam, pageable)
+                .map((record)->RecordResponse.toDto(record, userId)));
     }
 
     @Override
-    public ApplicationResponse<List<RecordResponse>> findAllRecordTabByUserAndGoal(Long goalId, String userId, Pageable pageable) {
+    public ApplicationResponse<Page<RecordResponse>> findAllRecordTabByUserAndGoal(Long goalId, String userId, Pageable pageable) {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
         Calendar week = Calendar.getInstance();
         week.add(Calendar.DATE , -7);
         String beforeWeek = new java.text.SimpleDateFormat("yyyy.MM.dd").format(week.getTime());
         return ApplicationResponse.ok(
-                recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), beforeWeek, pageable).stream()
-                        .map((record)->RecordResponse.toDto(record, userId))
-                        .collect(Collectors.toList()));
+                recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), beforeWeek, pageable)
+                        .map((record)->RecordResponse.toDto(record, userId)));
     }
 
     @Transactional

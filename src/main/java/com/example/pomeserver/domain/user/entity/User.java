@@ -6,6 +6,7 @@ import javax.persistence.*;
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
 import com.example.pomeserver.domain.record.entity.Record;
+import com.example.pomeserver.domain.user.entity.vo.UserType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class User {
     private String phoneNum;
     private String image;
 
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
+
     @OneToMany(mappedBy="user", cascade=ALL)
     private List<Goal> goals = new ArrayList<>();
 
@@ -56,7 +60,10 @@ public class User {
         this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.image = image;
+        setUserType(UserType.ACCESS);
     }
+
+    public void setUserType(UserType userType){this.userType = userType;}
 
     public void addGoal(Goal goal) {
         this.goals.add(goal);

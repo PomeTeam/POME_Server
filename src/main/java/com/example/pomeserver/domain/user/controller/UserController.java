@@ -110,7 +110,7 @@ public class UserController {
     @DeleteMapping("/friend/{friendId}")
     public ApplicationResponse<Boolean> deleteFriend(
             @PathVariable("friendId") String friendNickName,
-            @UserId String userId
+            @ApiIgnore @UserId String userId
             ){
         return ApplicationResponse.ok(userService.deleteFriend(friendNickName,userId));
     }
@@ -123,5 +123,23 @@ public class UserController {
     @PostMapping("")
     public ApplicationResponse<Boolean> checkUser(@RequestBody @Valid UserSignInRequest userSignInRequest){
         return ApplicationResponse.ok(userService.checkUser(userSignInRequest));
+    }
+
+    @Operation(summary = "회원탈퇴", description = "탈퇴 완료 : true \n 탈퇴 실패 : false")
+    @Auth
+    @DeleteMapping("")
+    public ApplicationResponse<Boolean> deleteUser(
+            @ApiIgnore @UserId String userId
+    ){
+        return ApplicationResponse.ok(userService.deleteUser(userId));
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃 성공 : true \n 로그아웃 실패 : false")
+    @Auth
+    @PostMapping("/logout")
+    public ApplicationResponse<Boolean> logout(
+            @ApiIgnore @UserId String userId
+    ){
+        return ApplicationResponse.ok(userService.logout(userId));
     }
 }

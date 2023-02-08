@@ -7,6 +7,7 @@ import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
+import com.example.pomeserver.domain.user.entity.vo.UserType;
 import com.example.pomeserver.domain.user.exception.excute.*;
 import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
@@ -55,13 +56,13 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserResponse signIn(UserSignInRequest userSignInRequest) {
         User user = userRepository.findByPhoneNum(userSignInRequest.getPhoneNum()).orElseThrow(UserNotFoundException::new);
+        if (!user.getUserType().equals(UserType.ACCESS)) throw new UserNotAllowedException();
         return UserResponse.toDto(user, getSaveToken(user));
     }
 
     @Override
     public Boolean checkNickname(UserNicknameRequest userNicknameRequest) {
-        if(userRepository.findByNickname(userNicknameRequest.getNickName()).isPresent()) throw new UserAlreadyNickName();
-//        userRepository.findByNickname(userNicknameRequest.getNickName()).orElseThrow(UserAlreadyNickName::new);
+        userRepository.findByNickname(userNicknameRequest.getNickName()).orElseThrow(UserAlreadyNickName::new);
         return true;
     }
 
@@ -122,6 +123,22 @@ public class UserServiceImpl implements UserService{
     @Override
     public Boolean checkUser(UserSignInRequest userSignInRequest) {
         return userRepository.findByPhoneNum(userSignInRequest.getPhoneNum()).isPresent();
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteUser(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        user.setUserType(UserType.DELETE);
+        redisTemplateService.deleteUserRefreshToken(userId);
+        return true;
+    }
+
+    @Override
+    public Boolean logout(String userId) {
+        userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        redisTemplateService.deleteUserRefreshToken(userId);
+        return true;
     }
 
     private String getSaveToken(User user) {

@@ -134,6 +134,13 @@ public class UserServiceImpl implements UserService{
         return true;
     }
 
+    @Override
+    public Boolean logout(String userId) {
+        userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        redisTemplateService.deleteUserRefreshToken(userId);
+        return true;
+    }
+
     private String getSaveToken(User user) {
         String accessToken = tokenUtils.createAccessToken(user.getUserId(), user.getNickname()); // 클라
         String refreshToken = tokenUtils.createRefreshToken(user.getUserId(), user.getNickname()); // 레디스

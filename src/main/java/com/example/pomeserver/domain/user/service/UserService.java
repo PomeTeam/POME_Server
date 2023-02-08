@@ -27,4 +27,6 @@ public interface UserService {
     Boolean checkUser(UserSignInRequest userSignInRequest);
 
     Boolean deleteUser(String userId);
+
+    Boolean logout(String userId);
 }

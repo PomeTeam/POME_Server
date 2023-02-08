@@ -133,4 +133,13 @@ public class UserController {
     ){
         return ApplicationResponse.ok(userService.deleteUser(userId));
     }
+
+    @Operation(summary = "로그아웃", description = "로그아웃 성공 : true \n 로그아웃 실패 : false")
+    @Auth
+    @PostMapping("/logout")
+    public ApplicationResponse<Boolean> logout(
+            @ApiIgnore @UserId String userId
+    ){
+        return ApplicationResponse.ok(userService.logout(userId));
+    }
 }

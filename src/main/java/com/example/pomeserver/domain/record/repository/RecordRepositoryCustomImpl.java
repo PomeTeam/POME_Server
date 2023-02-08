@@ -219,9 +219,14 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
 
-        String countQuery = "select count(r) from Record r where r.id in (:recordIds)";
+        String countQuery = "select count(r) from Record r " +
+                "join r.user u " +
+                "join r.goal g " +
+                "where u.userId=:userId " +
+                "and g.id=:goalId";
         Object singleResult = em.createQuery(countQuery)
-                .setParameter("recordIds", resultList.stream().map(Record::getId).collect(Collectors.toList()))
+                .setParameter("userId", userId)
+                .setParameter("goalId", goalId)
                 .getSingleResult();
 
         return PageableExecutionUtils.getPage(resultList, pageable, new MyLongSupplier(singleResult));

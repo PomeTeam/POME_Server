@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RecordRepository extends JpaRepository<Record, Long> , RecordRepositoryCustom {
-    Page<Record> findAllByUserAndGoal(User user, Goal goal, Pageable pageable);
+
 
 
 }

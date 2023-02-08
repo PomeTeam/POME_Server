@@ -1,5 +1,6 @@
 package com.example.pomeserver.domain.record.controller;
 
+import com.example.pomeserver.domain.record.dto.paramResolver.param.RecordFilteringParam;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
@@ -97,7 +98,7 @@ public class RecordController {
                     " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @Auth
     @GetMapping("/friends")
-    public ApplicationResponse<List<RecordResponse>> findAllByFriends(
+    public ApplicationResponse<Page<RecordResponse>> findAllByFriends(
             @ApiIgnore @UserId String userId,
             Pageable pageable)
     {
@@ -113,7 +114,7 @@ public class RecordController {
             "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다. ex) /api/v1/records/goal/1?page=0&size=10" +
             " --> 맨 첫 페이지(0페이지)부터 10개 가져오기")
     @GetMapping("/users/{userId}")
-    public ApplicationResponse<List<RecordResponse>> findAllByUser(
+    public ApplicationResponse<Page<RecordResponse>> findAllByUser(
             @PathVariable String userId,
             Pageable pageable)
     {
@@ -133,9 +134,10 @@ public class RecordController {
     public ApplicationResponse<Page<RecordResponse>> findAllRetrospectionByUserAndGoal(
             @PathVariable Long goalId,
             @ApiIgnore @UserId String userId,
+            RecordFilteringParam emotionParam,
             Pageable pageable)
     {
-        return recordService.findAllRetrospectionByUserAndGoal(goalId, userId, pageable);
+        return recordService.findAllRetrospectionByUserAndGoal(goalId, userId, emotionParam, pageable);
     }
 
     /* 기록탭: 기록탭은 첫번째 감정만 남긴(두번째 감정은 남기지 않은)기록들만 조회된다. */
@@ -144,7 +146,7 @@ public class RecordController {
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다.")
     @Auth
     @GetMapping("/goal/{goalId}/record-tab")
-    public ApplicationResponse<List<RecordResponse>> findAllRecordTabByUserAndGoal(
+    public ApplicationResponse<Page<RecordResponse>> findAllRecordTabByUserAndGoal(
             @PathVariable Long goalId,
             @ApiIgnore @UserId String userId,
             Pageable pageable)
@@ -161,7 +163,7 @@ public class RecordController {
                     "조회 조건은 User, Goal, 2주가 지남, 두번째 감정 존재 여부가 false(2차 감정이 없음)이다.")
     @Auth
     @GetMapping("/one-week/goal/{goalId}")
-    public ApplicationResponse<List<RecordResponse>> findAllOneWeek(
+    public ApplicationResponse<Page<RecordResponse>> findAllOneWeek(
             @ApiIgnore @UserId String userId,
             @PathVariable Long goalId,
             Pageable pageable)

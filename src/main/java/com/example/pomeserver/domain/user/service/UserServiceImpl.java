@@ -130,6 +130,7 @@ public class UserServiceImpl implements UserService{
     public Boolean deleteUser(String userId) {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         user.setUserType(UserType.DELETE);
+        redisTemplateService.deleteUserRefreshToken(userId);
         return true;
     }
 

@@ -7,7 +7,6 @@ import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface UserService {
@@ -26,7 +25,7 @@ public interface UserService {
 
     Boolean checkUser(UserSignInRequest userSignInRequest);
 
-    Boolean deleteUser(String userId);
+    Boolean deleteUser(String userId, String reason);
 
     Boolean logout(String userId);
 }

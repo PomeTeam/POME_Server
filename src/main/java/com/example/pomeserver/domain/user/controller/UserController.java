@@ -127,11 +127,12 @@ public class UserController {
 
     @Operation(summary = "회원탈퇴", description = "탈퇴 완료 : true \n 탈퇴 실패 : false")
     @Auth
-    @DeleteMapping("")
+    @DeleteMapping("/{reason}")
     public ApplicationResponse<Boolean> deleteUser(
-            @ApiIgnore @UserId String userId
+            @ApiIgnore @UserId String userId,
+            @PathVariable("reason") String reason
     ){
-        return ApplicationResponse.ok(userService.deleteUser(userId));
+        return ApplicationResponse.ok(userService.deleteUser(userId,reason));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃 성공 : true \n 로그아웃 실패 : false")

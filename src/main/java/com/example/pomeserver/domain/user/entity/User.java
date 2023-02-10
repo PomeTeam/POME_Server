@@ -54,6 +54,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<EmotionRecord> emotionRecords = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = ALL)
+    private UserWithdrawal userWithdrawal;
+
     @Builder
     public User(String userId, String nickname, String phoneNum, String image) {
         this.userId = userId;

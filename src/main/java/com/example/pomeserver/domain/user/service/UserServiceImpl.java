@@ -7,10 +7,12 @@ import com.example.pomeserver.domain.user.dto.response.FriendSearchResponse;
 import com.example.pomeserver.domain.user.dto.response.UserResponse;
 import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
+import com.example.pomeserver.domain.user.entity.UserWithdrawal;
 import com.example.pomeserver.domain.user.entity.vo.UserType;
 import com.example.pomeserver.domain.user.exception.excute.*;
 import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
+import com.example.pomeserver.domain.user.repository.UserWithdrawalRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService{
     private final EntityManager em;
     private final TokenUtils tokenUtils;
     private final RedisTemplateService redisTemplateService;
+    private final UserWithdrawalRepository userWithdrawalRepository;
 
     //TODO 확인
     @Transactional
@@ -127,10 +128,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public Boolean deleteUser(String userId) {
+    public Boolean deleteUser(String userId, String reason) {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        if (user.getUserType().equals(UserType.DELETE)) throw new UserAlreadyDeleteException();
         user.setUserType(UserType.DELETE);
         redisTemplateService.deleteUserRefreshToken(userId);
+        userWithdrawalRepository.save(UserWithdrawal.builder().user(user).reason(reason).build());
         return true;
     }
 

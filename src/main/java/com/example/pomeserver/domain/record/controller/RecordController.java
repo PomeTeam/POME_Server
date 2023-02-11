@@ -131,8 +131,8 @@ public class RecordController {
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다." +
                     "< 추가적으로 해당 API는 감정 필터링이 가능합니다. 만약 첫번째 감정이 0인 기록만을 조회하고 싶으신 경우에는" +
                     "회고탭api?first_emotion=0 과 같이 보내주시면 됩니다. 만약 감정으로 필터링을 원치 않으시는 경우에는 감정 쿼리스트링(first" +
-                    "_emotion 혹은 second_emotion)을 추가하지 않으시면 됩니다. 현재 두가지 감정 모두를 조건으로 하는 기능(회고탭api/first_emotion=" +
-                    "0&second_emotion=1)은 아직 구현 중에 있습니다.")
+                    "_emotion 혹은 second_emotion)을 추가하지 않으시면 됩니다. / 두개의 감정을 모두 필터링 조건으로 사용하실 경우에는 마찬가지로 " +
+                    "회고탭api?first_emotion=0&second_emotion 입니다.")
     @Auth
     @GetMapping("/goal/{goalId}/retrospection-tab")
     public ApplicationResponse<Page<RecordResponse>> findAllRetrospectionByUserAndGoal(

@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-import com.example.pomeserver.domain.goal.dto.assembler.GoalAssembler;
-import com.example.pomeserver.domain.goal.dto.assembler.GoalCategoryAssembler;
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.entity.Goal;

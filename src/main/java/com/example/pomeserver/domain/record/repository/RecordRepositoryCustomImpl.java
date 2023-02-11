@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 
@@ -234,10 +233,9 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
 
     /* FIRST */
     private List<Long> findAllByUserAndGoalAndFirstEmotion(String userId,
-                                                                Long goalId,
-                                                                Long emotionId)
+                                                           Long goalId,
+                                                           Long emotionId)
     {
-
         String query1 = "select r from Record r " +
                 "join fetch r.user u " +
                 "join fetch r.goal g " +
@@ -264,8 +262,8 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
     /* SECOND */
     private List<Long> findAllByUserAndGoalAndSecondEmotion(String userId,
                                                             Long goalId,
-                                                            Long emotionId){
-
+                                                            Long emotionId)
+    {
         String query = "select r from Record r " +
                 "join fetch r.user u " +
                 "join fetch r.goal g " +
@@ -287,39 +285,27 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         em.clear();
         return ids;
     }
+
     /* FIRST + SECOND */
     private List<Long> findAllByUserAndGoalAndAllEmotion(String userId,
-                                                              Long goalId,
-                                                              Long firstEmotionId,
-                                                              Long secondEmotionId){
-        String query = "select r from Record r " +
-                "join fetch r.user u " +
-                "join fetch r.goal g " +
-                "join fetch r.emotionRecords er " +
-                "join fetch er.emotion e " +
-                "where u.userId=:userId " +
-                "and g.id=:goalId " +
-                "and (er.emotionType = 'MY_FIRST' and e.id=:firstEmotionId) " +
-                "or (er.emotionType = 'MY_SECOND' and e.id=:secondEmotionId) " +
-                "order by r.useDate desc";
-
-        List<Record> records = em.createQuery(query, Record.class)
-                .setParameter("userId", userId)
-                .setParameter("goalId", goalId)
-                .setParameter("firstEmotionId", firstEmotionId)   //FIRST
-                .setParameter("secondEmotionId", secondEmotionId) //SECOND
-                .getResultList();
-
-        List<Long> ids = new ArrayList<>();
-        records.forEach((r)->ids.add(r.getId()));
-        em.clear();
-        return ids;
+                                                         Long goalId,
+                                                         Long firstEmotionId,
+                                                         Long secondEmotionId)
+    {
+        List<Long> firstList = findAllByUserAndGoalAndFirstEmotion(userId, goalId, firstEmotionId);
+        List<Long> secondList = findAllByUserAndGoalAndSecondEmotion(userId, goalId, secondEmotionId);
+        List<Long> common = new ArrayList<>();
+        for (Long f : firstList) for (Long s : secondList) if(f.equals(s)) common.add(f);
+        return common;
     }
 
-    private Page<Record> findAllByUserAndGoalAndIn(String userId, Long goalId, List<Long> recordIds, Pageable pageable){
-
+    private Page<Record> findAllByUserAndGoalAndIn(String userId,
+                                                   Long goalId,
+                                                   List<Long> recordIds,
+                                                   Pageable pageable)
+    {
         String query =
-                "select r from Record r " +
+                        "select r from Record r " +
                         "join fetch r.user u " +
                         "join fetch r.goal g " +
                         "where u.userId=:userId " +

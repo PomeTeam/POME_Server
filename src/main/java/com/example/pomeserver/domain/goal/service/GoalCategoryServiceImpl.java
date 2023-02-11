@@ -29,29 +29,6 @@ public class GoalCategoryServiceImpl implements GoalCategoryService {
 
     private final GoalCategoryAssembler goalCategoryAssembler;
 
-    @Transactional
-    @Override
-    public ApplicationResponse<GoalCategoryResponse> create(GoalCategoryCreateRequest request, String userId) {
-        // (1) 카테고리 리스트의 개수 초과 여부 확인
-        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
-
-        if (user.getGoalCategories().size() == 10) {
-            throw new GoalCategoryListSizeException();
-        }
-
-        // (2) 유저가 보유하고 있는 카테고리명 중복 확인
-        boolean distinct = user.getGoalCategories().stream()
-            .anyMatch(goalCategory -> goalCategory.getName().equals(request.getName()));
-        if (distinct) {
-            throw new GoalCategoryDuplicationException();
-        }
-
-        // (3) 카테고리 생성
-        GoalCategory goalCategory = goalCategoryAssembler.toEntity(request.getName(), user);
-        GoalCategory saved = goalCategoryRepository.save(goalCategory);
-
-        return ApplicationResponse.create("목표 카테고리를 생성했습니다.", GoalCategoryResponse.toDto(saved));
-    }
 
     @Override
     public ApplicationResponse<List<GoalCategoryResponse>> findAll(String userId) {

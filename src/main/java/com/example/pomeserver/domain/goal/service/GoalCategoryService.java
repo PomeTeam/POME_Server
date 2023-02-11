@@ -7,7 +7,7 @@ import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import java.util.List;
 
 public interface GoalCategoryService {
-    ApplicationResponse<GoalCategoryResponse> create(GoalCategoryCreateRequest request, String userId);
+
     ApplicationResponse<List<GoalCategoryResponse>> findAll(String userId);
     ApplicationResponse<Void> delete(Long goalCategoryId, String userId);
 }

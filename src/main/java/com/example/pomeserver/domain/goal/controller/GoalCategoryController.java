@@ -26,20 +26,6 @@ public class GoalCategoryController {
 
     private final GoalCategoryService goalCategoryService;
 
-    /**
-     * Goal Category 생성 ( 한 번에 1개만 생성 가능 )
-     * 단, 최대 개수는 10개이다.
-     *
-     * @author 이은비
-     */
-    @Auth
-    @PostMapping
-    public ApplicationResponse<GoalCategoryResponse> create(
-            @RequestBody @Valid GoalCategoryCreateRequest request,
-            @UserId String userId)
-    {
-        return goalCategoryService.create(request, userId);
-    }
 
     /**
      * 유저의 Goal Category 전체 조회.

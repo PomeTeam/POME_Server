@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.user.dto.request;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 public class UserNicknameRequest {
 
     @NotNull(message = "닉네임을 입력해주세요")

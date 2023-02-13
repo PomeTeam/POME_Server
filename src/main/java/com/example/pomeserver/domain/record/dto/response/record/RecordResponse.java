@@ -46,7 +46,7 @@ public class RecordResponse{
         response.useComment = record.getUseComment();
         response.oneLineMind = record.getGoal().getOneLineMind();
         response.createdAt = record.getCreatedAt().toString();
-        response.emotionResponse = EmotionResponse.toDto(record, viewerUserId);
+        response.emotionResponse = EmotionResponse.toDto(record.getEmotionRecords(), viewerUserId);
         return response;
     }
 }

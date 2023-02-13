@@ -27,8 +27,7 @@ public class EmotionResponse {
     @ApiModelProperty(value = "친구들의 감정 리스트", example = "[{nickname:string, emotionId:number}, ,,,,]", required = true)
     private List<FriendEmotion> friendEmotions = new ArrayList<>();
 
-    public static EmotionResponse toDto(Record record, String viewerUserId){
-        List<EmotionRecord> emotionRecords = record.getEmotionRecords();
+    public static EmotionResponse toDto(List<EmotionRecord> emotionRecords, String viewerUserId){
         EmotionResponse response = new EmotionResponse();
         if(emotionRecords.isEmpty()) return null;
         for (EmotionRecord er : emotionRecords){

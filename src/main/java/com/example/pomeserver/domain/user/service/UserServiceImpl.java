@@ -17,12 +17,14 @@ import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,7 +65,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean checkNickname(UserNicknameRequest userNicknameRequest) {
-        userRepository.findByNickname(userNicknameRequest.getNickName()).orElseThrow(UserAlreadyNickName::new);
+        if (userRepository.findByNickname(userNicknameRequest.getNickName()).isPresent()){
+            throw new UserAlreadyNickName();
+        }
         return true;
     }
 
@@ -133,7 +137,7 @@ public class UserServiceImpl implements UserService{
         if (user.getUserType().equals(UserType.DELETE)) throw new UserAlreadyDeleteException();
         user.setUserType(UserType.DELETE);
         redisTemplateService.deleteUserRefreshToken(userId);
-        userWithdrawalRepository.save(UserWithdrawal.builder().user(user).reason(reason).build());
+        UserWithdrawal save = userWithdrawalRepository.save(UserWithdrawal.builder().user(user).reason(reason).build());
         return true;
     }
 
@@ -149,12 +153,13 @@ public class UserServiceImpl implements UserService{
         String refreshToken = tokenUtils.createRefreshToken(user.getUserId(), user.getNickname()); // 레디스
         tokenUtils.getUserIdFromFullToken(accessToken);
         redisTemplateService.saveUserRefreshToken(user.getUserId(), refreshToken);
-        setHeaderToken(accessToken);
+//        setHeaderToken(accessToken);
         return accessToken;
     }
 
-    public void setHeaderToken(String accessToken){
-        HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
+    private void setHeaderToken(String accessToken){
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletResponse response = attr.getResponse();
         response.setHeader("ACCESS-TOKEN",accessToken);
     }
 

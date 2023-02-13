@@ -25,4 +25,5 @@ public interface RecordService{
     ApplicationResponse<Page<RecordResponse>> findAllOneWeekByUserAndGoal(String userId, Long goalId, Pageable pageable);
     ApplicationResponse<Page<RecordResponse>> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable);
     ApplicationResponse<Page<RecordResponse>> findAllRecordTabByUserAndGoal(Long goalId, String userId, Pageable pageable);
+
 }

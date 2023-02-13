@@ -104,7 +104,8 @@ public class RecordServiceImpl implements RecordService{
 
     private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion){
         for (EmotionRecord er : emotionRecords)
-            if(er.getUser().getUserId().equals(senderId)) er.editEmotion(emotion);
+            if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND))
+                er.editEmotion(emotion);
     }
 
     private boolean alreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
@@ -189,6 +190,8 @@ public class RecordServiceImpl implements RecordService{
                 recordRepository.findAllSecondEmotionIsFalseByGoalAndUser(user.getUserId(), goal.getId(), beforeWeek, pageable)
                         .map((record)->RecordResponse.toDto(record, userId)));
     }
+
+
 
     @Transactional
     @Override

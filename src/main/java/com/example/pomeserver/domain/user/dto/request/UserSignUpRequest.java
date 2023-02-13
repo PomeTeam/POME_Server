@@ -34,6 +34,7 @@ public class UserSignUpRequest {
             .build();
     }
 
+    @Builder
     public UserSignUpRequest(String nickname, String phoneNum, String imageKey) {
         this.nickname = nickname;
         this.phoneNum = phoneNum;

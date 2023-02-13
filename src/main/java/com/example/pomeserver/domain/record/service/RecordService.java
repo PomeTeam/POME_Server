@@ -10,8 +10,6 @@ import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface RecordService{
     ApplicationResponse<RecordResponse> create(RecordCreateRequest request, String userId);
     ApplicationResponse<RecordResponse> findById(Long recordId, String userId);
@@ -20,7 +18,7 @@ public interface RecordService{
     ApplicationResponse<Void> delete(Long recordId, String userId);
     ApplicationResponse<RecordResponse> writeSecondEmotion(RecordSecondEmotionRequest request, Long recordId, String userId);
     ApplicationResponse<RecordResponse> writeEmotionToFriend(RecordToFriendEmotionRequest request, Long recordId, String senderId);
-    ApplicationResponse<Page<RecordResponse>> findAllByUser(String userId, Pageable pageable);
+    ApplicationResponse<Page<RecordResponse>> findAllByUser(String userId, String viewerId, Pageable pageable);
     ApplicationResponse<Page<RecordResponse>> findAllByFriends(String userId, Pageable pageable);
     ApplicationResponse<Page<RecordResponse>> findAllOneWeekByUserAndGoal(String userId, Long goalId, Pageable pageable);
     ApplicationResponse<Page<RecordResponse>> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable);

@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -117,10 +116,10 @@ public class RecordServiceImpl implements RecordService{
     @Override
     public ApplicationResponse<Page<RecordResponse>> findAllByUser(
             String userId,
-            Pageable pageable)
+            String viewerId, Pageable pageable)
     {
         return ApplicationResponse.ok(recordRepository.findAllByUserCustom(userId, pageable)
-                .map((record)->RecordResponse.toDto(record, userId)));
+                .map((record)->RecordResponse.toDto(record, viewerId)));
     }
 
     @Override

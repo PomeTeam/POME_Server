@@ -124,7 +124,8 @@ public class RecordServiceImpl implements RecordService{
             String viewerId,
             Pageable pageable)
     {
-        return ApplicationResponse.ok(recordRepository.findAllByUserCustom(userId, pageable)
+        List<Long> hideRecordIds = hideRecordRepository.findAllRecordIdByUserId(viewerId);
+        return ApplicationResponse.ok(recordRepository.findAllByUserCustom(userId, hideRecordIds, pageable)
                 .map((record)->RecordResponse.toDto(record, viewerId)));
     }
 
@@ -138,11 +139,6 @@ public class RecordServiceImpl implements RecordService{
                 userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId());
 
         List<Long> hideRecordIds = hideRecordRepository.findAllRecordIdByUserId(userId);
-        System.out.println("----------------------------");
-        for (Long hideRecordId : hideRecordIds) {
-            System.out.println("hideRecordId = " + hideRecordId);
-        }
-        System.out.println("----------------------------");
         ArrayList<String> friendIds = new ArrayList<>();
         friends.forEach((f)->friendIds.add(f.getToUser().getUserId()));
         return ApplicationResponse.ok(recordRepository.findAllByFriends(friendIds, hideRecordIds, pageable)

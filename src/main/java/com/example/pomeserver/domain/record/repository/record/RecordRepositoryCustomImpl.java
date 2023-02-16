@@ -19,10 +19,35 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
     private final EntityManager em;
 
     @Override
-    public Page<Record> findAllByUserCustom(String userId, Pageable pageable){
-        String query = "select r from Record r join fetch r.user u " +
-                "where u.userId=:userId " +
+    public Page<Record> findAllByUserCustom(String userId, List<Long> hideRecordIds, Pageable pageable){
+        if(hideRecordIds.isEmpty()) return findAllByUserCustom(userId, pageable);
+        String query =
+                "select r from Record r join fetch r.user u " +
+                "where u.userId=:userId and " +
+                "r.id not in (:hideRecordIds) " +
                 "order by r.useDate desc";
+        List<Record> resultList = em.createQuery(query, Record.class)
+                .setParameter("userId", userId)
+                .setParameter("hideRecordIds", hideRecordIds)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+
+        String countQuery = "select count(r) from Record r join r.user u where u.userId=:userId and r.id not in (:hideRecordIds)";
+        Object singleResult = em.createQuery(countQuery)
+                .setParameter("userId", userId)
+                .setParameter("hideRecordIds", hideRecordIds)
+                .getSingleResult();
+
+        return PageableExecutionUtils.getPage(resultList, pageable, new MyLongSupplier(singleResult));
+    }
+
+    public Page<Record> findAllByUserCustom(String userId, Pageable pageable){
+        String query =
+                "select r from Record r join fetch r.user u " +
+                        "where u.userId=:userId " +
+                        "order by r.useDate desc";
         List<Record> resultList = em.createQuery(query, Record.class)
                 .setParameter("userId", userId)
                 .setFirstResult((int) pageable.getOffset())
@@ -95,7 +120,8 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                                                     String beforeDate,
                                                     Pageable pageable){
 
-        String query = "select r from Record r" +
+        String query =
+                "select r from Record r" +
                 " join fetch r.user u" +
                 " join fetch r.goal g" +
                 " where u.userId=:userId and" +
@@ -135,7 +161,8 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                                                        Long goalId,
                                                        Pageable pageable) {
 
-        String query = "select r from Record r" +
+        String query =
+                "select r from Record r" +
                 " join fetch r.user u" +
                 " join fetch r.goal g" +
                 " where u.userId=:userId and" +

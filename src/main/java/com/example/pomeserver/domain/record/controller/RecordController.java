@@ -200,7 +200,7 @@ public class RecordController {
     @Operation(summary = "특정 게시물 숨기기 기능",
             description = "사용자가 특정 게시물을 보이지 않게 숨긴다.")
     @Auth
-    @DeleteMapping("/{recordId}")
+    @DeleteMapping("/hide/{recordId}")
     public ApplicationResponse<Void> hideRecord(
             @PathVariable Long recordId,
             @ApiIgnore @UserId String userId)

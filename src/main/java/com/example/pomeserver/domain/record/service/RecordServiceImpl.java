@@ -12,6 +12,7 @@ import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.entity.Emotion;
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
+import com.example.pomeserver.domain.record.entity.HideRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.record.entity.vo.EmotionType;
 import com.example.pomeserver.domain.record.exception.emotion.excute.EmotionNotFoundException;
@@ -19,6 +20,7 @@ import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFou
 import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUserException;
 import com.example.pomeserver.domain.record.repository.EmotionRecordRepository;
 import com.example.pomeserver.domain.record.repository.EmotionRepository;
+import com.example.pomeserver.domain.record.repository.HideRecordRepository;
 import com.example.pomeserver.domain.record.repository.RecordRepository;
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.user.entity.Follow;
@@ -50,6 +52,7 @@ public class RecordServiceImpl implements RecordService{
     private final RecordAssembler recordAssembler;
     private final EmotionRecordAssembler emotionRecordAssembler;
     private final FollowRepository followRepository;
+    private final HideRecordRepository hideRecordRepository;
 
     @Transactional
     @Override
@@ -190,6 +193,14 @@ public class RecordServiceImpl implements RecordService{
                         .map((record)->RecordResponse.toDto(record, userId)));
     }
 
+    @Override
+    public ApplicationResponse<Void> hideRecord(Long recordId, String userId){
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
+        HideRecord hideRecord = HideRecord.builder().user(user).record(record).build();
+        hideRecordRepository.save(hideRecord);
+        return ApplicationResponse.ok();
+    }
 
 
     @Transactional

@@ -34,6 +34,9 @@ public class Record extends DateBaseEntity {
 
     @OneToMany(mappedBy="record", cascade=ALL)
     private List<EmotionRecord> emotionRecords = new ArrayList<>();
+
+    @OneToMany(mappedBy="record", cascade=ALL)
+    private List<HideRecord> hideRecords = new ArrayList<>();
     private int usePrice;
     private String useDate;
     private String useComment;
@@ -86,5 +89,9 @@ public class Record extends DateBaseEntity {
 
     public void addEmotionRecord(EmotionRecord emotionRecord) {
         this.emotionRecords.add(emotionRecord);
+    }
+
+    public void addHideRecord(HideRecord hideRecord) {
+        this.hideRecords.add(hideRecord);
     }
 }

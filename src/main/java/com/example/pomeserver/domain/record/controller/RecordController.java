@@ -193,7 +193,20 @@ public class RecordController {
 //    {
 //        return recordService.findAllEmotionAllByGoalAndUser(userId, goalId, pageable);
 //    }
-
+    /**
+     * 기록 숨기기 기능
+     * @Author 이찬영
+     */
+    @Operation(summary = "특정 게시물 숨기기 기능",
+            description = "사용자가 특정 게시물을 보이지 않게 숨긴다.")
+    @Auth
+    @DeleteMapping("/hide/{recordId}")
+    public ApplicationResponse<Void> hideRecord(
+            @PathVariable Long recordId,
+            @ApiIgnore @UserId String userId)
+    {
+        return recordService.hideRecord(recordId, userId);
+    }
 
     /**
      * 기록 수정 기능

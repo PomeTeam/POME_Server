@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
+import com.example.pomeserver.domain.record.entity.HideRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.vo.UserType;
 import lombok.AccessLevel;
@@ -54,6 +55,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<EmotionRecord> emotionRecords = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private List<HideRecord> hideRecords = new ArrayList<>();
+
     @OneToOne(mappedBy = "user", cascade = ALL)
     private UserWithdrawal userWithdrawal;
 
@@ -94,5 +98,9 @@ public class User {
 
     public void addRecord(Record record) {
         this.records.add(record);
+    }
+
+    public void addHideRecord(HideRecord hideRecord) {
+        this.hideRecords.add(hideRecord);
     }
 }

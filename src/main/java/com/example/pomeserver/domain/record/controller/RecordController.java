@@ -194,7 +194,7 @@ public class RecordController {
 //        return recordService.findAllEmotionAllByGoalAndUser(userId, goalId, pageable);
 //    }
     /**
-     * 기록 삭제 기능
+     * 기록 숨기기 기능
      * @Author 이찬영
      */
     @Operation(summary = "특정 게시물 숨기기 기능",

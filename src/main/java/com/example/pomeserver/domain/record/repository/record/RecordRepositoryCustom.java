@@ -1,18 +1,13 @@
 package com.example.pomeserver.domain.record.repository.record;
-import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.dto.paramResolver.param.RecordFilteringParam;
 import com.example.pomeserver.domain.record.entity.Record;
-import com.example.pomeserver.domain.user.entity.User;
-import io.lettuce.core.ScanIterator;
-import io.lettuce.core.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface RecordRepositoryCustom {
-    Page<Record> findAllByUserCustom(String userId, Pageable pageable);
+    Page<Record> findAllByUserCustom(String userId, List<Long> hideRecordIds, Pageable pageable);
     Page<Record> findAllByFriends(List<String> friendIds, List<Long> hideRecordIds, Pageable pageable);
     Page<Record> findAllOneWeekByUserAndGoal(String userId, Long goalId, String beforeWeek, Pageable pageable);
     Page<Record> findAllEmotionAllByGoalAndUser(String userId, Long goalId, Pageable pageable);

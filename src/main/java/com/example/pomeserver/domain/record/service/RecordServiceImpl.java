@@ -18,10 +18,10 @@ import com.example.pomeserver.domain.record.entity.vo.EmotionType;
 import com.example.pomeserver.domain.record.exception.emotion.excute.EmotionNotFoundException;
 import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFoundException;
 import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUserException;
-import com.example.pomeserver.domain.record.repository.EmotionRecordRepository;
-import com.example.pomeserver.domain.record.repository.EmotionRepository;
-import com.example.pomeserver.domain.record.repository.HideRecordRepository;
-import com.example.pomeserver.domain.record.repository.RecordRepository;
+import com.example.pomeserver.domain.record.repository.emotion.EmotionRecordRepository;
+import com.example.pomeserver.domain.record.repository.emotion.EmotionRepository;
+import com.example.pomeserver.domain.record.repository.hide.HideRecordRepository;
+import com.example.pomeserver.domain.record.repository.record.RecordRepository;
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.user.entity.Follow;
 import com.example.pomeserver.domain.user.entity.User;
@@ -72,6 +72,7 @@ public class RecordServiceImpl implements RecordService{
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(RecordResponse.toDto(record, userId));
     }
+
     @Transactional
     @Override
     public ApplicationResponse<RecordResponse> writeSecondEmotion(
@@ -87,6 +88,7 @@ public class RecordServiceImpl implements RecordService{
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(RecordResponse.toDto(record, userId));
     }
+
     @Transactional
     @Override
     public ApplicationResponse<RecordResponse> writeEmotionToFriend(
@@ -119,7 +121,8 @@ public class RecordServiceImpl implements RecordService{
     @Override
     public ApplicationResponse<Page<RecordResponse>> findAllByUser(
             String userId,
-            String viewerId, Pageable pageable)
+            String viewerId,
+            Pageable pageable)
     {
         return ApplicationResponse.ok(recordRepository.findAllByUserCustom(userId, pageable)
                 .map((record)->RecordResponse.toDto(record, viewerId)));
@@ -134,9 +137,15 @@ public class RecordServiceImpl implements RecordService{
         List<Follow> friends = followRepository.findByFromUserId(
                 userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new).getId());
 
+        List<Long> hideRecordIds = hideRecordRepository.findAllRecordIdByUserId(userId);
+        System.out.println("----------------------------");
+        for (Long hideRecordId : hideRecordIds) {
+            System.out.println("hideRecordId = " + hideRecordId);
+        }
+        System.out.println("----------------------------");
         ArrayList<String> friendIds = new ArrayList<>();
         friends.forEach((f)->friendIds.add(f.getToUser().getUserId()));
-        return ApplicationResponse.ok(recordRepository.findAllByFriends(friendIds, pageable)
+        return ApplicationResponse.ok(recordRepository.findAllByFriends(friendIds, hideRecordIds, pageable)
                 .map((record)->RecordResponse.toDto(record, userId)));
     }
 
@@ -193,6 +202,7 @@ public class RecordServiceImpl implements RecordService{
                         .map((record)->RecordResponse.toDto(record, userId)));
     }
 
+    @Transactional
     @Override
     public ApplicationResponse<Void> hideRecord(Long recordId, String userId){
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
@@ -201,7 +211,6 @@ public class RecordServiceImpl implements RecordService{
         hideRecordRepository.save(hideRecord);
         return ApplicationResponse.ok();
     }
-
 
     @Transactional
     @Override
@@ -227,6 +236,4 @@ public class RecordServiceImpl implements RecordService{
         recordRepository.delete(record);
         return ApplicationResponse.ok();
     }
-
-
 }

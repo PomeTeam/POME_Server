@@ -1,9 +1,7 @@
-package com.example.pomeserver.domain.record.repository;
+package com.example.pomeserver.domain.record.repository.record;
 
-import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.record.dto.paramResolver.param.RecordFilteringParam;
 import com.example.pomeserver.domain.record.entity.Record;
-import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.global.util.supplier.MyLongSupplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,11 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.function.LongSupplier;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -45,12 +40,40 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
 
     @Override
     public Page<Record> findAllByFriends(
-            ArrayList<String> friendIds,
+            List<String> friendIds,
+            List<Long> hideRecordIds,
             Pageable pageable)
     {
-        String query = "select r from Record r join fetch r.user u " +
-                "where u.userId in (:friendIds) " +
+        if(hideRecordIds.isEmpty()) return findAllByFriends(friendIds, pageable);
+        String query =
+                "select r from Record r " +
+                "join fetch r.user u " +
+                "where u.userId in (:friendIds) and " +
+                "r.id not in (:hideRecordIds) " +
                 "order by r.useDate desc";
+
+        List<Record> resultList = em.createQuery(query, Record.class)
+                .setParameter("friendIds", friendIds)
+                .setParameter("hideRecordIds", hideRecordIds)
+                .setFirstResult((int) (pageable.getOffset()))
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        String countQuery = "select count(r) from Record r join r.user u where u.userId in (:friendIds) and r.id not in (:hideRecordIds)";
+        Object singleResult = em.createQuery(countQuery)
+                .setParameter("friendIds", friendIds)
+                .setParameter("hideRecordIds", hideRecordIds)
+                .getSingleResult();
+
+        return PageableExecutionUtils.getPage(resultList, pageable, new MyLongSupplier(singleResult));
+    }
+
+    private Page<Record> findAllByFriends(List<String> friendIds, Pageable pageable) {
+        String query =
+                        "select r from Record r " +
+                        "join fetch r.user u " +
+                        "where u.userId in (:friendIds) " +
+                        "order by r.useDate desc";
 
         List<Record> resultList = em.createQuery(query, Record.class)
                 .setParameter("friendIds", friendIds)

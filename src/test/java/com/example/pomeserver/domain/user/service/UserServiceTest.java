@@ -1,5 +1,7 @@
 package com.example.pomeserver.domain.user.service;
 
+import com.example.pomeserver.domain.marshmello.entity.Marshmello;
+import com.example.pomeserver.domain.marshmello.repository.MarshmelloRepository;
 import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
@@ -47,6 +49,8 @@ public class UserServiceTest {
     FollowRepository followRepository;
     @Mock
     UserWithdrawalRepository userWithdrawalRepository;
+    @Mock
+    MarshmelloRepository marshmelloRepository;
 
     @DisplayName("유저_회원가입 성공")
     @Test
@@ -57,7 +61,7 @@ public class UserServiceTest {
 
         //stub
         lenient().when(userRepository.save(any())).thenReturn(actualUser);
-
+        lenient().when(marshmelloRepository.save(any())).thenReturn(new Marshmello());
         //when
         UserResponse userResponse = userService.signUp(request);
 

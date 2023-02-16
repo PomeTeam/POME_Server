@@ -1,5 +1,7 @@
 package com.example.pomeserver.domain.user.service;
 
+import com.example.pomeserver.domain.marshmello.entity.Marshmello;
+import com.example.pomeserver.domain.marshmello.repository.MarshmelloRepository;
 import com.example.pomeserver.domain.user.dto.request.UserNicknameRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignInRequest;
 import com.example.pomeserver.domain.user.dto.request.UserSignUpRequest;
@@ -36,6 +38,7 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final MarshmelloRepository marshmelloRepository;
     private final EntityManager em;
     private final TokenUtils tokenUtils;
     private final RedisTemplateService redisTemplateService;
@@ -53,6 +56,9 @@ public class UserServiceImpl implements UserService{
         }
         if (userSignUpRequest.getImageKey().equals("default")) userSignUpRequest.setImageKey("userprof847.png");
         User user = userRepository.save(userSignUpRequest.toEntity());
+        Marshmello marshmello = new Marshmello();
+        marshmelloRepository.save(marshmello);
+        user.addMarshmello(marshmello);
         return UserResponse.toDto(user, getSaveToken(user));
     }
 

@@ -4,9 +4,11 @@ import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import javax.persistence.*;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
+import com.example.pomeserver.domain.marshmello.entity.Marshmello;
 import com.example.pomeserver.domain.record.entity.EmotionRecord;
 import com.example.pomeserver.domain.record.entity.HideRecord;
 import com.example.pomeserver.domain.record.entity.Record;
+import com.example.pomeserver.domain.user.entity.vo.ActivityCount;
 import com.example.pomeserver.domain.user.entity.vo.UserType;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,6 +39,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
+    @Embedded
+    private ActivityCount activityCount;
+
     @OneToMany(mappedBy="user", cascade=ALL)
     private List<Goal> goals = new ArrayList<>();
 
@@ -61,12 +66,17 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = ALL)
     private UserWithdrawal userWithdrawal;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private Marshmello marshmello;
+
     @Builder
-    public User(String userId, String nickname, String phoneNum, String image) {
+    public User(String userId, String nickname, String phoneNum, String image){
         this.userId = userId;
         this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.image = image;
+        this.activityCount = new ActivityCount();
         setUserType(UserType.ACCESS);
     }
 
@@ -102,5 +112,10 @@ public class User {
 
     public void addHideRecord(HideRecord hideRecord) {
         this.hideRecords.add(hideRecord);
+    }
+
+    public void addMarshmello(Marshmello marshmello) {
+        this.marshmello = marshmello;
+        marshmello.addUser(this);
     }
 }

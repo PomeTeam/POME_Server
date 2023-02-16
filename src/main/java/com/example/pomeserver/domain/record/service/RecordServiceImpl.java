@@ -29,6 +29,9 @@ import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException
 import com.example.pomeserver.domain.user.repository.FollowRepository;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
+import com.example.pomeserver.global.event.Activity;
+import com.example.pomeserver.global.event.ActivityType;
+import com.example.pomeserver.global.event.publisher.UserActivityEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +56,7 @@ public class RecordServiceImpl implements RecordService{
     private final EmotionRecordAssembler emotionRecordAssembler;
     private final FollowRepository followRepository;
     private final HideRecordRepository hideRecordRepository;
+    private final UserActivityEventPublisher userActivityEventPublisher;
 
     @Transactional
     @Override
@@ -85,6 +89,8 @@ public class RecordServiceImpl implements RecordService{
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, emotion, EmotionType.MY_SECOND);
         record.hasSecond();
+        user.getActivityCount().addAddEmotionCount();
+        userActivityEventPublisher.execute(Activity.create(user, ActivityType.ADD_EMOTION));
         emotionRecordRepository.save(emotionRecord);
         return ApplicationResponse.create(RecordResponse.toDto(record, userId));
     }

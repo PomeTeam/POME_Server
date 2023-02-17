@@ -22,7 +22,6 @@ public class UserActivityEventHandler {
     @Async
     @EventListener
     public void execute(SuccessGoal event){
-        event.getUser().getActivityCount().addSuccessRecordCount();
         marshmelloService.levelUpGrowthMarshmello(event.getUser());
     }
     @Async
@@ -33,7 +32,6 @@ public class UserActivityEventHandler {
     @Async
     @EventListener
     public void execute(ChangePositiveToNegative event){
-        event.getUser().getActivityCount().addChangePositiveToNegativeCount();
         marshmelloService.levelUpHonestMarshmello(event.getUser());
     }
 }

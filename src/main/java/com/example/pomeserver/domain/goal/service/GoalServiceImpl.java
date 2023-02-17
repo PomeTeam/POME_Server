@@ -187,8 +187,13 @@ public class GoalServiceImpl implements GoalService {
       }
     }
 
-    // (6) 목표 종료 상태 수정 및 저장
-    goal.terminate(request);
+    // (6) 목표 종료 상태 수정 및 저장 ( 종료 시, 목표의 성공 여부 저장 )
+    // Goal이 갖는 Record의 usePrice의 합으로 갱신
+    int usePrice = 0;
+    for (Record record : goal.getRecords()) {
+      usePrice += record.getUsePrice();
+    }
+    goal.terminate(request, usePrice <= goal.getPrice());
     Goal saved = goalRepository.save(goal);
 
     return ApplicationResponse.ok(GoalResponse.toDto(saved));

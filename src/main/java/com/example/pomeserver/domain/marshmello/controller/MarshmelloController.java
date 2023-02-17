@@ -1,7 +1,5 @@
 package com.example.pomeserver.domain.marshmello.controller;
 
-import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
-import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloResponse;
 import com.example.pomeserver.domain.marshmello.service.MarshmelloService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;

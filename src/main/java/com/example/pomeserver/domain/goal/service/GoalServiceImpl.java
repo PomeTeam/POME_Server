@@ -23,6 +23,10 @@ import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import java.util.stream.Collectors;
+
+import com.example.pomeserver.global.event.Activity;
+import com.example.pomeserver.global.event.ActivityType;
+import com.example.pomeserver.global.event.publisher.UserActivityEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +44,8 @@ public class GoalServiceImpl implements GoalService {
   private final GoalAssembler goalAssembler;
 
   private final GoalCategoryAssembler goalCategoryAssembler;
+
+  private final UserActivityEventPublisher userActivityEventPublisher;
 
 
   @Transactional
@@ -169,7 +175,8 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (2) User 권한 조회
-    if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
+    User user = goal.getGoalCategory().getUser();
+    if (!user.getUserId().equals(userId)) {
       throw new ThisGoalIsNotByThisUserException();
     }
 
@@ -193,8 +200,15 @@ public class GoalServiceImpl implements GoalService {
     for (Record record : goal.getRecords()) {
       usePrice += record.getUsePrice();
     }
-    goal.terminate(request, usePrice <= goal.getPrice());
+    boolean isSuccess = usePrice <= goal.getPrice();
+    goal.terminate(request, isSuccess);
     Goal saved = goalRepository.save(goal);
+
+    // (7) 목표 성공 이벤트 publish
+    if(isSuccess){
+      user.getActivityCount().addSuccessRecordCount();
+      userActivityEventPublisher.execute(Activity.create(user, ActivityType.SUCCESS_GOAL));
+    }
 
     return ApplicationResponse.ok(GoalResponse.toDto(saved));
   }

@@ -1,9 +1,14 @@
 package com.example.pomeserver.domain.marshmello.service;
 
+import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
+import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloResponse;
 import com.example.pomeserver.domain.marshmello.entity.Marshmello;
 import com.example.pomeserver.domain.marshmello.exception.execute.MarshmelloNotFoundException;
 import com.example.pomeserver.domain.marshmello.repository.MarshmelloRepository;
 import com.example.pomeserver.domain.user.entity.User;
+import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
+import com.example.pomeserver.domain.user.repository.UserRepository;
+import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MarshmelloService {
 
     private final MarshmelloRepository marshmelloRepository;
+    private final UserRepository userRepository;
+
+
+    public ApplicationResponse<MarshmelloResponse> findByUser(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        Marshmello marshmello = marshmelloRepository.findByUser(user).orElseThrow(MarshmelloNotFoundException::new);
+        return ApplicationResponse.ok(MarshmelloResponse.toDto(marshmello));
+    }
+
     @Transactional
     public void levelUpRecordMarshmello(User user) { // 1 3 7 10 15
         Marshmello marshmello = marshmelloRepository.findByUser(user).orElseThrow(MarshmelloNotFoundException::new);
@@ -78,4 +92,6 @@ public class MarshmelloService {
             marshmello.levelUpHonestMarshmello();
         }
     }
+
+
 }

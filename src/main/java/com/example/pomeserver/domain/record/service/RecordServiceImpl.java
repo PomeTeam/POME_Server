@@ -86,9 +86,22 @@ public class RecordServiceImpl implements RecordService{
     {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
-        Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
-        EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, emotion, EmotionType.MY_SECOND);
+        Emotion secondEmotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
+        EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, secondEmotion, EmotionType.MY_SECOND);
         emotionRecordRepository.save(emotionRecord);
+
+        user.getActivityCount().addAddEmotionCount();
+        userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
+        if(secondEmotion.getId().equals(2L)){
+            record.getEmotionRecords().stream()
+                    .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(0L))
+                    .findFirst()
+                    .ifPresent((er)->{
+                        user.getActivityCount().addChangePositiveToNegativeCount();
+                        userActivityEventPublisher.execute(Activity.create(user, ActivityType.CHANGE_POSITIVE_TO_NEGATIVE));
+                    });
+        }
+
         return ApplicationResponse.create(RecordResponse.toDto(record, userId));
     }
 
@@ -102,15 +115,15 @@ public class RecordServiceImpl implements RecordService{
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
-
         record.hasSecond();
+
+        List<EmotionRecord> emotionRecords = record.getEmotionRecords();
+        if(alreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
+        else emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
+
         sender.getActivityCount().addAddEmotionCount();
         userActivityEventPublisher.execute(Activity.create(sender, ActivityType.ADD_EMOTION));
 
-        List<EmotionRecord> emotionRecords = record.getEmotionRecords();
-        if(alreadyHaveFriendEmotion(emotionRecords, senderId))
-            editEmotion(senderId, emotionRecords, emotion);
-        else emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
         return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
     }
 

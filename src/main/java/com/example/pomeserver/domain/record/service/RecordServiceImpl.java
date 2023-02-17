@@ -90,8 +90,9 @@ public class RecordServiceImpl implements RecordService{
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, secondEmotion, EmotionType.MY_SECOND);
         emotionRecordRepository.save(emotionRecord);
 
-        user.getActivityCount().addAddEmotionCount();
+        user.getActivityCount().addFinishRecordCount();
         userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
+
         if(secondEmotion.getId().equals(2L)){
             record.getEmotionRecords().stream()
                     .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(0L))

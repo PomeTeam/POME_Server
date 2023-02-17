@@ -51,6 +51,8 @@ public class Goal extends DateBaseEntity {
 
     private String oneLineComment; // 한줄 코멘트
 
+    private boolean isSuccess; // 목표 성공여부 ( 목표 종료 시, 갱신 )
+
     public void addRecord(Record record) {
         this.records.add(record);
     }
@@ -74,6 +76,7 @@ public class Goal extends DateBaseEntity {
         this.oneLineMind = oneLineMind;
         this.price = price;
         this.isPublic = isPublic;
+        this.isSuccess = false;
     }
 
     public static Goal toUpdateEntity(
@@ -120,9 +123,12 @@ public class Goal extends DateBaseEntity {
     /**
     * 목표 종료 시, 데이터 변경하는 함수
     * */
-    public void terminate(GoalTerminateRequest request) {
+    public void terminate(GoalTerminateRequest request, boolean isSuccess) {
         this.isEnd = true;
         this.oneLineComment = request.getOneLineComment();
+
+        // 목표 성공여부 저장
+        this.isSuccess = isSuccess;
     }
 
 }

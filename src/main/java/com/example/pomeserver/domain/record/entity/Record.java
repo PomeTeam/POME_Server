@@ -67,7 +67,7 @@ public class Record extends DateBaseEntity {
         return record;
     }
 
-    public void hasSecond(){
+    public void changeHasSecondToTrue(){
         this.hasSecond = true;
     }
 

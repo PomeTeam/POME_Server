@@ -89,7 +89,7 @@ public class RecordServiceImpl implements RecordService{
         Emotion secondEmotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         EmotionRecord emotionRecord = emotionRecordAssembler.toEntity(record, user, secondEmotion, EmotionType.MY_SECOND);
         emotionRecordRepository.save(emotionRecord);
-
+        record.changeHasSecondToTrue();
         user.getActivityCount().addFinishRecordCount();
         userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
 
@@ -116,7 +116,6 @@ public class RecordServiceImpl implements RecordService{
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
-        record.hasSecond();
 
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
         if(alreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);

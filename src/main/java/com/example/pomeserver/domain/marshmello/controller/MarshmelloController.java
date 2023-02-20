@@ -1,6 +1,7 @@
 package com.example.pomeserver.domain.marshmello.controller;
 
 import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloResponse;
+import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloSmallResponse;
 import com.example.pomeserver.domain.marshmello.service.MarshmelloService;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import com.example.pomeserver.global.util.authResolver.Auth;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/marshmello")
@@ -29,4 +31,13 @@ public class MarshmelloController {
     {
         return marshmelloService.findByUser(userId);
     }
+
+    @Auth
+    @GetMapping("/list")
+    public ApplicationResponse<List<MarshmelloSmallResponse>> findMarshmelloListByUser(@ApiIgnore @UserId String userId)
+    {
+        return marshmelloService.findMarshmelloListByUser(userId);
+    }
+
+
 }

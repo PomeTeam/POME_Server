@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.marshmello.service;
 
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloResponse;
+import com.example.pomeserver.domain.marshmello.dto.response.MarshmelloSmallResponse;
 import com.example.pomeserver.domain.marshmello.entity.Marshmello;
 import com.example.pomeserver.domain.marshmello.exception.execute.MarshmelloNotFoundException;
 import com.example.pomeserver.domain.marshmello.repository.MarshmelloRepository;
@@ -12,6 +13,8 @@ import com.example.pomeserver.global.dto.response.ApplicationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +28,12 @@ public class MarshmelloService {
         User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
         Marshmello marshmello = marshmelloRepository.findByUser(user).orElseThrow(MarshmelloNotFoundException::new);
         return ApplicationResponse.ok(MarshmelloResponse.toDto(marshmello));
+    }
+
+    public ApplicationResponse<List<MarshmelloSmallResponse>> findMarshmelloListByUser(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+        Marshmello marshmello = marshmelloRepository.findByUser(user).orElseThrow(MarshmelloNotFoundException::new);
+        return ApplicationResponse.ok(MarshmelloSmallResponse.toListDto(marshmello));
     }
 
     @Transactional

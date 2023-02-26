@@ -232,24 +232,22 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         return PageableExecutionUtils.getPage(resultList, pageable, new MyLongSupplier(singleResult));
     }
 
-    @Override
+    @Override // 회고탭
     public Page<Record> findAllByUserAndGoalAndEmotionFiltering(String userId,
                                                                 Long goalId,
                                                                 RecordFilteringParam emotionParam,
-                                                                Pageable pageable){
+                                                                Pageable pageable)
+    {
         Long firstEmotion = emotionParam.getFirstEmotion();
         Long secondEmotion = emotionParam.getSecondEmotion();
-
-        if(firstEmotion != null && secondEmotion != null) {
-            List<Long> recordIds = findAllByUserAndGoalAndAllEmotion(userId, goalId, firstEmotion, secondEmotion);
-            return findAllByUserAndGoalAndIn(userId, goalId, recordIds, pageable);
-        }
-        if(firstEmotion != null) {
-            List<Long> recordIds = findAllByUserAndGoalAndFirstEmotion(userId, goalId, firstEmotion);
-            return findAllByUserAndGoalAndIn(userId, goalId, recordIds, pageable);
-        }
-        if(secondEmotion != null){
-            List<Long> recordIds = findAllByUserAndGoalAndSecondEmotion(userId, goalId, secondEmotion);
+        if(!emotionParam.isNull()){ // 감정 필터링 조건이 존재하는 경우
+            List<Long> recordIds = new ArrayList<>();
+            if(emotionParam.hasAllEmotion())
+                recordIds = getRecordIdsByUserAndGoalAndAllEmotion(userId, goalId, firstEmotion, secondEmotion);
+            else if(emotionParam.hasFirstEmotion())
+                recordIds = getRecordIdsByUserAndGoalAndFirstEmotion(userId, goalId, firstEmotion);
+            else if(emotionParam.hasSecondEmotion())
+                recordIds = getRecordIdsByUserAndGoalAndSecondEmotion(userId, goalId, secondEmotion);
             return findAllByUserAndGoalAndIn(userId, goalId, recordIds, pageable);
         }
 
@@ -258,6 +256,7 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 "join fetch r.goal g " +
                 "where u.userId=:userId " +
                 "and g.id=:goalId " +
+                "and r.hasSecond = true " +
                 "order by r.useDate desc ";
 
 
@@ -268,10 +267,12 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
 
-        String countQuery = "select count(r) from Record r " +
+        String countQuery =
+                "select count(r) from Record r " +
                 "join r.user u " +
                 "join r.goal g " +
                 "where u.userId=:userId " +
+                "and r.hasSecond = true " +
                 "and g.id=:goalId";
         Object singleResult = em.createQuery(countQuery)
                 .setParameter("userId", userId)
@@ -281,10 +282,11 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         return PageableExecutionUtils.getPage(resultList, pageable, new MyLongSupplier(singleResult));
     }
 
+    // 회고탭
     /* FIRST */
-    private List<Long> findAllByUserAndGoalAndFirstEmotion(String userId,
-                                                           Long goalId,
-                                                           Long emotionId)
+    private List<Long> getRecordIdsByUserAndGoalAndFirstEmotion(String userId,
+                                                                Long goalId,
+                                                                Long emotionId)
     {
         String query1 = "select r from Record r " +
                 "join fetch r.user u " +
@@ -294,6 +296,7 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 "where u.userId=:userId " +
                 "and g.id=:goalId " +
                 "and er.emotionType = 'MY_FIRST' " +
+                "and r.hasSecond = true " +
                 "and e.id =: emotionId ";
 
         List<Record> records = em.createQuery(query1, Record.class)
@@ -308,11 +311,11 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
 
         return ids;
     }
-
+    // 회고탭
     /* SECOND */
-    private List<Long> findAllByUserAndGoalAndSecondEmotion(String userId,
-                                                            Long goalId,
-                                                            Long emotionId)
+    private List<Long> getRecordIdsByUserAndGoalAndSecondEmotion(String userId,
+                                                                 Long goalId,
+                                                                 Long emotionId)
     {
         String query = "select r from Record r " +
                 "join fetch r.user u " +
@@ -322,6 +325,7 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 "where u.userId=:userId " +
                 "and g.id=:goalId " +
                 "and er.emotionType = 'MY_SECOND' " +
+                "and r.hasSecond = true " +
                 "and e.id =: emotionId ";
 
         List<Record> records = em.createQuery(query, Record.class)
@@ -335,15 +339,15 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
         em.clear();
         return ids;
     }
-
+    // 회고탭
     /* FIRST + SECOND */
-    private List<Long> findAllByUserAndGoalAndAllEmotion(String userId,
-                                                         Long goalId,
-                                                         Long firstEmotionId,
-                                                         Long secondEmotionId)
+    private List<Long> getRecordIdsByUserAndGoalAndAllEmotion(String userId,
+                                                              Long goalId,
+                                                              Long firstEmotionId,
+                                                              Long secondEmotionId)
     {
-        List<Long> firstList = findAllByUserAndGoalAndFirstEmotion(userId, goalId, firstEmotionId);
-        List<Long> secondList = findAllByUserAndGoalAndSecondEmotion(userId, goalId, secondEmotionId);
+        List<Long> firstList = getRecordIdsByUserAndGoalAndFirstEmotion(userId, goalId, firstEmotionId);
+        List<Long> secondList = getRecordIdsByUserAndGoalAndSecondEmotion(userId, goalId, secondEmotionId);
         List<Long> common = new ArrayList<>();
         for (Long f : firstList) for (Long s : secondList) if(f.equals(s)) common.add(f);
         return common;

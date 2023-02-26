@@ -129,7 +129,7 @@ public class RecordController {
      */
     /* 회고탭: 회고탭은 감정이 1개든 2개든 모든 감정들이 조회된다. */
     @Operation(summary = "[회고탭] 기록 페이징 조회",
-            description = "회고탭 조회. 조회 조건: User, Goal, Emotion (두번째 감정 존재 여부는 상관 없음)" +
+            description = "회고탭 조회. 조회 조건: User, Goal, Emotion (두번째 감정까지 존재해야한다.)" +
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다." +
                     "< 추가적으로 해당 API는 감정 필터링이 가능합니다. 만약 첫번째 감정이 0인 기록만을 조회하고 싶으신 경우에는" +
                     "회고탭api?first_emotion=0 과 같이 보내주시면 됩니다. 만약 감정으로 필터링을 원치 않으시는 경우에는 감정 쿼리스트링(first" +

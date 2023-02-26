@@ -13,8 +13,8 @@ public interface GoalService {
 
     ApplicationResponse<GoalResponse> findById(Long goalId);
 
-    ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(String userId, Long goalCategoryId,
-        Pageable pageable);
+//    ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(String userId, Long goalCategoryId,
+//        Pageable pageable);
 
     ApplicationResponse<GoalResponse> update(GoalUpdateRequest request, Long goalId, String userId);
 

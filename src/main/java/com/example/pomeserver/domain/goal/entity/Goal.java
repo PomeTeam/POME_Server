@@ -30,9 +30,7 @@ public class Goal extends DateBaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="goal_category_id")
-    private GoalCategory goalCategory;
+    private String name; // 목표 카테고리
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id")
@@ -63,14 +61,15 @@ public class Goal extends DateBaseEntity {
 
 
     @Builder
-    public Goal(GoalCategory goalCategory,
+    public Goal(String name,
                 String startDate,
                 String endDate,
                 String oneLineMind,
                 int price,
-                boolean isPublic){
-        this.addGoalCategory(goalCategory);
-        this.addUser(goalCategory.getUser());
+                boolean isPublic,
+                User user){
+        this.name = name;
+        this.addUser(user);
         this.startDate = startDate;
         this.endDate = endDate;
         this.oneLineMind = oneLineMind;
@@ -80,7 +79,7 @@ public class Goal extends DateBaseEntity {
     }
 
     public static Goal toUpdateEntity(
-            GoalCategory goalCategory,
+            String name,
             String startDate,
             String endDate,
             String oneLineMind,
@@ -89,7 +88,7 @@ public class Goal extends DateBaseEntity {
     )
     {
         Goal goal = new Goal();
-        goal.goalCategory = goalCategory;
+        goal.name = name;
         goal.startDate = startDate;
         goal.endDate = endDate;
         goal.oneLineMind = oneLineMind;
@@ -98,27 +97,16 @@ public class Goal extends DateBaseEntity {
         return goal;
     }
 
-    private void addGoalCategory(GoalCategory goalCategory) {
-        this.goalCategory = goalCategory;
-        goalCategory.addGoal(this);
-    }
-
     public void edit(Goal editGoal) {
         this.startDate = editGoal.getStartDate();
         this.endDate = editGoal.getEndDate();
         this.oneLineMind = editGoal.getOneLineMind();
         this.price = editGoal.getPrice();
         this.isPublic = editGoal.isPublic();
-        if(!Objects.equals(this.getGoalCategory().getId(), editGoal.getGoalCategory().getId())) editGoalCategory(editGoal.getGoalCategory());
+        this.name = editGoal.getName();
         this.isEnd = editGoal.isEnd;
         this.oneLineComment = editGoal.oneLineComment;
     }
-
-    private void editGoalCategory(GoalCategory goalCategory){
-        this.goalCategory.removeGoal(this);
-        this.addGoalCategory(goalCategory);
-    }
-
 
     /**
     * 목표 종료 시, 데이터 변경하는 함수

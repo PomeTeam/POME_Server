@@ -12,13 +12,11 @@ import static org.mockito.Mockito.when;
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.entity.Goal;
-import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryDuplicationException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryListSizeException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.ThisGoalIsNotByThisUserException;
-import com.example.pomeserver.domain.goal.repository.GoalCategoryRepository;
 import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
@@ -41,8 +39,6 @@ class GoalServiceImplTest {
   @Mock
   GoalRepository goalRepository;
   @Mock
-  GoalCategoryRepository goalCategoryRepository;
-  @Mock
   UserRepository userRepository;
   @InjectMocks
   UserServiceImpl userService;
@@ -62,20 +58,14 @@ class GoalServiceImplTest {
     String userId = UUID.randomUUID().toString();
     Optional<User> user = Optional.of(User.builder().userId(userId).nickname("POME").build());
 
-    when(userRepository.findByUserId(anyString())).thenReturn(user);
-    assertEquals(userService.getUserNickName(userId), "POME");
+    lenient().when(userRepository.findByUserId(anyString())).thenReturn(user);
 
-    GoalCategory goalCategoryEntity = GoalCategory.builder().name("음료").user(user.get()).build();
-    lenient().when(goalCategoryRepository.save(any())).thenReturn(goalCategoryEntity);
-
-    Goal goal = Goal.builder().goalCategory(goalCategoryEntity).endDate(request.getEndDate())
+    Goal goal = Goal.builder().name(request.getName()).endDate(request.getEndDate())
         .startDate(request.getStartDate()).isPublic(request.getIsPublic())
-        .oneLineMind(request.getOneLineMind()).build();
+        .oneLineMind(request.getOneLineMind()).user(user.get()).build();
     lenient().when(goalRepository.save(any())).thenReturn(goal);
 
-    assertThrows(GoalCategoryDuplicationException.class, () -> {
-      goalService.create(request, userId);
-    });
+    assertThat(goal.getName()).isEqualTo(request.getName());
   }
 
   @Test
@@ -108,9 +98,7 @@ class GoalServiceImplTest {
     // size of goal categories user has is 10
     for (int i = 0; i < 5; i++) {
       user.get().getGoals().add(
-          Goal.builder().goalCategory(
-              GoalCategory.builder().name("a" + i).user(user.get()).build()
-          ).build()
+          Goal.builder().name("a" + i).user(user.get()).build()
       );
     }
 
@@ -138,12 +126,13 @@ class GoalServiceImplTest {
 
     // given for getting goal
     Optional<Goal> mockGoal = Optional.of(Goal.builder()
-        .goalCategory(GoalCategory.builder().name("커피").user(user.get()).build())
+        .name("카페인")
         .startDate("2023.01.01")
         .endDate("2023.03.01")
         .isPublic(false)
         .price(50000)
         .oneLineMind("방학에는 커피를 줄여보자.")
+            .user(user.get())
         .build());
 
     // when-then
@@ -172,9 +161,9 @@ class GoalServiceImplTest {
     request.setStartDate("2023.01.01");
     request.setEndDate("2023.03.01");
     request.setOneLineMind("방학에는 커피를 줄여보자.");
-    request.setGoalCategoryId(1L);
+    request.setName("커피");
 
-    assertThrows(GoalCategoryNotFoundException.class, () -> {
+    assertThrows(GoalNotFoundException.class, () -> {
       goalService.update(request, 1L, userId);
     });
   }
@@ -191,11 +180,9 @@ class GoalServiceImplTest {
     request.setStartDate("2023.01.01");
     request.setEndDate("2023.03.01");
     request.setOneLineMind("방학에는 커피를 줄여보자.");
-    request.setGoalCategoryId(1L);
+    request.setName("커피");
 
     Optional<User> user = Optional.of(User.builder().build());
-    Optional<GoalCategory> goalCategory = Optional.of(GoalCategory.builder().name("커피").user(user.get()).build());
-    when(goalCategoryRepository.findById(anyLong())).thenReturn(goalCategory);
 
     assertThrows(GoalNotFoundException.class, () -> {
       goalService.update(request, 1L, userId);
@@ -214,13 +201,11 @@ class GoalServiceImplTest {
     request.setStartDate("2023.01.01");
     request.setEndDate("2023.03.01");
     request.setOneLineMind("방학에는 커피를 줄여보자.");
-    request.setGoalCategoryId(1L);
+    request.setName("커피");
 
     Optional<User> user = Optional.of(User.builder().userId(userId).build());
-    Optional<GoalCategory> goalCategory = Optional.of(GoalCategory.builder().name("커피").user(user.get()).build());
-    Optional<Goal> goal = Optional.of(Goal.builder().goalCategory(goalCategory.get()).build());
+    Optional<Goal> goal = Optional.of(Goal.builder().name("커피").user(user.get()).build());
 
-    when(goalCategoryRepository.findById(anyLong())).thenReturn(goalCategory);
     when(goalRepository.findById(anyLong())).thenReturn(goal);
 
     assertThrows(ThisGoalIsNotByThisUserException.class, () -> {

@@ -1,28 +1,22 @@
 package com.example.pomeserver.domain.goal.service;
 
 import com.example.pomeserver.domain.goal.dto.assembler.GoalAssembler;
-import com.example.pomeserver.domain.goal.dto.assembler.GoalCategoryAssembler;
 import com.example.pomeserver.domain.goal.dto.request.GoalCreateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalTerminateRequest;
 import com.example.pomeserver.domain.goal.dto.request.GoalUpdateRequest;
 import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.goal.entity.Goal;
-import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import com.example.pomeserver.domain.goal.exception.excute.GoalAlreadyEndException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCanNotEndException;
-import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryDuplicationException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryListSizeException;
-import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.ThisGoalIsNotByThisUserException;
-import com.example.pomeserver.domain.goal.repository.GoalCategoryRepository;
 import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.User;
 import com.example.pomeserver.domain.user.exception.excute.UserNotFoundException;
 import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.global.dto.response.ApplicationResponse;
-import java.util.stream.Collectors;
 
 import com.example.pomeserver.global.event.Activity;
 import com.example.pomeserver.global.event.ActivityType;
@@ -40,10 +34,7 @@ public class GoalServiceImpl implements GoalService {
 
   private final GoalRepository goalRepository;
   private final UserRepository userRepository;
-  private final GoalCategoryRepository goalCategoryRepository;
   private final GoalAssembler goalAssembler;
-
-  private final GoalCategoryAssembler goalCategoryAssembler;
 
   private final UserActivityEventPublisher userActivityEventPublisher;
 
@@ -62,20 +53,10 @@ public class GoalServiceImpl implements GoalService {
       throw new GoalCategoryListSizeException();
     }
 
-    // (2) 유저가 보유하고 있는 카테고리명 중복 확인
-    boolean distinct = user.getGoalCategories()
-        .stream()
-        .anyMatch(goalCategory -> goalCategory.getName().equals(request.getName()));
-    if (distinct) {
-      throw new GoalCategoryDuplicationException();
-    }
-
-    // (3) 카테고리 생성
-    GoalCategory goalCategory = goalCategoryAssembler.toEntity(request.getName(), user);
-    GoalCategory saved = goalCategoryRepository.save(goalCategory);
+    // (2) 유저가 보유하고 있는 카테고리명 중복 확인 -> 중복 허용
 
     // (4) DTO <-> Entity
-    Goal goal = goalAssembler.toEntity(request, saved);
+    Goal goal = goalAssembler.toEntity(request, user);
 
     // (4) Goal 저장
     Goal savedGoal = goalRepository.save(goal);
@@ -89,21 +70,6 @@ public class GoalServiceImpl implements GoalService {
     return ApplicationResponse.ok(GoalResponse.toDto(goal));
   }
 
-  @Override
-  public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
-      String userId,
-      Long goalCategoryId, Pageable pageable) {
-    // (1) 유저 데이터 조회
-    User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
-    // (2) 유저가 보유한 목표 카테고리 리스트에서 goalCategoryId를 가진 데이터 조회
-    GoalCategory goalCategory = user.getGoalCategories().stream()
-        .filter(category -> category.getId().equals(goalCategoryId))
-        .findFirst()
-        .orElseThrow(GoalCategoryNotFoundException::new);
-    // (3) GoalCategory가 갖는 Goal 리스트 조회
-    return ApplicationResponse.ok(
-        goalRepository.findAllByGoalCategory(goalCategory, pageable).map(GoalResponse::toDto));
-  }
 
   @Transactional
   @Override
@@ -111,20 +77,16 @@ public class GoalServiceImpl implements GoalService {
       GoalUpdateRequest request,
       Long goalId,
       String userId) {
-    // (1) GoalCategory 조회
-    GoalCategory goalCategory = goalCategoryRepository.findById(request.getGoalCategoryId())
-        .orElseThrow(GoalCategoryNotFoundException::new);
-
     // (2) Goal 조회
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
-    // (3) 유저가 보유한 Goal Category 인지 확인
-    if (!goalCategory.getUser().getUserId().equals(userId)) {
+    // (3) 유저가 보유한 Goal 인지 확인
+    if (!goal.getUser().getUserId().equals(userId)) {
       throw new ThisGoalIsNotByThisUserException();
     }
 
     // (4) Goal 수정
-    goal.edit(goalAssembler.toEntity(request, goalCategory));
+    goal.edit(goalAssembler.toEntity(request));
 
     // (5) Goal 저장
     Goal saved = goalRepository.save(goal);
@@ -141,17 +103,12 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (2) 유저의 삭제 권한 확인
-    if (!goal.getGoalCategory().getUser().getUserId().equals(userId)) {
+    if (!goal.getUser().getUserId().equals(userId)) {
       throw new ThisGoalIsNotByThisUserException();
     }
 
-    Long goalCategoryId = goal.getGoalCategory().getId();
-
     // (3) Goal 삭제
     goalRepository.deleteById(goalId);
-
-    // (4) Goal Category 삭제
-    goalCategoryRepository.deleteById(goalCategoryId);
 
     return ApplicationResponse.ok();
   }
@@ -175,7 +132,7 @@ public class GoalServiceImpl implements GoalService {
     Goal goal = goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
 
     // (2) User 권한 조회
-    User user = goal.getGoalCategory().getUser();
+    User user = goal.getUser();
     if (!user.getUserId().equals(userId)) {
       throw new ThisGoalIsNotByThisUserException();
     }

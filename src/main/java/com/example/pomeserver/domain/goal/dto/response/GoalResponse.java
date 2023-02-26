@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class GoalResponse {
     private Long id;
-    private GoalCategoryResponse goalCategoryResponse;
+    private String name;
     private String startDate; //2023.02.23
     private String endDate;   //2023.02.23
     private String oneLineMind;
@@ -25,7 +25,7 @@ public class GoalResponse {
     public static GoalResponse toDto(Goal goal){
         GoalResponse response = new GoalResponse();
         response.id = goal.getId();
-        response.goalCategoryResponse = GoalCategoryResponse.toDto(goal.getGoalCategory());
+        response.name = goal.getName();
         response.startDate = goal.getStartDate();
         response.endDate = goal.getEndDate();
         response.oneLineMind = goal.getOneLineMind();
@@ -37,7 +37,7 @@ public class GoalResponse {
         for (Record record : goal.getRecords()) {
             response.usePrice += record.getUsePrice();
         }
-        response.nickname = goal.getGoalCategory().getUser().getNickname();
+        response.nickname = goal.getUser().getNickname();
         return response;
     }
 }

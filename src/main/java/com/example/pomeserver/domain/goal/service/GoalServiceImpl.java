@@ -8,6 +8,7 @@ import com.example.pomeserver.domain.goal.dto.response.GoalResponse;
 import com.example.pomeserver.domain.goal.entity.Goal;
 import com.example.pomeserver.domain.goal.exception.excute.GoalAlreadyEndException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCanNotEndException;
+import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryDuplicationException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalCategoryListSizeException;
 import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.exception.excute.ThisGoalIsNotByThisUserException;
@@ -54,6 +55,9 @@ public class GoalServiceImpl implements GoalService {
     }
 
     // (2) 유저가 보유하고 있는 카테고리명 중복 확인 -> 중복 허용
+    if(goalRepository.findByIsEndAndNameAndUser(true, request.getName(), user).isPresent()) {
+      throw new GoalCategoryDuplicationException();
+    }
 
     // (4) DTO <-> Entity
     Goal goal = goalAssembler.toEntity(request, user);

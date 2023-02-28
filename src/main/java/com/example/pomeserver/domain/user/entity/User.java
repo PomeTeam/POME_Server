@@ -1,6 +1,5 @@
 package com.example.pomeserver.domain.user.entity;
 
-import com.example.pomeserver.domain.goal.entity.GoalCategory;
 import javax.persistence.*;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
@@ -48,9 +47,6 @@ public class User {
     @OneToMany(mappedBy="user", cascade=ALL)
     private List<Record> records = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = ALL)
-    private List<GoalCategory> goalCategories = new ArrayList<>();
-
     @OneToMany(mappedBy = "toUser", cascade = ALL)
     private List<Follow> toUser = new ArrayList<>();
 
@@ -84,14 +80,6 @@ public class User {
 
     public void addGoal(Goal goal) {
         this.goals.add(goal);
-    }
-
-    public void addGoalCategory(GoalCategory goalCategory) {
-        this.goalCategories.add(goalCategory);
-    }
-
-    public void removeGoalCategory(GoalCategory goalCategory) {
-        this.goalCategories.remove(goalCategory);
     }
 
     public void addEmotionRecord(EmotionRecord emotionRecord) {

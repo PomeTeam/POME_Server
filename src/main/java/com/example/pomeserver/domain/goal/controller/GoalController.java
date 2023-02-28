@@ -34,7 +34,6 @@ public class GoalController {
 
     /**
      * Goal 생성
-     * 단, Goal Category가 존재해야 한다.
      *
      * @author 이은비
      */
@@ -60,23 +59,6 @@ public class GoalController {
     public ApplicationResponse<GoalResponse> findById(@PathVariable Long goalId)
     {
         return goalService.findById(goalId);
-    }
-
-    /**
-     * 유저가 가진 Goal Category에 해당하는 Goal 전체 조회.
-     *
-     * @author 이은비
-     */
-    @Operation(summary = "특정 목표 카테고리에 따른 목표 리스트 조회하기",
-        description = "사용자가 보유한 목표 카테고리 리스트 중 목표 카테고리 ID를 통해 특정 목표 카테고리에 속하는 목표 리스트 조회한다.")
-    @Auth
-    @GetMapping("/category/{goalCategoryId}")
-    public ApplicationResponse<Page<GoalResponse>> findAllByUserCategory(
-            @ApiIgnore @UserId String userId,
-            @PathVariable Long goalCategoryId,
-            Pageable pageable)
-    {
-        return goalService.findAllByUserCategory(userId, goalCategoryId, pageable);
     }
 
     /**

@@ -196,17 +196,16 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
     public Page<Record> findAllSecondEmotionIsFalseByGoalAndUser(String userId,
                                                                  Long goalId,
                                                                  String beforeDate,
-                                                                 Pageable pageable) {
-
+                                                                 Pageable pageable)
+    {
         String query = "select r from Record r" +
                 " join fetch r.user u" +
                 " join fetch r.goal g" +
                 " where u.userId=:userId and" +
-                " r.useDate > :beforeDate and" +
+                " r.useDate >= :beforeDate and" +
                 " r.hasSecond = false and" +
                 " g.id=:goalId" +
                 " order by r.useDate desc";
-
         List<Record> resultList = em.createQuery(query, Record.class)
                 .setParameter("userId", userId)
                 .setParameter("goalId", goalId)

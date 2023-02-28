@@ -16,6 +16,7 @@ import com.example.pomeserver.domain.record.entity.HideRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.record.entity.vo.EmotionType;
 import com.example.pomeserver.domain.record.exception.emotion.excute.EmotionNotFoundException;
+import com.example.pomeserver.domain.record.exception.emotion.excute.LeaveEmotionToMyRecordException;
 import com.example.pomeserver.domain.record.exception.record.excute.RecordNotFoundException;
 import com.example.pomeserver.domain.record.exception.record.excute.ThisRecordIsNotByThisUserException;
 import com.example.pomeserver.domain.record.repository.emotion.EmotionRecordRepository;
@@ -113,17 +114,19 @@ public class RecordServiceImpl implements RecordService{
             Long recordId,
             String senderId)
     {
+
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
+        if(sender.getUserId().equals(record.getUser().getUserId())) throw new LeaveEmotionToMyRecordException();
+
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
-
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
-        if(alreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
-        else emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
-
-        sender.getActivityCount().addAddEmotionCount();
-        userActivityEventPublisher.execute(Activity.create(sender, ActivityType.ADD_EMOTION));
-
+        if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
+        else{
+            emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
+            sender.getActivityCount().addAddEmotionCount();
+            userActivityEventPublisher.execute(Activity.create(sender, ActivityType.ADD_EMOTION));
+        }
         return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
     }
 
@@ -133,7 +136,7 @@ public class RecordServiceImpl implements RecordService{
                 er.editEmotion(emotion);
     }
 
-    private boolean alreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
+    private boolean isAlreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
         for (EmotionRecord er : emotionRecords)
             if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND)) return true;
         return false;

@@ -127,7 +127,7 @@ public class RecordController {
      * Goal에 해당하는 기록들 페이징 조회 기능
      * @Author 이찬영
      */
-    /* 회고탭: 회고탭은 감정이 1개든 2개든 모든 감정들이 조회된다. */
+    /* 회고탭 */
     @Operation(summary = "[회고탭] 기록 페이징 조회",
             description = "회고탭 조회. 조회 조건: User, Goal, Emotion (두번째 감정까지 존재해야한다.)" +
                     "이때 클라이언트는 반드시 쿼리스트링으로 size와 page를 명시해 주어야 한다." +

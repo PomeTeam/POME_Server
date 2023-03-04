@@ -18,7 +18,7 @@ public class UserNicknameRequest {
 
     @NotNull(message = "닉네임을 입력해주세요")
     @NotBlank(message ="닉네임을 입력해주세요")
-    @Pattern(regexp = "^[a-z0-9가-힣]{2,10}$", message = "닉네임은 2~10글자의 영소문자, 숫자, 한글만 가능합니다.")
+    @Pattern(regexp = "^[a-z가-힣A-Z]{1,10}$", message = "닉네임은 1~10글자의 영문, 한글만 입력할 수 입력할 수 있어요.")
     private String nickName;
 
 }

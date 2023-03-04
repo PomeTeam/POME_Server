@@ -258,14 +258,13 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 "and r.hasSecond = true " +
                 "order by r.useDate desc ";
 
-
         List<Record> resultList = em.createQuery(query, Record.class)
                 .setParameter("userId", userId)
                 .setParameter("goalId", goalId)
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
-
+        //주석 추가
         String countQuery =
                 "select count(r) from Record r " +
                 "join r.user u " +
@@ -273,6 +272,7 @@ public class RecordRepositoryCustomImpl implements RecordRepositoryCustom{
                 "where u.userId=:userId " +
                 "and r.hasSecond = true " +
                 "and g.id=:goalId";
+
         Object singleResult = em.createQuery(countQuery)
                 .setParameter("userId", userId)
                 .setParameter("goalId", goalId)

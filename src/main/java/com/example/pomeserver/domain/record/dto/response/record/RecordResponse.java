@@ -3,6 +3,7 @@ package com.example.pomeserver.domain.record.dto.response.record;
 import com.example.pomeserver.domain.record.dto.response.emotion.EmotionResponse;
 import com.example.pomeserver.domain.record.entity.Record;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,5 +49,25 @@ public class RecordResponse{
         response.createdAt = record.getCreatedAt().toString();
         response.emotionResponse = EmotionResponse.toDto(record.getEmotionRecords(), viewerUserId);
         return response;
+    }
+
+    @Builder
+    public RecordResponse(Long id,
+                          String nickname,
+                          int usePrice,
+                          String useDate,
+                          String useComment,
+                          String oneLineMind,
+                          String createdAt,
+                          EmotionResponse emotionResponse)
+    {
+        this.id = id;
+        this.nickname = nickname;
+        this.usePrice = usePrice;
+        this.useDate = useDate;
+        this.useComment = useComment;
+        this.oneLineMind = oneLineMind;
+        this.createdAt = createdAt;
+        this.emotionResponse = emotionResponse;
     }
 }

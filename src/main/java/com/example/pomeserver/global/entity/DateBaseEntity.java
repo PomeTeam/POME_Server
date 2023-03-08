@@ -37,4 +37,8 @@ public class DateBaseEntity implements Serializable {
     @Setter
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private Boolean isEnable = true;
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

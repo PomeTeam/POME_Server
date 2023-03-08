@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.record.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,5 +35,18 @@ public class RecordCreateRequest {
     @ApiModelProperty(value = "기록 코멘트", example = "이런저런 소비를 하였다. ^.^", required = true, dataType = "string")
     @Size(max = 151, message = "코멘트는 150자 이하만 가능합니다.")
     private String useComment;
+
+    @Builder
+    public RecordCreateRequest(Long goalId,
+                               Long emotionId,
+                               int usePrice,
+                               String useDate,
+                               String useComment) {
+        this.goalId = goalId;
+        this.emotionId = emotionId;
+        this.usePrice = usePrice;
+        this.useDate = useDate;
+        this.useComment = useComment;
+    }
 }
 

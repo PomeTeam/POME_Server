@@ -9,6 +9,7 @@ import com.example.pomeserver.domain.record.entity.HideRecord;
 import com.example.pomeserver.domain.record.entity.Record;
 import com.example.pomeserver.domain.user.entity.vo.ActivityCount;
 import com.example.pomeserver.domain.user.entity.vo.UserType;
+import com.example.pomeserver.global.entity.DateBaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import static javax.persistence.CascadeType.ALL;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends DateBaseEntity {
 
     @Id
     @GeneratedValue

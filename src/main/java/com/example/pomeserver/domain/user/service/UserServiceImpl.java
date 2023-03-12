@@ -17,6 +17,7 @@ import com.example.pomeserver.domain.user.repository.UserRepository;
 import com.example.pomeserver.domain.user.repository.UserWithdrawalRepository;
 import com.example.pomeserver.global.util.jwtToken.TokenUtils;
 import com.example.pomeserver.global.util.redis.template.RedisTemplateService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,10 +64,19 @@ public class UserServiceImpl implements UserService{
         return UserResponse.toDto(user, getSaveToken(user));
     }
 
+    @Transactional
     @Override
     public UserResponse signIn(UserSignInRequest userSignInRequest) {
         User user = userRepository.findByPhoneNum(userSignInRequest.getPhoneNum()).orElseThrow(UserNotFoundException::new);
-        if (!user.getUserType().equals(UserType.ACCESS)) throw new UserNotAllowedException();
+        if (!user.getUserType().equals(UserType.ACCESS)){
+            LocalDateTime userLastModified = user.getLastModifiedAt().plusDays(7);
+            if (userLastModified.isAfter(LocalDateTime.now())){
+                throw new UserNotAllowedException();
+            }
+            if (userLastModified.isBefore(LocalDateTime.now())){
+                user.setUserType(UserType.ACCESS);
+            }
+        }
         return UserResponse.toDto(user, getSaveToken(user));
     }
 

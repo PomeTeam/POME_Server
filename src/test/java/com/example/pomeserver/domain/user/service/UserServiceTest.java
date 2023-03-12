@@ -23,7 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -143,6 +147,8 @@ public class UserServiceTest {
 
         User actualUser = User.builder().userId(UUID.randomUUID().toString()).image("userprof847.png").nickname("testNick").phoneNum(request.getPhoneNum()).build();
         actualUser.setUserType(UserType.DELETE);
+        //어제 탈퇴한 회원
+        ReflectionTestUtils.setField(actualUser, "lastModifiedAt", LocalDateTime.now().minusDays(1));
 
         lenient().when(userRepository.findByPhoneNum(request.getPhoneNum())).thenReturn(Optional.of(actualUser));
 

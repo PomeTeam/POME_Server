@@ -2,6 +2,7 @@ package com.example.pomeserver.domain.record.entity;
 
 import com.example.pomeserver.global.entity.DateBaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,5 +29,12 @@ public class Emotion extends DateBaseEntity{
 
     public void addEmotionRecord(EmotionRecord emotionRecord) {
         this.emotionRecords.add(emotionRecord);
+    }
+
+    @Builder
+    public Emotion(Long id, String emotionName, String image) {
+        this.id = id;
+        this.emotionName = emotionName;
+        this.image = image;
     }
 }

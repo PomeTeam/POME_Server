@@ -21,7 +21,10 @@ public class RecordAssembler {
     }
 
     public Record toEntity(RecordUpdateRequest request){
-        return Record.toUpdateEntity(request.getUsePrice(), request.getUseDate(), request.getUseComment());
+        return Record.toUpdateEntity(
+                request.getUsePrice(),
+                request.getUseDate(),
+                request.getUseComment());
     }
 
 }

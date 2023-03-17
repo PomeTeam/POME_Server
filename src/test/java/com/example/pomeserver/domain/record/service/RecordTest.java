@@ -1,11 +1,11 @@
 package com.example.pomeserver.domain.record.service;
 
 import com.example.pomeserver.domain.goal.entity.Goal;
-import com.example.pomeserver.domain.goal.exception.excute.GoalNotFoundException;
 import com.example.pomeserver.domain.goal.repository.GoalRepository;
 import com.example.pomeserver.domain.record.dto.assembler.EmotionRecordAssembler;
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
+import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.entity.Emotion;
@@ -25,9 +25,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import com.example.pomeserver.domain.record.entity.Record;
+import org.mockito.stubbing.Answer;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -201,6 +203,56 @@ public class RecordTest {
         );
     }
 
+    @Test
+    void 기록에_두번째_감정_남기기(){
+        // given
+        Long firstEmotionId = 1L;
+        Long secondEmotionId = 2L;
+
+        RecordSecondEmotionRequest request = new RecordSecondEmotionRequest();
+        request.setEmotionId(secondEmotionId);
+
+        User user = getTestUser1();
+        String userId = user.getUserId();
+
+        Record record = getTestRecord1();
+        Long targetRecordId = record.getId();
+        record.addEmotionRecord(EmotionRecord.builder()
+                .emotionType(EmotionType.MY_FIRST)
+                .user(user)
+                .emotion(getTestEmotion1())
+                .record(record).build());
+
+        EmotionRecord emotionRecord = getTestMySecondEmotionRecord(user, getTestEmotion2(), getTestRecord1());
+
+        // when
+        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
+        lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestEmotion2()));
+        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
+        lenient().when(emotionRecordRepository.save(any())).thenAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocationOnMock){
+                record.addEmotionRecord(EmotionRecord.builder()
+                        .emotionType(EmotionType.MY_SECOND)
+                        .user(user)
+                        .emotion(getTestEmotion2())
+                        .record(record).build());
+                return null;
+            }
+        });
+        ApplicationResponse<RecordResponse> response = recordService.writeSecondEmotion(request, targetRecordId, userId);
+
+        // then
+        RecordResponse result = response.getData();
+        assertAll(
+                () -> assertEquals(record.getId(), result.getId()),
+                () -> assertEquals(secondEmotionId, result.getEmotionResponse().getSecondEmotion()),
+                () -> assertEquals(firstEmotionId, result.getEmotionResponse().getFirstEmotion()),
+                () -> assertEquals(user.getNickname(), result.getNickname())
+        );
+    }
+
 
 
 
@@ -244,6 +296,16 @@ public class RecordTest {
                 .record(record).build();
     }
 
+    private EmotionRecord getTestMySecondEmotionRecord(User user,
+                                                      Emotion emotion,
+                                                      Record record)
+    {
+        return EmotionRecord.builder().emotionType(EmotionType.MY_SECOND)
+                .user(user)
+                .emotion(emotion)
+                .record(record).build();
+    }
+
     private Record requestToRecordEntity(RecordCreateRequest request,
                                          Goal goal,
                                          User user)
@@ -264,6 +326,14 @@ public class RecordTest {
                 .id(emotion1Id)
                 .emotionName(emotion1Name).
                 image(emotion1Image).build();
+    }
+
+    private Emotion getTestEmotion2()
+    {
+        return Emotion.builder()
+                .id(emotion2Id)
+                .emotionName(emotion2Name).
+                image(emotion2Image).build();
     }
 
 
@@ -318,6 +388,10 @@ public class RecordTest {
         Long emotion1Id = 1L;
         String emotion1Name = "smile";
         String emotion1Image = "emoji1";
+
+        Long emotion2Id = 2L;
+        String emotion2Name = "angry";
+        String emotion2Image = "emoji2";
 
         /* record */
         Long record1Id = 1L;

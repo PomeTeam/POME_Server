@@ -59,6 +59,9 @@ public class RecordServiceImpl implements RecordService{
     private final HideRecordRepository hideRecordRepository;
     private final UserActivityEventPublisher userActivityEventPublisher;
 
+    private final Long POSITIVE_EMOTION = 0L;
+    private final Long NEGATIVE_EMOTION = 2L;
+
     @Transactional
     @Override
     public ApplicationResponse<RecordResponse> create(
@@ -94,9 +97,9 @@ public class RecordServiceImpl implements RecordService{
         user.getActivityCount().addFinishRecordCount();
         userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
 
-        if(secondEmotion.getId().equals(2L)){
+        if(secondEmotion.getId().equals(NEGATIVE_EMOTION)){
             record.getEmotionRecords().stream()
-                    .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(0L))
+                    .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(POSITIVE_EMOTION))
                     .findFirst()
                     .ifPresent((er)->{
                         user.getActivityCount().addChangePositiveToNegativeCount();
@@ -114,7 +117,6 @@ public class RecordServiceImpl implements RecordService{
             Long recordId,
             String senderId)
     {
-
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         if(sender.getUserId().equals(record.getUser().getUserId())) throw new LeaveEmotionToMyRecordException();

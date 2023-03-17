@@ -117,7 +117,6 @@ public class RecordServiceImpl implements RecordService{
             Long recordId,
             String senderId)
     {
-
         User sender = userRepository.findByUserId(senderId).orElseThrow(UserNotFoundException::new);
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         if(sender.getUserId().equals(record.getUser().getUserId())) throw new LeaveEmotionToMyRecordException();

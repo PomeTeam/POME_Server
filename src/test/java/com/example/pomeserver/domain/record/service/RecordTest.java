@@ -6,6 +6,7 @@ import com.example.pomeserver.domain.record.dto.assembler.EmotionRecordAssembler
 import com.example.pomeserver.domain.record.dto.assembler.RecordAssembler;
 import com.example.pomeserver.domain.record.dto.request.RecordCreateRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordSecondEmotionRequest;
+import com.example.pomeserver.domain.record.dto.request.RecordToFriendEmotionRequest;
 import com.example.pomeserver.domain.record.dto.request.RecordUpdateRequest;
 import com.example.pomeserver.domain.record.dto.response.record.RecordResponse;
 import com.example.pomeserver.domain.record.entity.Emotion;
@@ -25,11 +26,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import com.example.pomeserver.domain.record.entity.Record;
-import org.mockito.stubbing.Answer;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -66,22 +65,30 @@ public class RecordTest {
 
 
     @Test
-    void 기록_생성_성공() {
+    void 기록_생성_성공()
+    {
         //given
         RecordCreateRequest request = getRecordCreateRequest();
         User user = getTestUser1();
         String userId = user.getUserId();
+
         Goal goal = getTestGoal1();
-        Emotion emotion = getTestEmotion1();
-        Record record = requestToRecordEntity(request, goal, user);
-        EmotionRecord emotionRecord = getTestMyFirstEmotionRecord(user, emotion, record);
+
+        Emotion emotion = getTestSmileEmotion();
+
 
         //when
         lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
         lenient().when(goalRepository.findById(any())).thenReturn(Optional.of(goal));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(emotion));
+        Record record = requestToRecordEntity(request, goal, user);
         lenient().when(recordAssembler.toEntity(any(), any(), any())).thenReturn(record);
-        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
+        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenAnswer( invocation -> {
+            return EmotionRecord.builder().emotionType(EmotionType.MY_FIRST)
+                    .user(user)
+                    .emotion(emotion)
+                    .record(record).build();
+        });
         lenient().when(recordRepository.save(any())).thenReturn(record);
 
         ApplicationResponse<RecordResponse> response = recordService.create(request, userId);
@@ -97,10 +104,11 @@ public class RecordTest {
     }
 
     @Test
-    void 기록_단건_조회() {
+    void 기록_단건_조회()
+    {
 
         // given
-        Record savedRecord = getTestRecord1();
+        Record savedRecord = getTestRecord1(getTestUser1(), getTestGoal1());
         Long recordId = 1L;
         String userId = user1Id;
 
@@ -118,11 +126,12 @@ public class RecordTest {
     }
 
     @Test
-    void 기록_수정하기() {
+    void 기록_수정하기()
+    {
         // given
         String requestUserId = user1Id;
         Long updateRecordId = record1Id;
-        Record savedRecord = getTestRecord1();
+        Record savedRecord = getTestRecord1(getTestUser1(), getTestGoal1());
 
         Long goalId = goal1Id;
         String editUseDate = "2023.03.09";
@@ -153,13 +162,15 @@ public class RecordTest {
                 () -> assertEquals(editUseComment, result.getUseComment())
         );
     }
+
     @Test
     @DisplayName("기록_수정하기_실패(요청한 유저가 해당 기록의 주인이 아닌 경우)")
-    void 기록_수정하기_실패1() {
+    void 기록_수정하기_실패1()
+    {
         // given
         String otherUserId = "otherUserId";
         Long updateRecordId = record1Id;
-        Record savedRecord = getTestRecord1();
+        Record savedRecord = getTestRecord1(getTestUser1(), getTestGoal1());
 
         Long goalId = goal1Id;
         String editUseDate = "2023.03.09";
@@ -187,11 +198,12 @@ public class RecordTest {
 
 
     @Test
-    void 기록_삭제하기() {
+    void 기록_삭제하기()
+    {
         // given
         Long recordId = 1L;
         String userId = user1Id;
-        Record savedRecord = getTestRecord1();
+        Record savedRecord = getTestRecord1(getTestUser1(), getTestGoal1());
 
         // when
         lenient().when(recordRepository.findById(recordId)).thenReturn(Optional.of(savedRecord));
@@ -204,7 +216,8 @@ public class RecordTest {
     }
 
     @Test
-    void 기록에_두번째_감정_남기기(){
+    void 기록에_두번째_감정_남기기()
+    {
         // given
         Long firstEmotionId = 1L;
         Long secondEmotionId = 2L;
@@ -215,31 +228,29 @@ public class RecordTest {
         User user = getTestUser1();
         String userId = user.getUserId();
 
-        Record record = getTestRecord1();
+        Record record = getTestRecord1(getTestUser1(), getTestGoal1());
         Long targetRecordId = record.getId();
         record.addEmotionRecord(EmotionRecord.builder()
                 .emotionType(EmotionType.MY_FIRST)
                 .user(user)
-                .emotion(getTestEmotion1())
+                .emotion(getTestSmileEmotion())
                 .record(record).build());
 
-        EmotionRecord emotionRecord = getTestMySecondEmotionRecord(user, getTestEmotion2(), getTestRecord1());
+        EmotionRecord emotionRecord = getTestMySecondEmotionRecord(user, getTestSoSoEmotion(), getTestRecord1(getTestUser1(), getTestGoal1()));
 
         // when
         lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
-        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestEmotion2()));
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestSoSoEmotion()));
         lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
-        lenient().when(emotionRecordRepository.save(any())).thenAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock){
-                record.addEmotionRecord(EmotionRecord.builder()
-                        .emotionType(EmotionType.MY_SECOND)
-                        .user(user)
-                        .emotion(getTestEmotion2())
-                        .record(record).build());
-                return null;
-            }
+        lenient().when(emotionRecordRepository.save(any())).thenAnswer(invocation -> {
+            EmotionRecord emotionRecord2 = EmotionRecord.builder()
+                    .emotionType(EmotionType.MY_SECOND)
+                    .user(user)
+                    .emotion(getTestSoSoEmotion())
+                    .record(record).build();
+            record.addEmotionRecord(emotionRecord2);
+            return emotionRecord2;
         });
         ApplicationResponse<RecordResponse> response = recordService.writeSecondEmotion(request, targetRecordId, userId);
 
@@ -253,17 +264,46 @@ public class RecordTest {
         );
     }
 
+    @Test
+    @DisplayName("친구의 기록에 감정 남기기 (성공 - 감정을 처음 남기는 경우)")
+    void 친구의_기록에_감정_남기기()
+    {
+        // given
+        User user = getTestUser2();
+        String userId = user.getUserId();
 
+        Record record = getTestRecord1(getTestUser1(), getTestGoal1());
+        RecordToFriendEmotionRequest request = new RecordToFriendEmotionRequest();
+        Long requestEmotionId = 3L;
+        request.setEmotionId(requestEmotionId);
 
+        EmotionRecord emotionRecord = getTestFriendEmotionRecord(user, getTestBadEmotion(), record);
 
+        // when
+        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
+        lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestBadEmotion()));
+        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
+        lenient().when(emotionRecordRepository.save(any())).thenAnswer( invocation -> {
+            record.addEmotionRecord(emotionRecord);
+            return emotionRecord;
+        });
 
+        ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), userId);
 
+        // then
+        RecordResponse result = response.getData();
+        assertAll(
+                () -> assertEquals(record.getId(), result.getId()),
+                () -> assertEquals(1, (long) result.getEmotionResponse().getFriendEmotions().size()),
+                () -> assertEquals(requestEmotionId,  result.getEmotionResponse().getFriendEmotions().get(0).getEmotionId())
+        );
+    }
 
-
-    private Record getTestRecord1() {
+    private Record getTestRecord1(User user, Goal goal){
         Record record = Record.builder()
-                .goal(getTestGoal1())
-                .user(getTestUser1())
+                .goal(goal)
+                .user(user)
                 .usePrice(record1UsePrice)
                 .useDate(record1UseDate)
                 .useComment(record1UseComment).build();
@@ -306,6 +346,16 @@ public class RecordTest {
                 .record(record).build();
     }
 
+    private EmotionRecord getTestFriendEmotionRecord(User user,
+                                                       Emotion emotion,
+                                                       Record record)
+    {
+        return EmotionRecord.builder().emotionType(EmotionType.FRIEND)
+                .user(user)
+                .emotion(emotion)
+                .record(record).build();
+    }
+
     private Record requestToRecordEntity(RecordCreateRequest request,
                                          Goal goal,
                                          User user)
@@ -320,7 +370,7 @@ public class RecordTest {
         return record;
     }
 
-    private Emotion getTestEmotion1()
+    private Emotion getTestSmileEmotion()
     {
         return Emotion.builder()
                 .id(emotion1Id)
@@ -328,12 +378,20 @@ public class RecordTest {
                 image(emotion1Image).build();
     }
 
-    private Emotion getTestEmotion2()
+    private Emotion getTestSoSoEmotion()
     {
         return Emotion.builder()
                 .id(emotion2Id)
                 .emotionName(emotion2Name).
                 image(emotion2Image).build();
+    }
+
+    private Emotion getTestBadEmotion()
+    {
+        return Emotion.builder()
+                .id(emotion3Id)
+                .emotionName(emotion3Name).
+                image(emotion3Image).build();
     }
 
 
@@ -368,12 +426,26 @@ public class RecordTest {
                 .image(user1Image).build();
     }
 
+    private User getTestUser2()
+    {
+        return User.builder()
+                .userId(user2Id)
+                .nickname(user2Nickname)
+                .phoneNum(user2PhoneNumber)
+                .image(user2Image).build();
+    }
+
     public interface staticValues{
         /* user */
         String user1Id = "userId1";
         String user1Nickname = "peace";
         String user1PhoneNumber = "01011112222";
         String user1Image = "user1Image";
+
+        String user2Id = "userId2";
+        String user2Nickname = "chaos";
+        String user2PhoneNumber = "01033334444";
+        String user2Image = "user2Image";
 
         /* goal */
         Long goal1Id = 1L;
@@ -390,8 +462,12 @@ public class RecordTest {
         String emotion1Image = "emoji1";
 
         Long emotion2Id = 2L;
-        String emotion2Name = "angry";
+        String emotion2Name = "soso";
         String emotion2Image = "emoji2";
+
+        Long emotion3Id = 3L;
+        String emotion3Name = "bad";
+        String emotion3Image = "emoji3";
 
         /* record */
         Long record1Id = 1L;

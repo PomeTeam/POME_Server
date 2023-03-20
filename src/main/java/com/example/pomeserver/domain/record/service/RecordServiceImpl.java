@@ -96,7 +96,6 @@ public class RecordServiceImpl implements RecordService{
         record.changeHasSecondToTrue();
         user.getActivityCount().addFinishRecordCount();
         userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
-
         if(secondEmotion.getId().equals(NEGATIVE_EMOTION)){
             record.getEmotionRecords().stream()
                     .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(POSITIVE_EMOTION))
@@ -123,6 +122,9 @@ public class RecordServiceImpl implements RecordService{
 
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
+        for (EmotionRecord emotionRecord : emotionRecords) {
+            System.out.println(emotionRecord.getUser().getUserId());
+        }
         if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
         else{
             emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));

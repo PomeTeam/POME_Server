@@ -36,7 +36,7 @@ import java.util.Optional;
 import static com.example.pomeserver.domain.record.service.RecordTest.staticValues.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RecordTest {
@@ -216,51 +216,90 @@ public class RecordTest {
     }
 
     @Test
-    void 기록에_두번째_감정_남기기()
+    @DisplayName("기록에 두번째 감정남기기 (성공 - 일반적인 경우)")
+    void 기록에_두번째_감정_남기기1()
     {
         // given
-        Long firstEmotionId = 1L;
-        Long secondEmotionId = 2L;
+        Emotion firstEmotion = getTestSmileEmotion();
+        Emotion secondEmotion = getTestSmileEmotion();
 
         RecordSecondEmotionRequest request = new RecordSecondEmotionRequest();
-        request.setEmotionId(secondEmotionId);
+        request.setEmotionId(secondEmotion.getId());
 
         User user = getTestUser1();
-        String userId = user.getUserId();
+        Goal goal = getTestGoal1();
 
-        Record record = getTestRecord1(getTestUser1(), getTestGoal1());
-        Long targetRecordId = record.getId();
-        record.addEmotionRecord(EmotionRecord.builder()
-                .emotionType(EmotionType.MY_FIRST)
-                .user(user)
-                .emotion(getTestSmileEmotion())
-                .record(record).build());
+        Record record = getTestRecord1(user, goal);
+        EmotionRecord firstEmotionRecord = getTestMyFirstEmotionRecord(user, firstEmotion, record);
+        record.addEmotionRecord(firstEmotionRecord);
 
-        EmotionRecord emotionRecord = getTestMySecondEmotionRecord(user, getTestSoSoEmotion(), getTestRecord1(getTestUser1(), getTestGoal1()));
 
         // when
         lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestSoSoEmotion()));
-        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
+        EmotionRecord secondEmotionRecord = getTestMySecondEmotionRecord(user, secondEmotion, record);
+        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(secondEmotionRecord);
         lenient().when(emotionRecordRepository.save(any())).thenAnswer(invocation -> {
-            EmotionRecord emotionRecord2 = EmotionRecord.builder()
-                    .emotionType(EmotionType.MY_SECOND)
-                    .user(user)
-                    .emotion(getTestSoSoEmotion())
-                    .record(record).build();
-            record.addEmotionRecord(emotionRecord2);
-            return emotionRecord2;
+            record.addEmotionRecord(secondEmotionRecord);
+            return secondEmotionRecord;
         });
-        ApplicationResponse<RecordResponse> response = recordService.writeSecondEmotion(request, targetRecordId, userId);
+        ApplicationResponse<RecordResponse> response = recordService.writeSecondEmotion(request, record.getId(), user.getUserId());
 
         // then
         RecordResponse result = response.getData();
         assertAll(
                 () -> assertEquals(record.getId(), result.getId()),
-                () -> assertEquals(secondEmotionId, result.getEmotionResponse().getSecondEmotion()),
-                () -> assertEquals(firstEmotionId, result.getEmotionResponse().getFirstEmotion()),
-                () -> assertEquals(user.getNickname(), result.getNickname())
+                () -> assertEquals(secondEmotion.getId(), result.getEmotionResponse().getSecondEmotion()),
+                () -> assertEquals(firstEmotion.getId(), result.getEmotionResponse().getFirstEmotion()),
+                () -> assertEquals(user.getNickname(), result.getNickname()),
+                () -> assertEquals(1, user.getActivityCount().getFinishRecordCount())
+        );
+    }
+
+    @Test
+    @DisplayName("기록에 두번째 감정 남기기 (성공 - 첫번째는 긍정감정 두번째는 부정감정인 경우. 이때 마시멜로 솔직 카운트 증가)")
+    void 기록에_두번째_감정_남기기2()
+    {
+        // given
+        UserActivityEventPublisher userActivityEventPublisher = mock(UserActivityEventPublisher.class);
+
+        Emotion firstEmotion = getTestSmileEmotion();
+        Emotion secondEmotion = getTestBadEmotion();
+
+
+        RecordSecondEmotionRequest request = new RecordSecondEmotionRequest();
+        request.setEmotionId(secondEmotion.getId());
+
+        User user = getTestUser1();
+        Goal goal = getTestGoal1();
+        Record record = getTestRecord1(user, goal);
+        EmotionRecord firstEmotionRecord = getTestMyFirstEmotionRecord(user, getTestSmileEmotion(), record);
+        record.addEmotionRecord(firstEmotionRecord);
+
+
+        // when
+        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
+        lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestBadEmotion()));
+        EmotionRecord secondEmotionRecord = getTestMySecondEmotionRecord(user, getTestBadEmotion(), record);
+        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(secondEmotionRecord);
+        lenient().when(emotionRecordRepository.save(any())).thenAnswer(invocation -> {
+            record.addEmotionRecord(secondEmotionRecord);
+            return secondEmotionRecord;
+        });
+
+        ApplicationResponse<RecordResponse> response = recordService.writeSecondEmotion(request, record.getId(), user.getUserId());
+
+        // then
+        RecordResponse result = response.getData();
+        assertAll(
+                () -> assertEquals(record.getId(), result.getId()),
+                () -> assertEquals(secondEmotion.getId(), result.getEmotionResponse().getSecondEmotion()),
+                () -> assertEquals(firstEmotion.getId(), result.getEmotionResponse().getFirstEmotion()),
+                () -> assertEquals(user.getNickname(), result.getNickname()),
+                () -> assertEquals(1, user.getActivityCount().getFinishRecordCount()),
+                () -> assertEquals(1, user.getActivityCount().getChangePositiveToNegativeCount())
         );
     }
 
@@ -269,34 +308,32 @@ public class RecordTest {
     void 친구의_기록에_감정_남기기()
     {
         // given
-        User user = getTestUser2();
-        String userId = user.getUserId();
+        User sender = getTestUser2();
 
-        Record record = getTestRecord1(getTestUser1(), getTestGoal1());
+        User recordOwner = getTestUser1();
+        Goal goal = getTestGoal1();
+        Record record = getTestRecord1(recordOwner, goal);
+        Emotion emotion = getTestBadEmotion();
+
         RecordToFriendEmotionRequest request = new RecordToFriendEmotionRequest();
-        Long requestEmotionId = 3L;
-        request.setEmotionId(requestEmotionId);
-
-        EmotionRecord emotionRecord = getTestFriendEmotionRecord(user, getTestBadEmotion(), record);
+        request.setEmotionId(emotion.getId());
 
         // when
-        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
+        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(sender));
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
-        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestBadEmotion()));
-        lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(emotionRecord);
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(emotion));
         lenient().when(emotionRecordRepository.save(any())).thenAnswer( invocation -> {
-            record.addEmotionRecord(emotionRecord);
-            return emotionRecord;
+            return getTestFriendEmotionRecord(sender, emotion, record);
         });
-
-        ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), userId);
+        ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), sender.getUserId());
 
         // then
         RecordResponse result = response.getData();
         assertAll(
                 () -> assertEquals(record.getId(), result.getId()),
                 () -> assertEquals(1, (long) result.getEmotionResponse().getFriendEmotions().size()),
-                () -> assertEquals(requestEmotionId,  result.getEmotionResponse().getFriendEmotions().get(0).getEmotionId())
+                () -> assertEquals(emotion.getId(),  result.getEmotionResponse().getFriendEmotions().get(0).getEmotionId()),
+                () -> assertEquals(1,  sender.getActivityCount().getAddEmotionCount())
         );
     }
 
@@ -373,25 +410,25 @@ public class RecordTest {
     private Emotion getTestSmileEmotion()
     {
         return Emotion.builder()
-                .id(emotion1Id)
-                .emotionName(emotion1Name).
-                image(emotion1Image).build();
+                .id(smileEmotionId)
+                .emotionName(smileEmotionName).
+                image(smileEmotionImage).build();
     }
 
     private Emotion getTestSoSoEmotion()
     {
         return Emotion.builder()
-                .id(emotion2Id)
-                .emotionName(emotion2Name).
-                image(emotion2Image).build();
+                .id(sosoEmotionId)
+                .emotionName(sosoEmotionName).
+                image(sosoEmotionImage).build();
     }
 
     private Emotion getTestBadEmotion()
     {
         return Emotion.builder()
-                .id(emotion3Id)
-                .emotionName(emotion3Name).
-                image(emotion3Image).build();
+                .id(badEmotionId)
+                .emotionName(badEmotionName).
+                image(badEmotionImage).build();
     }
 
 
@@ -411,7 +448,7 @@ public class RecordTest {
     {
         return RecordCreateRequest.builder()
                 .goalId(goal1Id)
-                .emotionId(emotion1Id)
+                .emotionId(smileEmotionId)
                 .usePrice(record1UsePrice)
                 .useDate(record1UseDate)
                 .useComment(record1UseComment).build();
@@ -457,17 +494,17 @@ public class RecordTest {
         Boolean goal1IsPublic = true;
 
         /* emotion */
-        Long emotion1Id = 1L;
-        String emotion1Name = "smile";
-        String emotion1Image = "emoji1";
+        Long smileEmotionId = 0L;
+        String smileEmotionName = "smile";
+        String smileEmotionImage = "emoji1";
 
-        Long emotion2Id = 2L;
-        String emotion2Name = "soso";
-        String emotion2Image = "emoji2";
+        Long sosoEmotionId = 1L;
+        String sosoEmotionName = "soso";
+        String sosoEmotionImage = "emoji2";
 
-        Long emotion3Id = 3L;
-        String emotion3Name = "bad";
-        String emotion3Image = "emoji3";
+        Long badEmotionId = 2L;
+        String badEmotionName = "bad";
+        String badEmotionImage = "emoji3";
 
         /* record */
         Long record1Id = 1L;

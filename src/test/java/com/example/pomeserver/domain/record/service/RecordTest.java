@@ -337,6 +337,43 @@ public class RecordTest {
         );
     }
 
+    @Test
+    @DisplayName("친구의 기록에 감정 남기기2 (성공 - 이미 기존에 감정을 남겼던 경우는 기존의 감정만 수정시킨다 <-- 마시멜로 공감 카운트 증가X)")
+    void 친구의_기록에_감정_남기기2()
+    {
+        // given
+        User sender = getTestUser2();
+        User recordOwner = getTestUser1();
+        Goal goal = getTestGoal1();
+        Record record = getTestRecord1(recordOwner, goal);
+        Emotion emotion1 = getTestBadEmotion();
+        Emotion emotion2 = getTestSmileEmotion();
+
+        RecordToFriendEmotionRequest request = new RecordToFriendEmotionRequest();
+        request.setEmotionId(emotion2.getId());
+
+        EmotionRecord emotionRecord = getTestFriendEmotionRecord(sender, emotion1, record); //record에 이미 sender의 emotion 존재
+        sender.getActivityCount().addAddEmotionCount();
+
+        // when
+        lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(sender));
+        lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
+        lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(emotion2));
+        lenient().when(emotionRecordRepository.save(any())).thenAnswer( invocation -> {
+            return getTestFriendEmotionRecord(sender, emotion2, record);
+        });
+        ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), sender.getUserId());
+
+        // then
+        RecordResponse result = response.getData();
+        assertAll(
+                () -> assertEquals(record.getId(), result.getId()),
+                () -> assertEquals(1, (long) result.getEmotionResponse().getFriendEmotions().size()),
+                () -> assertEquals(emotion2.getId(),  result.getEmotionResponse().getFriendEmotions().get(0).getEmotionId()),
+                () -> assertEquals(1,  sender.getActivityCount().getAddEmotionCount())
+        );
+    }
+
     private Record getTestRecord1(User user, Goal goal){
         Record record = Record.builder()
                 .goal(goal)

@@ -122,25 +122,26 @@ public class RecordServiceImpl implements RecordService{
 
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
-        for (EmotionRecord emotionRecord : emotionRecords) {
-            System.out.println(emotionRecord.getUser().getUserId());
+        if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)){
+            editEmotion(senderId, emotionRecords, emotion);
         }
-        if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
         else{
-            emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
+            emotionRecordRepository.save(emotionRecordAssembler.toEntity(record,sender,emotion,EmotionType.FRIEND));
             sender.getActivityCount().addAddEmotionCount();
             userActivityEventPublisher.execute(Activity.create(sender, ActivityType.ADD_EMOTION));
         }
         return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
     }
 
-    private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion){
+    private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion)
+    {
         for (EmotionRecord er : emotionRecords)
             if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND))
                 er.editEmotion(emotion);
     }
 
-    private boolean isAlreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
+    private boolean isAlreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId)
+    {
         for (EmotionRecord er : emotionRecords)
             if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND)) return true;
         return false;

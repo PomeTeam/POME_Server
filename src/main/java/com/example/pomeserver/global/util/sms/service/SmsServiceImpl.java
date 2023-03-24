@@ -43,7 +43,8 @@ public class SmsServiceImpl {
     private String phoneNum;
 
     public String send(SmsSendReq smsSendReq) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException, URISyntaxException {
-        String certification = Integer.toString((int)(Math.random() * (99999 - 10000 + 1)) + 10000);
+//        String certification = Integer.toString((int)(Math.random() * (99999 - 10000 + 1)) + 10000);
+        String certification = Integer.toString(41534);
         Long time = System.currentTimeMillis();
         List<MessageDTO> messages = new ArrayList<>();
         messages.add(new MessageDTO(smsSendReq.getPhoneNum(), "POME \n 인증번호: "+certification));

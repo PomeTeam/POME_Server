@@ -34,7 +34,7 @@ public class RecordUpdateRequest {
     private String useComment;
 
     @Builder
-    public RecordUpdateRequest(Long goalId, int usePrice, String useDate, String useComment) {
+    public RecordUpdateRequest(Long goalId, int usePrice, String useDate, String useComment){
         this.goalId = goalId;
         this.usePrice = usePrice;
         this.useDate = useDate;

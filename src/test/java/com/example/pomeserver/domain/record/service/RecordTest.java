@@ -230,7 +230,7 @@ public class RecordTest {
         Goal goal = getTestGoal1();
 
         Record record = getTestRecord1(user, goal);
-        EmotionRecord firstEmotionRecord = getTestMyFirstEmotionRecord(user, firstEmotion, record);
+        EmotionRecord firstEmotionRecord = addMyFirstEmotionRecordToRecord(user, firstEmotion, record);
         record.addEmotionRecord(firstEmotionRecord);
 
 
@@ -238,7 +238,7 @@ public class RecordTest {
         lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestSoSoEmotion()));
-        EmotionRecord secondEmotionRecord = getTestMySecondEmotionRecord(user, secondEmotion, record);
+        EmotionRecord secondEmotionRecord = addMySecondEmotionRecordToRecord(user, secondEmotion, record);
         lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(secondEmotionRecord);
         lenient().when(emotionRecordRepository.save(any())).thenAnswer(invocation -> {
             record.addEmotionRecord(secondEmotionRecord);
@@ -274,7 +274,7 @@ public class RecordTest {
         User user = getTestUser1();
         Goal goal = getTestGoal1();
         Record record = getTestRecord1(user, goal);
-        EmotionRecord firstEmotionRecord = getTestMyFirstEmotionRecord(user, getTestSmileEmotion(), record);
+        EmotionRecord firstEmotionRecord = addMyFirstEmotionRecordToRecord(user, getTestSmileEmotion(), record);
         record.addEmotionRecord(firstEmotionRecord);
 
 
@@ -282,7 +282,7 @@ public class RecordTest {
         lenient().when(userRepository.findByUserId(any())).thenReturn(Optional.of(user));
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(getTestBadEmotion()));
-        EmotionRecord secondEmotionRecord = getTestMySecondEmotionRecord(user, getTestBadEmotion(), record);
+        EmotionRecord secondEmotionRecord = addMySecondEmotionRecordToRecord(user, getTestBadEmotion(), record);
         lenient().when(emotionRecordAssembler.toEntity(any(), any(), any(), any())).thenReturn(secondEmotionRecord);
         lenient().when(emotionRecordRepository.save(any())).thenAnswer(invocation -> {
             record.addEmotionRecord(secondEmotionRecord);
@@ -323,7 +323,7 @@ public class RecordTest {
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(emotion));
         lenient().when(emotionRecordRepository.save(any())).thenAnswer( invocation -> {
-            return getTestFriendEmotionRecord(sender, emotion, record);
+            return addFriendEmotionRecordToRecord(sender, emotion, record);
         });
         ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), sender.getUserId());
 
@@ -352,7 +352,7 @@ public class RecordTest {
         RecordToFriendEmotionRequest request = new RecordToFriendEmotionRequest();
         request.setEmotionId(emotion2.getId());
 
-        EmotionRecord emotionRecord = getTestFriendEmotionRecord(sender, emotion1, record); //record에 이미 sender의 emotion 존재
+        EmotionRecord emotionRecord = addFriendEmotionRecordToRecord(sender, emotion1, record); //record에 이미 sender의 emotion 존재
         sender.getActivityCount().addAddEmotionCount();
 
         // when
@@ -360,7 +360,7 @@ public class RecordTest {
         lenient().when(recordRepository.findById(any())).thenReturn(Optional.of(record));
         lenient().when(emotionRepository.findById(any())).thenReturn(Optional.of(emotion2));
         lenient().when(emotionRecordRepository.save(any())).thenAnswer( invocation -> {
-            return getTestFriendEmotionRecord(sender, emotion2, record);
+            return addFriendEmotionRecordToRecord(sender, emotion2, record);
         });
         ApplicationResponse<RecordResponse> response = recordService.writeEmotionToFriend(request, record.getId(), sender.getUserId());
 
@@ -400,9 +400,9 @@ public class RecordTest {
                 .createdAt(record1CreatedAt).emotionResponse(null).build();
     }
 
-    private EmotionRecord getTestMyFirstEmotionRecord(User user,
-                                                      Emotion emotion,
-                                                      Record record)
+    private EmotionRecord addMyFirstEmotionRecordToRecord(User user,
+                                                          Emotion emotion,
+                                                          Record record)
     {
         return EmotionRecord.builder().emotionType(EmotionType.MY_FIRST)
                 .user(user)
@@ -410,9 +410,9 @@ public class RecordTest {
                 .record(record).build();
     }
 
-    private EmotionRecord getTestMySecondEmotionRecord(User user,
-                                                      Emotion emotion,
-                                                      Record record)
+    private EmotionRecord addMySecondEmotionRecordToRecord(User user,
+                                                           Emotion emotion,
+                                                           Record record)
     {
         return EmotionRecord.builder().emotionType(EmotionType.MY_SECOND)
                 .user(user)
@@ -420,9 +420,9 @@ public class RecordTest {
                 .record(record).build();
     }
 
-    private EmotionRecord getTestFriendEmotionRecord(User user,
-                                                       Emotion emotion,
-                                                       Record record)
+    private EmotionRecord addFriendEmotionRecordToRecord(User user,
+                                                         Emotion emotion,
+                                                         Record record)
     {
         return EmotionRecord.builder().emotionType(EmotionType.FRIEND)
                 .user(user)

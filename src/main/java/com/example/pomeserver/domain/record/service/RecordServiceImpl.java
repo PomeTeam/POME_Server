@@ -247,7 +247,18 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
         record.edit(recordAssembler.toEntity(request));
+        if(!request.getGoalId().equals(record.getGoal().getId())) changeGoal(request.getGoalId(), record);
         return ApplicationResponse.ok(RecordResponse.toDto(record, userId));
+    }
+
+    public void changeGoal(Long newGoalId, Record record)
+    {
+        Goal oldGoal = record.getGoal();
+        Goal newGoal = goalRepository.findById(newGoalId).orElseThrow(GoalNotFoundException::new);
+        // 이전의 연관관계 삭제
+        oldGoal.getRecords().removeIf((r) -> r.getId().equals(record.getId()));
+        // 새로운 연관관계 맺음
+        record.addGoal(newGoal);
     }
 
     @Transactional

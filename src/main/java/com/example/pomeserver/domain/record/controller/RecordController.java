@@ -213,7 +213,7 @@ public class RecordController {
      * @Author 이찬영
      */
     @Operation(summary = "기록 수정",
-            description = "사용자가 작성한 기록을 수정한다. 소비 순간의 감정을 제외하고 모든 것(소비 금액, 소비 날짜, 소비 코멘트)을 수정할 수 있다.")
+            description = "사용자가 작성한 기록을 수정한다. 소비 순간의 감정을 제외하고 모든 것(목표, 소비 금액, 소비 날짜, 소비 코멘트)을 수정할 수 있다.")
     @Auth
     @PutMapping("/{recordId}")
     public ApplicationResponse<RecordResponse> update(

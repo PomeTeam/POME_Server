@@ -76,7 +76,7 @@ public class Record extends DateBaseEntity {
         user.addRecord(this);
     }
 
-    private void addGoal(Goal goal) {
+    public void addGoal(Goal goal) {
         this.goal = goal;
         goal.addRecord(this);
     }

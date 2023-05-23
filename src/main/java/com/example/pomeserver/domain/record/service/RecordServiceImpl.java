@@ -96,7 +96,6 @@ public class RecordServiceImpl implements RecordService{
         record.changeHasSecondToTrue();
         user.getActivityCount().addFinishRecordCount();
         userActivityEventPublisher.execute(Activity.create(user, ActivityType.FINISH_RECORD));
-
         if(secondEmotion.getId().equals(NEGATIVE_EMOTION)){
             record.getEmotionRecords().stream()
                     .filter((er) -> er.getEmotionType().equals(EmotionType.MY_FIRST) && er.getEmotion().getId().equals(POSITIVE_EMOTION))
@@ -123,22 +122,26 @@ public class RecordServiceImpl implements RecordService{
 
         Emotion emotion = emotionRepository.findById(request.getEmotionId()).orElseThrow(EmotionNotFoundException::new);
         List<EmotionRecord> emotionRecords = record.getEmotionRecords();
-        if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)) editEmotion(senderId, emotionRecords, emotion);
+        if(isAlreadyHaveFriendEmotion(emotionRecords, senderId)){
+            editEmotion(senderId, emotionRecords, emotion);
+        }
         else{
-            emotionRecordRepository.save(emotionRecordAssembler.toEntity(record, sender, emotion, EmotionType.FRIEND));
+            emotionRecordRepository.save(emotionRecordAssembler.toEntity(record,sender,emotion,EmotionType.FRIEND));
             sender.getActivityCount().addAddEmotionCount();
             userActivityEventPublisher.execute(Activity.create(sender, ActivityType.ADD_EMOTION));
         }
         return ApplicationResponse.create(RecordResponse.toDto(record, senderId));
     }
 
-    private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion){
+    private void editEmotion(String senderId, List<EmotionRecord> emotionRecords, Emotion emotion)
+    {
         for (EmotionRecord er : emotionRecords)
             if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND))
                 er.editEmotion(emotion);
     }
 
-    private boolean isAlreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId) {
+    private boolean isAlreadyHaveFriendEmotion(List<EmotionRecord> emotionRecords, String senderId)
+    {
         for (EmotionRecord er : emotionRecords)
             if(er.getUser().getUserId().equals(senderId) && er.getEmotionType().equals(EmotionType.FRIEND)) return true;
         return false;
@@ -244,7 +247,18 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(recordId).orElseThrow(RecordNotFoundException::new);
         if(!record.getUser().getUserId().equals(userId)) throw new ThisRecordIsNotByThisUserException();
         record.edit(recordAssembler.toEntity(request));
+        if(!request.getGoalId().equals(record.getGoal().getId())) changeGoal(request.getGoalId(), record);
         return ApplicationResponse.ok(RecordResponse.toDto(record, userId));
+    }
+
+    public void changeGoal(Long newGoalId, Record record)
+    {
+        Goal oldGoal = record.getGoal();
+        Goal newGoal = goalRepository.findById(newGoalId).orElseThrow(GoalNotFoundException::new);
+        // 이전의 연관관계 삭제
+        oldGoal.getRecords().removeIf((r) -> r.getId().equals(record.getId()));
+        // 새로운 연관관계 맺음
+        record.addGoal(newGoal);
     }
 
     @Transactional

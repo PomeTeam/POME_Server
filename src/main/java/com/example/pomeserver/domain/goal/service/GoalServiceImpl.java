@@ -55,7 +55,7 @@ public class GoalServiceImpl implements GoalService {
     }
 
     // (2) 유저가 보유하고 있는 카테고리명 중복 확인 -> 중복 허용
-    if(goalRepository.findByIsEndAndNameAndUser(true, request.getName(), user).isPresent()) {
+    if(goalRepository.findByIsEndAndNameAndUser(false, request.getName(), user).isPresent()) {
       throw new GoalCategoryDuplicationException();
     }
 

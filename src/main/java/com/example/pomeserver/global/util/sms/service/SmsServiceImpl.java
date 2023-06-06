@@ -45,7 +45,7 @@ public class SmsServiceImpl {
     public String send(SmsSendReq smsSendReq) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException, URISyntaxException {
         String certification = Integer.toString((int)(Math.random() * (99999 - 10000 + 1)) + 10000);
         Long time = System.currentTimeMillis();
-        if (smsSendReq.getPhoneNum().equals("01012341235")) {
+        if (smsSendReq.getPhoneNum().equals("00012341235")) {
             certification = "12345";
             return certification;
         }
